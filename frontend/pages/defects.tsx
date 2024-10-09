@@ -1,7 +1,7 @@
 import Head from "next/head";
 import Image from "next/image";
 import localFont from "next/font/local";
-import styles from "@/styles/Home.module.css";
+import styles from "@/styles/Defects.module.css";
 import { useState } from "react";
 
 const geistSans = localFont({
@@ -15,7 +15,7 @@ const geistMono = localFont({
   weight: "100 900",
 });
 
-export default function Home() {
+export default function Defects() {
   // Beispielhafte Mängeldaten
   const [defects, setDefects] = useState([
     {
@@ -32,22 +32,45 @@ export default function Home() {
       shortDescription: "Bodenbelag beschädigt",
       detailDescription: "Der Bodenbelag hat Risse und muss repariert werden.",
       reportingDate: "07.10.2024",
-      status: "in Bearbeitung",
+      status: "in-Bearbeitung",
     },
     // Weitere Mängel können hier hinzugefügt werden
   ]);
+  
+
+  const [newDefect, setNewDefect] = useState({
+    object: "",
+    location: "",
+    shortDescription: "",
+    detailDescription: "",
+    reportingDate: "",
+    status: "offen",
+  });
+
+  const handleAddDefect = (e: { preventDefault: () => void; }) => {
+    e.preventDefault();
+    setDefects((prevDefects) => [...prevDefects, newDefect]);
+    setNewDefect({
+      object: "",
+      location: "",
+      shortDescription: "",
+      detailDescription: "",
+      reportingDate: "",
+      status: "offen",
+    }); // Formular zurücksetzen
+  };
 
   return (
     <>
       <Head>
-        <title>Mängelverwaltung</title>
+        <title>Defects</title>
         <meta name="description" content="Anwendung zur Verwaltung von Mängeln" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <div className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}>
         <main className={styles.main}>
-        <div className={`w-5 h-5 relative flex-shrink-0 ${styles.imageContainer}`}>
+        <div className={styles.imageContainer}>
             <Image
               src="/parkhaus.png" // Den richtigen Pfad zum Bild angeben
               alt="Parkhaus"
@@ -58,8 +81,58 @@ export default function Home() {
         <h1>GM-Parking Solutions</h1>
           </div>
           
-          <h2>Mängelverwaltung</h2>
-          <h3>Liste der Mängel</h3>
+          <h2>Defect managemant</h2>
+
+<form onSubmit={handleAddDefect} className={styles.defectForm}>
+            <h3>Neuen Mangel erstellen</h3>
+            <input
+              type="text"
+              placeholder="Objekt"
+              value={newDefect.object}
+              onChange={(e) => setNewDefect({ ...newDefect, object: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Standort"
+              value={newDefect.location}
+              onChange={(e) => setNewDefect({ ...newDefect, location: e.target.value })}
+              required
+            />
+            <input
+              type="text"
+              placeholder="Kurzbeschreibung"
+              value={newDefect.shortDescription}
+              onChange={(e) => setNewDefect({ ...newDefect, shortDescription: e.target.value })}
+              maxLength={80}
+              required
+            />
+            <input
+              placeholder="Detailbeschreibung"
+              value={newDefect.detailDescription}
+              onChange={(e) => setNewDefect({ ...newDefect, detailDescription: e.target.value })}
+              required
+            />
+            <input
+              type="date"
+              value={newDefect.reportingDate}
+              onChange={(e) => setNewDefect({ ...newDefect, reportingDate: e.target.value })}
+              required
+            />
+            <select
+              value={newDefect.status}
+              onChange={(e) => setNewDefect({ ...newDefect, status: e.target.value })}
+            >
+              <option value="offen">Offen</option>
+              <option value="in Bearbeitung">In Bearbeitung</option>
+              <option value="geschlossen">Geschlossen</option>
+              <option value="abgelehnt">Abgelehnt</option>
+            </select>
+            <button type="submit">Mangel hinzufügen</button>
+          </form>
+
+
+          <h3>List of defects</h3>
           <div className={styles.defectContainer}>
             {defects.map((defect, index) => (
               <div className={styles.defectCard} key={index}>
