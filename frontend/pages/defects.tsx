@@ -47,6 +47,15 @@ export default function Home() {
       </Head>
       <div className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}>
         <main className={styles.main}>
+        <div className={styles.imageContainer}>
+            <Image
+              src="/parkhaus.png" // Den richtigen Pfad zum Bild angeben
+              alt="Parkhaus"
+              width={600} // oder eine geeignete Breite für dein Layout
+              height={200} // oder eine geeignete Höhe für dein Layout
+              layout="responsive" // Optional, um das Bild responsiv zu machen
+            />
+          </div>
           <h1>Mängelverwaltung</h1>
           <h2>Liste der Mängel</h2>
           <div className={styles.defectContainer}>
