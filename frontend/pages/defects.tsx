@@ -51,13 +51,15 @@ export default function Home() {
             <Image
               src="/parkhaus.png" // Den richtigen Pfad zum Bild angeben
               alt="Parkhaus"
-              width={600} // oder eine geeignete Breite für dein Layout
-              height={200} // oder eine geeignete Höhe für dein Layout
-              layout="responsive" // Optional, um das Bild responsiv zu machen
+              width={75} // oder eine geeignete Breite für dein Layout
+              height={20} // oder eine geeignete Höhe für dein Layout
+              layout="intrinsic" // Optional, um das Bild responsiv zu machen
             />
+        <h1>GM-Parking Solutions</h1>
           </div>
-          <h1>Mängelverwaltung</h1>
-          <h2>Liste der Mängel</h2>
+          
+          <h2>Mängelverwaltung</h2>
+          <h3>Liste der Mängel</h3>
           <div className={styles.defectContainer}>
             {defects.map((defect, index) => (
               <div className={styles.defectCard} key={index}>
