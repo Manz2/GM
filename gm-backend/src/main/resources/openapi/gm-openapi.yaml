@@ -1,0 +1,87 @@
+openapi: 3.0.3
+info:
+  title: GM Defects API
+  description: OpenAPI-Spezifikation der GM Defects-API
+  version: 1.0.0
+
+servers:
+  - url: 'http://localhost'
+paths:
+  /api/defects:
+    get:
+      summary: "Defects Liste abfragen"
+      description: "Gibt alle gemeldeten Defects zurück"
+      operationId: "list"
+      parameters:
+        - name: "id"
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Der Defect wurde gefunden und zurückgegeben"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Defect'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  schemas:
+    Defect:
+      description: "Defect am Parkhaus"
+      type: object
+      properties:
+        property:
+          description: "Das Parkhaus"
+          type: string
+        location:
+          description: "Ort des Defects im Parkhaus"
+          type: string
+        description_short:
+          description: "Kurzbeschreibung des Schadens"
+          type: string
+        description_detailed:
+          description: "Detaillierte Beschreibung des Schadens"
+          type: string
+        reporting_date:
+          description: "Datum der Schadensmeldung"
+          type: date
+        status:
+          description: "Detaillierte Beschreibung des Schadens"
+          type: string
+          enum: ["Offen", "In Bearbeitung", "Geschlossen", "Abgelehnt"]
+
+    ErrorResponse:
+      description: "Basis Fehler-Response ohne Detailangaben"
+      type: object
+      properties:
+        message:
+          description: "Fehlermeldung"
+          type: string
+      required:
+        - "message"
+
+  responses:
+    BadRequest:
+      description: Fehlerhafte Anfrage
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Die angeforderte Ressource wurde nicht gefunden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
