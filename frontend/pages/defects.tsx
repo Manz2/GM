@@ -47,7 +47,7 @@ export default function Home() {
       </Head>
       <div className={`${styles.page} ${geistSans.variable} ${geistMono.variable}`}>
         <main className={styles.main}>
-        <div className={styles.imageContainer}>
+        <div className={`w-5 h-5 relative flex-shrink-0 ${styles.imageContainer}`}>
             <Image
               src="/parkhaus.png" // Den richtigen Pfad zum Bild angeben
               alt="Parkhaus"
