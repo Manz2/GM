@@ -10,11 +10,66 @@ paths:
   /api/defects:
     get:
       summary: "Defects Liste abfragen"
-      description: "Gibt alle gemeldeten Defects zurück"
-      operationId: "list"
+      description: "Gibt alle gemeldeten Defects zurück. Optional kann nach Property und Status gefiltert werden."
+      operationId: "listDefects"
+      parameters:
+        - name: "property"
+          in: query
+          description: "Das Parkhaus, zu dem der Defect gehört"
+          required: false
+          schema:
+            type: string
+        - name: "status"
+          in: query
+          description: "Status des Defects (z.B. Offen, In Bearbeitung, Geschlossen, Abgelehnt)"
+          required: false
+          schema:
+            type: string
+            enum: ["Offen", "In Bearbeitung", "Geschlossen", "Abgelehnt"]
+      responses:
+        '200':
+          description: "Liste der Defects erfolgreich zurückgegeben"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Defect'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      summary: "Defect hinzufügen"
+      description: "Fügt einen neuen Defect hinzu"
+      operationId: "addDefect"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Defect'
+      responses:
+        '201':
+          description: "Defect wurde erfolgreich erstellt"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Defect'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/defects/{id}:
+    get:
+      summary: "Defect per ID abrufen"
+      description: "Gibt einen spezifischen Defect anhand der ID zurück"
+      operationId: "getDefectById"
       parameters:
         - name: "id"
-          in: query
+          in: path
           required: true
           schema:
             type: string
@@ -25,6 +80,58 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Defect'
+        '404':
+          description: "Defect mit der angegebenen ID wurde nicht gefunden"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      summary: "Defect aktualisieren"
+      description: "Aktualisiert einen spezifischen Defect anhand der ID"
+      operationId: "updateDefect"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Defect'
+      responses:
+        '200':
+          description: "Defect wurde erfolgreich aktualisiert"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Defect'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: "Defect mit der angegebenen ID wurde nicht gefunden"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      summary: "Defect löschen"
+      description: "Löscht einen spezifischen Defect anhand der ID"
+      operationId: "deleteDefect"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "Defect wurde erfolgreich gelöscht"
+        '404':
+          description: "Defect mit der angegebenen ID wurde nicht gefunden"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -36,6 +143,9 @@ components:
       description: "Defect am Parkhaus"
       type: object
       properties:
+        id:
+          description: "Id"
+          type: string
         property:
           description: "Das Parkhaus"
           type: string
@@ -55,6 +165,7 @@ components:
           description: "Detaillierte Beschreibung des Schadens"
           type: string
           enum: ["Offen", "In Bearbeitung", "Geschlossen", "Abgelehnt"]
+
 
     ErrorResponse:
       description: "Basis Fehler-Response ohne Detailangaben"
