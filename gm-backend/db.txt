@@ -1,0 +1,3 @@
+02c11d49-d354-4f05-8952-65716a89b44c;Parkhaus 1;Eingang;Kaputter Aufzug;Der Aufzug funktioniert nicht, es gibt keine Anzeige.;2024-10-11;Offen
+4dab5288-f4b3-45ab-b9e4-7b19ce0f592d;Parkhaus 2;Eingang;Kaputter Aufzug;Der Aufzug funktioniert nicht, es gibt keine Anzeige.;2024-10-11;Offen
+a24034ca-b278-4053-9528-c62662333a88;Parkhaus 3;Eingang;Kaputter Aufzug;Der Aufzug funktioniert nicht, es gibt keine Anzeige.;2024-10-11;Geschlossen
