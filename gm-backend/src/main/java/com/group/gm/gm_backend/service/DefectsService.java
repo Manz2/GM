@@ -1,10 +1,9 @@
 package com.group.gm.gm_backend.service;
 
 import com.group.gm.gm_backend.db.GMDBService;
-import com.group.gm.gm_backend.db.TextFileDefectDatabase;
 import com.group.gm.openapi.api.DefectsApiDelegate;
 import com.group.gm.openapi.model.Defect;
-import jakarta.annotation.PostConstruct;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -16,18 +15,13 @@ import java.util.stream.Collectors;
 @Service
 public class DefectsService implements DefectsApiDelegate {
 
+    @Autowired
     GMDBService gmdbService;
-
-    @PostConstruct
-    public void init() {
-        // Initialisiere hier deine Datenbank mit Testdaten
-        gmdbService = new TextFileDefectDatabase("./db.txt");
-    }
 
     @Override
     public ResponseEntity<Defect> getDefectById(String id) {
         Defect defect = gmdbService.getDefectById(id);
-        if(defect != null){
+        if (defect != null) {
             return ResponseEntity.ok(gmdbService.getDefectById(id));
         } else {
             return ResponseEntity.notFound().build();
@@ -104,10 +98,4 @@ public class DefectsService implements DefectsApiDelegate {
 
         return ResponseEntity.ok(existingDefect); // Rückgabe des aktualisierten Defects mit 200 OK
     }
-
-
-
-
-
-
 }

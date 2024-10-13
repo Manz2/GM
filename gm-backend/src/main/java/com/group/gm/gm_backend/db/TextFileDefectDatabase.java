@@ -1,23 +1,29 @@
 package com.group.gm.gm_backend.db;
 
 import com.group.gm.openapi.model.Defect;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
 
-
+@Component
 public class TextFileDefectDatabase implements GMDBService {
 
+    //Pfad zur Textdatei welche Defects speichert
     private final String filePath;
 
-    // Konstruktor, der den Pfad zur Textdatei erhält
-    public TextFileDefectDatabase(String filePath) {
+    public TextFileDefectDatabase(@Value("${TextFileDefectDatabase.path}") String filePath) {
         this.filePath = filePath;
+        try {
+            new File(filePath).createNewFile();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
-    // Methode zum Hinzufügen eines neuen Defects
     @Override
     public Defect addDefect(Defect defect) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(filePath, true))) {
@@ -31,13 +37,11 @@ public class TextFileDefectDatabase implements GMDBService {
         }
     }
 
-    // Methode zum Abrufen aller Defects
     @Override
     public List<Defect> getAllDefects() {
         return readAllDefects();
     }
 
-    // Methode zum Abrufen eines Defects anhand der ID
     @Override
     public Defect getDefectById(String id) {
         return readAllDefects().stream()
@@ -46,7 +50,6 @@ public class TextFileDefectDatabase implements GMDBService {
                 .orElse(null);
     }
 
-    // Methode zum Filtern der Defects nach Property und Status
     @Override
     public List<Defect> filterDefects(String property, String status) {
         return readAllDefects().stream()
@@ -55,7 +58,6 @@ public class TextFileDefectDatabase implements GMDBService {
                 .collect(Collectors.toList());
     }
 
-    // Methode zum Aktualisieren eines Defects
     @Override
     public Defect updateDefect(Defect updatedDefect) {
         List<Defect> defects = readAllDefects();
@@ -77,7 +79,6 @@ public class TextFileDefectDatabase implements GMDBService {
         }
     }
 
-    // Methode zum Löschen eines Defects anhand der ID
     @Override
     public boolean deleteDefect(String id) {
         List<Defect> defects = readAllDefects();
