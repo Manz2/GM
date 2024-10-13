@@ -50,7 +50,7 @@ export interface UpdateDefectRequest {
 /**
  * 
  */
-export class DefaultApi extends runtime.BaseAPI {
+export class DefectsApi extends runtime.BaseAPI {
 
     /**
      * Fügt einen neuen Defect hinzu

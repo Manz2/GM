@@ -1,4 +1,5 @@
-apis/DefaultApi.ts
+.openapi-generator-ignore
+apis/DefectsApi.ts
 apis/index.ts
 index.ts
 models/Defect.ts

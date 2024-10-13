@@ -137,11 +137,11 @@ a.secondary {
   color: #f0ad4e; /* Gelb für in Bearbeitung */
 }
 
-.closed {
+.geschlossen {
   color: #5cb85c; /* Grün für geschlossenen Status */
 }
 
-.rejected {
+.abgelehnt {
   color: #d9534f; /* Rot für abgelehnten Status */
 }
 .imageContainer {
