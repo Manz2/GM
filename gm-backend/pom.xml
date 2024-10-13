@@ -94,6 +94,7 @@
 							<configOptions>
 								<delegatePattern>true</delegatePattern>
 								<useJakartaEe>true</useJakartaEe>
+								<useTags>true</useTags>
 							</configOptions>
 						</configuration>
 					</execution>

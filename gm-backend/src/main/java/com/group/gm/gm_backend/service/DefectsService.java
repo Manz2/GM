@@ -2,7 +2,7 @@ package com.group.gm.gm_backend.service;
 
 import com.group.gm.gm_backend.db.GMDBService;
 import com.group.gm.gm_backend.db.TextFileDefectDatabase;
-import com.group.gm.openapi.api.ApiApiDelegate;
+import com.group.gm.openapi.api.DefectsApiDelegate;
 import com.group.gm.openapi.model.Defect;
 import jakarta.annotation.PostConstruct;
 import org.springframework.http.HttpStatus;
@@ -14,7 +14,7 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
-public class DefectsService implements ApiApiDelegate {
+public class DefectsService implements DefectsApiDelegate {
 
     GMDBService gmdbService;
 

@@ -9,6 +9,8 @@ servers:
 paths:
   /api/defects:
     get:
+      tags:
+        - "Defects"
       summary: "Defects Liste abfragen"
       description: "Gibt alle gemeldeten Defects zurück. Optional kann nach Property und Status gefiltert werden."
       operationId: "listDefects"
@@ -41,6 +43,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
     post:
+      tags:
+        - "Defects"
       summary: "Defect hinzufügen"
       description: "Fügt einen neuen Defect hinzu"
       operationId: "addDefect"
@@ -64,6 +68,8 @@ paths:
 
   /api/defects/{id}:
     get:
+      tags:
+        - "Defects"
       summary: "Defect per ID abrufen"
       description: "Gibt einen spezifischen Defect anhand der ID zurück"
       operationId: "getDefectById"
@@ -88,6 +94,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
     put:
+      tags:
+        - "Defects"
       summary: "Defect aktualisieren"
       description: "Aktualisiert einen spezifischen Defect anhand der ID"
       operationId: "updateDefect"
@@ -118,6 +126,8 @@ paths:
           $ref: '#/components/responses/InternalServerError'
 
     delete:
+      tags:
+        - "Defects"
       summary: "Defect löschen"
       description: "Löscht einen spezifischen Defect anhand der ID"
       operationId: "deleteDefect"
