@@ -37,7 +37,24 @@ const geistMono = localFont({
 });
 
 export default function Defects() {
-  const [defects, setDefects] = useState<Defect[]>([]);
+  const [defects, setDefects] = useState<Defect[]>([
+    {
+      property: "Test",
+      location: "Test",
+      descriptionShort: "Test",
+      descriptionDetailed: "Test",
+      reportingDate: new Date(),
+      status: "Offen",
+    },
+    {
+      property: "Test",
+      location: "Test",
+      descriptionShort: "Test",
+      descriptionDetailed: "Test",
+      reportingDate: new Date(),
+      status: "Offen",
+    },
+  ]);
   const [newDefect, setNewDefect] = useState<Defect>({
     property: "",
     location: "",
@@ -171,7 +188,6 @@ export default function Defects() {
                       onChange={(e) => setNewDefect({ ...newDefect, descriptionShort: e.target.value })}
                       required
                       fullWidth
-                      inputProps={{ maxLength: 80 }}
                     />
                   </Box>
                   <Box flexBasis={{ xs: '100%', sm: '48%' }}>
@@ -270,9 +286,9 @@ export default function Defects() {
 
 
 
-          <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap={2}>
+          <Box display="flex" flexWrap="wrap" gap={2}>
             {defects.map((defect, index) => (
-              <Box className={styles.defectCard} key={index} flexBasis={{ xs: '100%', sm: '48%', md: '30%' }} mb={2}>
+              <Box key={index} flexBasis={{ xs: '100%', sm: '48%', md: '30%' }} mb={2}>
                 <Card>
                   <CardContent>
                     <Typography variant="h6">{defect.property}</Typography>
@@ -283,7 +299,7 @@ export default function Defects() {
                     <Typography color="textSecondary"><strong>Status:</strong> <span className={styles[defect.status?.toLowerCase() || "undefined"]}>{defect.status || "Unbekannt"}</span></Typography>
                   </CardContent>
                   <CardActions>
-                    <Button size="small" color="secondary" onClick={() => defect.id && handleDeleteDefect(defect.id)}>
+                    <Button size="small" color="error" onClick={() => defect.id && handleDeleteDefect(defect.id)}>
                       Löschen
                     </Button>
                   </CardActions>
