@@ -37,71 +37,7 @@ const geistMono = localFont({
 });
 
 export default function Defects() {
-  const [defects, setDefects] = useState<Defect[]>([
-    {
-      property: "Wohngebäude A",
-      location: "Keller",
-      descriptionShort: "Feuchtigkeit im Keller",
-      descriptionDetailed:
-        "Feuchtigkeit tritt an mehreren Stellen im Keller auf, insbesondere in der Nähe der Außenwand. Dies könnte auf eine defekte Drainage oder undichte Stellen in der Wand hindeuten.",
-      reportingDate: new Date("2024-05-01"),
-      status: "Offen",
-    },
-    {
-      property: "Bürogebäude B",
-      location: "3. Stock, Raum 305",
-      descriptionShort: "Kaputte Klimaanlage",
-      descriptionDetailed:
-        "Die Klimaanlage in Raum 305 funktioniert nicht mehr. Sie gibt nur noch heiße Luft ab, was die Arbeit in diesem Raum erschwert. Eine schnelle Reparatur wird empfohlen.",
-      reportingDate: new Date("2024-06-15"),
-      status: "In-Bearbeitung",
-    },
-    {
-      property: "Lagerhalle C",
-      location: "Haupteingang",
-      descriptionShort: "Türschloss defekt",
-      descriptionDetailed:
-        "Das Türschloss am Haupteingang der Lagerhalle funktioniert nicht mehr ordnungsgemäß. Es lässt sich schwer öffnen und könnte für Unbefugte leicht zugänglich sein.",
-      reportingDate: new Date("2024-03-22"),
-      status: "Geschlossen",
-    },
-    {
-      property: "Wohngebäude D",
-      location: "Dachgeschoss",
-      descriptionShort: "Dach undicht",
-      descriptionDetailed:
-        "Bei starkem Regen tropft Wasser durch das Dach ins Dachgeschoss. Besonders betroffen ist der Bereich über dem Schlafzimmer. Es besteht die Gefahr von Wasserschäden.",
-      reportingDate: new Date("2024-07-10"),
-      status: "Offen",
-    },
-    {
-      property: "Bürogebäude E",
-      location: "1. Stock, Raum 101",
-      descriptionShort: "Stromausfall",
-      descriptionDetailed:
-        "Im Raum 101 gibt es immer wieder Stromausfälle. Die Ursache ist unbekannt, könnte aber auf ein Problem mit der Elektrik im Gebäude hinweisen.",
-      reportingDate: new Date("2024-04-25"),
-      status: "Abgelehnt",
-    },
-    {
-      property: "Wohngebäude F",
-      location: "Garten",
-      descriptionShort: "Mauer beschädigt",
-      descriptionDetailed:
-        "Die Gartenmauer ist an mehreren Stellen beschädigt, vermutlich durch Frost im letzten Winter. Es gibt Risse, die sich auszubreiten scheinen.",
-      reportingDate: new Date("2024-08-02"),
-      status: "In-Bearbeitung",
-    },
-    {
-      property: "Lagerhalle G",
-      location: "Lagerraum 1",
-      descriptionShort: "Schimmelbildung",
-      descriptionDetailed:
-        "Schimmel wurde in Lagerraum 1 entdeckt, besonders in den Ecken und an den Decken. Es scheint, als ob Feuchtigkeit über längere Zeit unbemerkt geblieben ist.",
-      reportingDate: new Date("2024-05-30"),
-      status: "Offen",
-    },
-  ]);
+  const [defects, setDefects] = useState<Defect[]>([]);
   const [newDefect, setNewDefect] = useState<Defect>({
     property: "",
     location: "",
