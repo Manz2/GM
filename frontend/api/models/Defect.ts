@@ -69,7 +69,7 @@ export interface Defect {
  */
 export const DefectStatusEnum = {
     Offen: 'Offen',
-    InBearbeitung: 'In Bearbeitung',
+    InBearbeitung: 'In-Bearbeitung',
     Geschlossen: 'Geschlossen',
     Abgelehnt: 'Abgelehnt'
 } as const;

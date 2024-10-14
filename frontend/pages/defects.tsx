@@ -39,19 +39,66 @@ const geistMono = localFont({
 export default function Defects() {
   const [defects, setDefects] = useState<Defect[]>([
     {
-      property: "Test",
-      location: "Test",
-      descriptionShort: "Test",
-      descriptionDetailed: "Test",
-      reportingDate: new Date(),
+      property: "Wohngebäude A",
+      location: "Keller",
+      descriptionShort: "Feuchtigkeit im Keller",
+      descriptionDetailed:
+        "Feuchtigkeit tritt an mehreren Stellen im Keller auf, insbesondere in der Nähe der Außenwand. Dies könnte auf eine defekte Drainage oder undichte Stellen in der Wand hindeuten.",
+      reportingDate: new Date("2024-05-01"),
       status: "Offen",
     },
     {
-      property: "Test",
-      location: "Test",
-      descriptionShort: "Test",
-      descriptionDetailed: "Test",
-      reportingDate: new Date(),
+      property: "Bürogebäude B",
+      location: "3. Stock, Raum 305",
+      descriptionShort: "Kaputte Klimaanlage",
+      descriptionDetailed:
+        "Die Klimaanlage in Raum 305 funktioniert nicht mehr. Sie gibt nur noch heiße Luft ab, was die Arbeit in diesem Raum erschwert. Eine schnelle Reparatur wird empfohlen.",
+      reportingDate: new Date("2024-06-15"),
+      status: "In-Bearbeitung",
+    },
+    {
+      property: "Lagerhalle C",
+      location: "Haupteingang",
+      descriptionShort: "Türschloss defekt",
+      descriptionDetailed:
+        "Das Türschloss am Haupteingang der Lagerhalle funktioniert nicht mehr ordnungsgemäß. Es lässt sich schwer öffnen und könnte für Unbefugte leicht zugänglich sein.",
+      reportingDate: new Date("2024-03-22"),
+      status: "Geschlossen",
+    },
+    {
+      property: "Wohngebäude D",
+      location: "Dachgeschoss",
+      descriptionShort: "Dach undicht",
+      descriptionDetailed:
+        "Bei starkem Regen tropft Wasser durch das Dach ins Dachgeschoss. Besonders betroffen ist der Bereich über dem Schlafzimmer. Es besteht die Gefahr von Wasserschäden.",
+      reportingDate: new Date("2024-07-10"),
+      status: "Offen",
+    },
+    {
+      property: "Bürogebäude E",
+      location: "1. Stock, Raum 101",
+      descriptionShort: "Stromausfall",
+      descriptionDetailed:
+        "Im Raum 101 gibt es immer wieder Stromausfälle. Die Ursache ist unbekannt, könnte aber auf ein Problem mit der Elektrik im Gebäude hinweisen.",
+      reportingDate: new Date("2024-04-25"),
+      status: "Abgelehnt",
+    },
+    {
+      property: "Wohngebäude F",
+      location: "Garten",
+      descriptionShort: "Mauer beschädigt",
+      descriptionDetailed:
+        "Die Gartenmauer ist an mehreren Stellen beschädigt, vermutlich durch Frost im letzten Winter. Es gibt Risse, die sich auszubreiten scheinen.",
+      reportingDate: new Date("2024-08-02"),
+      status: "In-Bearbeitung",
+    },
+    {
+      property: "Lagerhalle G",
+      location: "Lagerraum 1",
+      descriptionShort: "Schimmelbildung",
+      descriptionDetailed:
+        "Schimmel wurde in Lagerraum 1 entdeckt, besonders in den Ecken und an den Decken. Es scheint, als ob Feuchtigkeit über längere Zeit unbemerkt geblieben ist.",
+      reportingDate: new Date("2024-05-30"),
       status: "Offen",
     },
   ]);
@@ -69,6 +116,7 @@ export default function Defects() {
   });
 
   const [expanded, setExpanded] = useState<string | null>(null);
+  const [expandedCard, setExpandedCard] = useState<number | null>(null);
 
   useEffect(() => {
     fetchDefects();
@@ -128,6 +176,10 @@ export default function Defects() {
     setExpanded(isExpanded ? panel : null); // Setzt expanded auf null, wenn das Panel geschlossen wird
   };
 
+  const toggleCard = (index: number) => {
+    setExpandedCard(expandedCard === index ? null : index);
+  };
+
 
   return (
     <>
@@ -147,18 +199,18 @@ export default function Defects() {
               height={20}
               layout="intrinsic"
             />
-            <Typography variant="h4" gutterBottom>
+            <Typography variant="h3" gutterBottom>
               GM-Parking Solutions
             </Typography>
           </div>
 
-          <Typography variant="h5" gutterBottom>
+          <Typography variant="h4" gutterBottom>
             Defect Management
           </Typography>
 
           <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
             <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-              <Typography variant="h6">Neuen Defect erstellen</Typography>
+              <Typography variant="h5">Neuen Defect erstellen</Typography>
             </AccordionSummary>
             <AccordionDetails>
               <form onSubmit={handleAddDefect} style={{ marginBottom: "20px" }}>
@@ -219,7 +271,7 @@ export default function Defects() {
                         label="Status"
                       >
                         <MenuItem value="Offen">Offen</MenuItem>
-                        <MenuItem value="In Bearbeitung">In Bearbeitung</MenuItem>
+                        <MenuItem value="In-Bearbeitung">In Bearbeitung</MenuItem>
                         <MenuItem value="Geschlossen">Geschlossen</MenuItem>
                         <MenuItem value="Abgelehnt">Abgelehnt</MenuItem>
                       </Select>
@@ -234,17 +286,15 @@ export default function Defects() {
               </form>
             </AccordionDetails>
           </Accordion>
-          <div style={{ marginTop: '40px' }}>
-            <Typography variant="h6" gutterBottom >
-              List of Defects
-            </Typography>
+          <div style={{ marginTop: '20px' }}>
+
           </div>
 
 
           <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px" }}>
             <Accordion expanded={expanded === 'filterPanel'} onChange={handleChange('filterPanel')}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="h6">Filter</Typography>
+                <Typography variant="h5">Filter</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={1}>
@@ -267,7 +317,7 @@ export default function Defects() {
                       >
                         <MenuItem value="">Alle</MenuItem>
                         <MenuItem value="Offen">Offen</MenuItem>
-                        <MenuItem value="In Bearbeitung">In Bearbeitung</MenuItem>
+                        <MenuItem value="In-Bearbeitung">In Bearbeitung</MenuItem>
                         <MenuItem value="Geschlossen">Geschlossen</MenuItem>
                         <MenuItem value="Abgelehnt">Abgelehnt</MenuItem>
                       </Select>
@@ -287,25 +337,58 @@ export default function Defects() {
 
 
           <Box display="flex" flexWrap="wrap" gap={2}>
-            {defects.map((defect, index) => (
-              <Box key={index} flexBasis={{ xs: '100%', sm: '48%', md: '30%' }} mb={2}>
-                <Card>
-                  <CardContent>
-                    <Typography variant="h6">{defect.property}</Typography>
-                    <Typography color="textSecondary"><strong>Standort:</strong> {defect.location}</Typography>
-                    <Typography color="textSecondary"><strong>Kurzbeschreibung:</strong> {defect.descriptionShort}</Typography>
-                    <Typography color="textSecondary"><strong>Detailbeschreibung:</strong> {defect.descriptionDetailed}</Typography>
-                    <Typography color="textSecondary"><strong>Melddatum:</strong> {defect.reportingDate?.toString()}</Typography>
-                    <Typography color="textSecondary"><strong>Status:</strong> <span className={styles[defect.status?.toLowerCase() || "undefined"]}>{defect.status || "Unbekannt"}</span></Typography>
-                  </CardContent>
-                  <CardActions>
-                    <Button size="small" color="error" onClick={() => defect.id && handleDeleteDefect(defect.id)}>
-                      Löschen
-                    </Button>
-                  </CardActions>
-                </Card>
-              </Box>
-            ))}
+            {defects.map((defect, index) => {
+              const isExpanded = expandedCard === index;
+              return (
+                <Box key={index} flexBasis={{ xs: '100%', sm: '48%', md: '30%' }} mb={2}>
+                  <Card style={{ height: isExpanded ? 'auto' : '100px' }}> {/* Festgelegte Höhe für eingeklappte Karten */}
+                    <CardContent onClick={() => toggleCard(index)} style={{ cursor: 'pointer' }}>
+                      <Typography variant="h5">{defect.property}</Typography>
+                      <Typography color="textSecondary">
+                        <strong>{defect.descriptionShort}</strong>
+                      </Typography>
+
+                      {isExpanded && (
+                        <>
+                          <Typography variant='h6'>
+                            Standort:
+                          </Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {defect.location}
+                          </Typography>
+                          <Typography variant='h6'>
+                            Detailbeschreibung:
+                          </Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {defect.descriptionDetailed}
+                          </Typography>
+                          <Typography variant='h6'>
+                            Meldedatum:
+                          </Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {defect.reportingDate ? new Date(defect.reportingDate).toLocaleDateString('de-DE') : 'Kein Datum'}
+                          </Typography>
+                          <Typography variant='h6'>
+                            Status:
+                          </Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            <span className={styles[defect.status?.toLowerCase() || "undefined"]}>{defect.status || "Unbekannt"}</span>
+                          </Typography>
+
+                        </>
+                      )}
+                    </CardContent>
+                    {isExpanded && (
+                      <CardActions>
+                        <Button size="small" color="error" onClick={() => defect.id && handleDeleteDefect(defect.id)}>
+                          Löschen
+                        </Button>
+                      </CardActions>
+                    )}
+                  </Card>
+                </Box>
+              );
+            })}
           </Box>
 
           <div style={{ marginTop: "40px" }}>
@@ -325,7 +408,7 @@ export default function Defects() {
             Git Repo
           </a>
         </footer>
-      </Container>
+      </Container >
     </>
   );
 }
