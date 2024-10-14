@@ -218,7 +218,7 @@ export default function Defects() {
                 />
               </Box>
               <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <FormControl fullWidth variant="outlined" margin="normal">
+                <FormControl fullWidth required>
                   <InputLabel>Status</InputLabel>
                   <Select
                     value={filter.status}
