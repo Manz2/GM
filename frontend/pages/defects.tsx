@@ -7,6 +7,7 @@ import { DefectStatusEnum } from "@/api/models/Defect";
 import { useEffect, useState } from "react";
 import styles from "@/styles/Defects.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import {
   Accordion,
   AccordionSummary,
@@ -23,6 +24,7 @@ import {
   CardContent,
   CardActions,
   Box,
+  IconButton,
 } from "@mui/material";
 
 const geistSans = localFont({
@@ -51,12 +53,18 @@ export default function Defects() {
     status: "",
   });
 
+  const [filterForm, setFilterForm] = useState({
+    property: "",
+    status: "",
+  });
+
   const [expanded, setExpanded] = useState<string | null>(null);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
+  const [open, setOpen] = useState(false);
 
   useEffect(() => {
     fetchDefects();
-  }, []);
+  }, [filter]);
 
   const handleDeleteDefect = (defectId: string) => {
     const defectsApi = new DefectsApi();
@@ -91,7 +99,7 @@ export default function Defects() {
 
   const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    fetchDefects();
+    setFilter(filterForm);
   };
 
   const handleAddDefect = (e: { preventDefault: () => void }) => {
@@ -102,6 +110,14 @@ export default function Defects() {
       .then((response) => {
         console.log("Defekt erfolgreich hinzugefügt:", response);
         fetchDefects();
+        setNewDefect({
+          property: "",
+          location: "",
+          descriptionShort: "",
+          descriptionDetailed: "",
+          reportingDate: new Date(),
+          status: "Offen",
+        });
       })
       .catch((error) => {
         console.error("Fehler beim Hinzufügen des Defekts:", error);
@@ -113,7 +129,51 @@ export default function Defects() {
   };
 
   const toggleCard = (index: number) => {
-    setExpandedCard(expandedCard === index ? null : index);
+    if (!open) {
+      setExpandedCard(expandedCard === index ? null : index);
+    }
+
+  };
+
+  const handleUpdateStatus = (e: React.ChangeEvent<{ value: unknown }>, defect: Defect, status: DefectStatusEnum) => {
+    e.preventDefault();
+    const defectsApi = new DefectsApi();
+    defect.status = status;
+    if (!defect.id) {
+      console.error("Defekt ID fehlt");
+      return;
+    }
+    const requestParameters = { id: defect.id, defect: defect };
+
+    defectsApi
+      .updateDefect(requestParameters)
+      .then(() => {
+        console.log("Defekt erfolgreich aktualisiert");
+        fetchDefects();
+      })
+      .catch((error) => {
+        console.error("Fehler beim Aktualisieren des Defekts:", error);
+      });
+  };
+
+  const handleOpen = () => {
+    console.log('Dialog geöffnet');
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
+  };
+
+  const handleReset = () => {
+    setFilter({
+      property: '',
+      status: '',
+    });
+    setFilterForm({
+      property: '',
+      status: '',
+    });
   };
 
 
@@ -227,7 +287,7 @@ export default function Defects() {
           </div>
 
 
-          <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px" }}>
+          <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px", }}>
             <Accordion expanded={expanded === 'filterPanel'} onChange={handleChange('filterPanel')}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography variant="h5">Filter</Typography>
@@ -239,16 +299,16 @@ export default function Defects() {
                       label="Objekt"
                       variant="outlined"
                       fullWidth
-                      value={filter.property}
-                      onChange={(e) => setFilter({ ...filter, property: e.target.value })}
+                      value={filterForm.property}
+                      onChange={(e) => setFilterForm({ ...filterForm, property: e.target.value })}
                     />
                   </Box>
                   <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                     <FormControl fullWidth>
                       <InputLabel>Status</InputLabel>
                       <Select
-                        value={filter.status}
-                        onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                        value={filterForm.status}
+                        onChange={(e) => setFilterForm({ ...filterForm, status: e.target.value })}
                         label="Status"
                       >
                         <MenuItem value="">Alle</MenuItem>
@@ -260,10 +320,14 @@ export default function Defects() {
                     </FormControl>
                   </Box>
                   <Box display="flex" flexBasis={{ xs: '100%', sm: '100%' }} alignItems="center">
-                    <Button type="submit" variant="contained" color="primary" style={{ height: 'fit-content' }}>
+                    <Button type="submit" variant="contained" color="primary" style={{ height: 'fit-content', marginLeft: "20px" }}>
                       Anwenden
                     </Button>
+                    <IconButton onClick={handleReset} color="primary" aria-label="reset filter" style={{ marginLeft: "20px" }}>
+                      <FilterListOffIcon />
+                    </IconButton>
                   </Box>
+
                 </Box>
               </AccordionDetails>
             </Accordion>
@@ -307,10 +371,21 @@ export default function Defects() {
                           <Typography variant='h6'>
                             Status:
                           </Typography>
-                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                            <span className={styles[defect.status?.toLowerCase() || "undefined"]}>{defect.status || "Unbekannt"}</span>
+                          <Typography>
+                            <Select
+                              value={defect.status}
+                              onChange={(e) => defect.id && handleUpdateStatus(e as React.ChangeEvent<{ value: unknown }>, defect, e.target.value as DefectStatusEnum)}
+                              onOpen={handleOpen}
+                              onClose={handleClose}
+                              className={styles[defect.status?.toLowerCase() || "undefined"]}
+                              variant="standard"
+                              size="small">
+                              <MenuItem value="Offen" className={styles['offen']}>Offen</MenuItem>
+                              <MenuItem value="In-Bearbeitung" className={styles['in-bearbeitung']}>In Bearbeitung</MenuItem>
+                              <MenuItem value="Geschlossen" className={styles['geschlossen']}>Geschlossen</MenuItem>
+                              <MenuItem value="Abgelehnt" className={styles['abgelehnt']}>Abgelehnt</MenuItem>
+                            </Select>
                           </Typography>
-
                         </>
                       )}
                     </CardContent>
