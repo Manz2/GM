@@ -6,7 +6,11 @@ import { Defect } from "@/api/models/Defect";
 import { DefectStatusEnum } from "@/api/models/Defect";
 import { useEffect, useState } from "react";
 import styles from "@/styles/Defects.module.css";
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import {
+  Accordion,
+  AccordionSummary,
+  AccordionDetails,
   TextField,
   Button,
   FormControl,
@@ -46,6 +50,8 @@ export default function Defects() {
     property: "",
     status: "",
   });
+
+  const [expanded, setExpanded] = useState<string | null>(null);
 
   useEffect(() => {
     fetchDefects();
@@ -101,6 +107,11 @@ export default function Defects() {
       });
   };
 
+  const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
+    setExpanded(isExpanded ? panel : null); // Setzt expanded auf null, wenn das Panel geschlossen wird
+  };
+
+
   return (
     <>
       <Head>
@@ -128,118 +139,136 @@ export default function Defects() {
             Defect Management
           </Typography>
 
-          <form onSubmit={handleAddDefect} style={{ marginBottom: "20px" }}>
-            <Typography variant="h6">Neuen Mangel erstellen</Typography>
-            <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap={2}>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <TextField
-                  label="Objekt"
-                  value={newDefect.property}
-                  onChange={(e) => setNewDefect({ ...newDefect, property: e.target.value })}
-                  required
-                  fullWidth
-                />
-              </Box>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <TextField
-                  label="Standort"
-                  value={newDefect.location}
-                  onChange={(e) => setNewDefect({ ...newDefect, location: e.target.value })}
-                  required
-                  fullWidth
-                />
-              </Box>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <TextField
-                  label="Kurzbeschreibung"
-                  value={newDefect.descriptionShort}
-                  onChange={(e) => setNewDefect({ ...newDefect, descriptionShort: e.target.value })}
-                  required
-                  fullWidth
-                  inputProps={{ maxLength: 80 }}
-                />
-              </Box>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <TextField
-                  label="Detailbeschreibung"
-                  value={newDefect.descriptionDetailed}
-                  onChange={(e) => setNewDefect({ ...newDefect, descriptionDetailed: e.target.value })}
-                  required
-                  fullWidth
-                />
-              </Box>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <TextField
-                  label="Melddatum"
-                  type="date"
-                  value={newDefect.reportingDate ? newDefect.reportingDate.toISOString().split("T")[0] : ""}
-                  onChange={(e) => setNewDefect({ ...newDefect, reportingDate: new Date(e.target.value) })}
-                  required
-                  fullWidth
-                />
-              </Box>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <FormControl fullWidth required>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={newDefect.status}
-                    onChange={(e) => setNewDefect({ ...newDefect, status: e.target.value as DefectStatusEnum })}
-                    label="Status"
-                  >
-                    <MenuItem value="Offen">Offen</MenuItem>
-                    <MenuItem value="In Bearbeitung">In Bearbeitung</MenuItem>
-                    <MenuItem value="Geschlossen">Geschlossen</MenuItem>
-                    <MenuItem value="Abgelehnt">Abgelehnt</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box flexBasis="100%">
-                <Button type="submit" variant="contained" color="primary">
-                  Mangel hinzufügen
-                </Button>
-              </Box>
-            </Box>
+          <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h6">Neuen Defect erstellen</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <form onSubmit={handleAddDefect} style={{ marginBottom: "20px" }}>
+                <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap={2}>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Objekt"
+                      value={newDefect.property}
+                      onChange={(e) => setNewDefect({ ...newDefect, property: e.target.value })}
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Standort"
+                      value={newDefect.location}
+                      onChange={(e) => setNewDefect({ ...newDefect, location: e.target.value })}
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Kurzbeschreibung"
+                      value={newDefect.descriptionShort}
+                      onChange={(e) => setNewDefect({ ...newDefect, descriptionShort: e.target.value })}
+                      required
+                      fullWidth
+                      inputProps={{ maxLength: 80 }}
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Detailbeschreibung"
+                      value={newDefect.descriptionDetailed}
+                      onChange={(e) => setNewDefect({ ...newDefect, descriptionDetailed: e.target.value })}
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Melddatum"
+                      type="date"
+                      value={newDefect.reportingDate ? newDefect.reportingDate.toISOString().split("T")[0] : ""}
+                      onChange={(e) => setNewDefect({ ...newDefect, reportingDate: new Date(e.target.value) })}
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <FormControl fullWidth required>
+                      <InputLabel>Status</InputLabel>
+                      <Select
+                        value={newDefect.status}
+                        onChange={(e) => setNewDefect({ ...newDefect, status: e.target.value as DefectStatusEnum })}
+
+                        label="Status"
+                      >
+                        <MenuItem value="Offen">Offen</MenuItem>
+                        <MenuItem value="In Bearbeitung">In Bearbeitung</MenuItem>
+                        <MenuItem value="Geschlossen">Geschlossen</MenuItem>
+                        <MenuItem value="Abgelehnt">Abgelehnt</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box flexBasis="100%">
+                    <Button type="submit" variant="contained" color="primary">
+                      Defect hinzufügen
+                    </Button>
+                  </Box>
+                </Box>
+              </form>
+            </AccordionDetails>
+          </Accordion>
+          <div style={{ marginTop: '40px' }}>
+            <Typography variant="h6" gutterBottom >
+              List of Defects
+            </Typography>
+          </div>
+
+
+          <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px" }}>
+            <Accordion expanded={expanded === 'filterPanel'} onChange={handleChange('filterPanel')}>
+              <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                <Typography variant="h6">Filter</Typography>
+              </AccordionSummary>
+              <AccordionDetails>
+                <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={1}>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Objekt"
+                      variant="outlined"
+                      fullWidth
+                      value={filter.property}
+                      onChange={(e) => setFilter({ ...filter, property: e.target.value })}
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <FormControl fullWidth>
+                      <InputLabel>Status</InputLabel>
+                      <Select
+                        value={filter.status}
+                        onChange={(e) => setFilter({ ...filter, status: e.target.value })}
+                        label="Status"
+                      >
+                        <MenuItem value="">Alle</MenuItem>
+                        <MenuItem value="Offen">Offen</MenuItem>
+                        <MenuItem value="In Bearbeitung">In Bearbeitung</MenuItem>
+                        <MenuItem value="Geschlossen">Geschlossen</MenuItem>
+                        <MenuItem value="Abgelehnt">Abgelehnt</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                  <Box display="flex" flexBasis={{ xs: '100%', sm: '100%' }} alignItems="center">
+                    <Button type="submit" variant="contained" color="primary" style={{ height: 'fit-content' }}>
+                      Anwenden
+                    </Button>
+                  </Box>
+                </Box>
+              </AccordionDetails>
+            </Accordion>
           </form>
 
-          <Typography variant="h6" gutterBottom>
-            List of Defects
-          </Typography>
-          <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px" }}>
-            <Typography variant="h6">Filter</Typography>
-            <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={2}>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <TextField
-                  label="Objekt"
-                  variant="outlined"
-                  fullWidth
-                  value={filter.property}
-                  onChange={(e) => setFilter({ ...filter, property: e.target.value })}
-                  required
-                />
-              </Box>
-              <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                <FormControl fullWidth required>
-                  <InputLabel>Status</InputLabel>
-                  <Select
-                    value={filter.status}
-                    onChange={(e) => setFilter({ ...filter, status: e.target.value })}
-                    label="Status"
-                  >
-                    <MenuItem value="">Alle</MenuItem>
-                    <MenuItem value="Offen">Offen</MenuItem>
-                    <MenuItem value="In Bearbeitung">In Bearbeitung</MenuItem>
-                    <MenuItem value="Geschlossen">Geschlossen</MenuItem>
-                    <MenuItem value="Abgelehnt">Abgelehnt</MenuItem>
-                  </Select>
-                </FormControl>
-              </Box>
-              <Box flexBasis={{ xs: '100%', sm: '100%' }}>
-                <Button type="submit" variant="contained" color="primary">
-                  Anwenden
-                </Button>
-              </Box>
-            </Box>
-          </form>
+
+
 
           <Box display="flex" flexWrap="wrap" justifyContent="space-between" gap={2}>
             {defects.map((defect, index) => (
@@ -269,7 +298,7 @@ export default function Defects() {
           </div>
         </main>
         <footer style={{ textAlign: "center", margin: "20px 0" }}>
-          <a href="https://nextjs.org" target="_blank" rel="noopener noreferrer">
+          <a href="https://github.com/Manz2/GM" target="_blank" rel="noopener noreferrer">
             <Image
               aria-hidden
               src="https://nextjs.org/icons/file.svg"
@@ -277,7 +306,7 @@ export default function Defects() {
               width={16}
               height={16}
             />
-            Lernen
+            Git Repo
           </a>
         </footer>
       </Container>
