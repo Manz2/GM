@@ -192,8 +192,9 @@ export default function Defects() {
               src="/parkhaus.png"
               alt="Parkhaus"
               width={75}
-              height={20}
-              layout="intrinsic"
+              height={70
+                
+              }
             />
             <Typography variant="h3" gutterBottom>
               GM-Parking Solutions
