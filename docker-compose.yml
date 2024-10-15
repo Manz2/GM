@@ -1,0 +1,6 @@
+services:
+  gm-backend:
+    container_name: gm-backend
+    image: com/group/gm-backend:latest
+    ports:
+      - "8000:8000"
