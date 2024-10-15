@@ -4,3 +4,8 @@ services:
     image: com/group/gm-backend:latest
     ports:
       - "8000:8000"
+  gm-frontend:
+    container_name: gm-frontend
+    image: com/group/gm-frontend:latest
+    ports:
+      - "3000:3000"

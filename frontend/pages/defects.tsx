@@ -193,7 +193,7 @@ export default function Defects() {
               alt="Parkhaus"
               width={75}
               height={70
-                
+
               }
             />
             <Typography variant="h3" gutterBottom>
