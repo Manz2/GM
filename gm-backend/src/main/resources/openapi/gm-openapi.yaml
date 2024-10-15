@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: 'http://localhost'
+  - url: 'http://localhost:8000'
 paths:
   /api/defects:
     get:
@@ -27,7 +27,7 @@ paths:
           required: false
           schema:
             type: string
-            enum: ["Offen", "In Bearbeitung", "Geschlossen", "Abgelehnt"]
+            enum: ["Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt"]
       responses:
         '200':
           description: "Liste der Defects erfolgreich zurückgegeben"
@@ -174,7 +174,7 @@ components:
         status:
           description: "Detaillierte Beschreibung des Schadens"
           type: string
-          enum: ["Offen", "In Bearbeitung", "Geschlossen", "Abgelehnt"]
+          enum: ["Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt"]
 
 
     ErrorResponse:

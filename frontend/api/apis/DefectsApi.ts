@@ -247,7 +247,7 @@ export class DefectsApi extends runtime.BaseAPI {
  */
 export const ListDefectsStatusEnum = {
     Offen: 'Offen',
-    InBearbeitung: 'In Bearbeitung',
+    InBearbeitung: 'In-Bearbeitung',
     Geschlossen: 'Geschlossen',
     Abgelehnt: 'Abgelehnt'
 } as const;
