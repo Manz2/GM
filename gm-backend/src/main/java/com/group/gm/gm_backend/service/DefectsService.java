@@ -33,8 +33,6 @@ public class DefectsService implements DefectsApiDelegate {
         if (defect == null || defect.getProperty() == null) {
             return ResponseEntity.badRequest().build(); // 400 Bad Request
         }
-
-        defect.setId(UUID.randomUUID().toString());
         gmdbService.addDefect(defect);
         return ResponseEntity.status(HttpStatus.CREATED).body(defect); // 201 Created
     }

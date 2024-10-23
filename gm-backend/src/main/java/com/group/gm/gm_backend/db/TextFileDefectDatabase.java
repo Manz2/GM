@@ -1,3 +1,4 @@
+/*
 package com.group.gm.gm_backend.db;
 
 import com.group.gm.openapi.model.Defect;
@@ -9,7 +10,6 @@ import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
 
-@Component
 public class TextFileDefectDatabase implements GMDBService {
 
     //Pfad zur Textdatei welche Defects speichert
@@ -159,3 +159,4 @@ public class TextFileDefectDatabase implements GMDBService {
         }
     }
 }
+*/

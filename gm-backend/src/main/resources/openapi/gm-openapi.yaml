@@ -5,7 +5,7 @@ info:
   version: 1.0.0
 
 servers:
-  - url: 'http://backend:8000'
+  - url: 'https://gm-backend-563205931618.us-central1.run.app'
 paths:
   /api/defects:
     get:
@@ -170,7 +170,10 @@ components:
           type: string
         reporting_date:
           description: "Datum der Schadensmeldung"
-          type: date
+          type: long
+        image:
+          description: "Bild des Schadens"
+          type: string
         status:
           description: "Detaillierte Beschreibung des Schadens"
           type: string
