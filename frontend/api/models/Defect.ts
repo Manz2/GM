@@ -51,10 +51,16 @@ export interface Defect {
     descriptionDetailed?: string;
     /**
      * Datum der Schadensmeldung
-     * @type {Date}
+     * @type {number}
      * @memberof Defect
      */
-    reportingDate?: Date;
+    reportingDate?: number;
+    /**
+     * Bild des Schadens
+     * @type {string}
+     * @memberof Defect
+     */
+    image?: string;
     /**
      * Detaillierte Beschreibung des Schadens
      * @type {string}
@@ -99,6 +105,7 @@ export function DefectFromJSONTyped(json: any, ignoreDiscriminator: boolean): De
         'descriptionShort': json['description_short'] == null ? undefined : json['description_short'],
         'descriptionDetailed': json['description_detailed'] == null ? undefined : json['description_detailed'],
         'reportingDate': json['reporting_date'] == null ? undefined : json['reporting_date'],
+        'image': json['image'] == null ? undefined : json['image'],
         'status': json['status'] == null ? undefined : json['status'],
     };
 }
@@ -120,6 +127,7 @@ export function DefectFromJSONTyped(json: any, ignoreDiscriminator: boolean): De
         'description_short': value['descriptionShort'],
         'description_detailed': value['descriptionDetailed'],
         'reporting_date': value['reportingDate'],
+        'image': value['image'],
         'status': value['status'],
     };
 }

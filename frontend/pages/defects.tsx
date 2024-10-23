@@ -45,7 +45,7 @@ export default function Defects() {
     location: "",
     descriptionShort: "",
     descriptionDetailed: "",
-    reportingDate: new Date(),
+    reportingDate: new Date().getTime(),
     status: "Offen",
   });
   const [filter, setFilter] = useState({
@@ -115,7 +115,7 @@ export default function Defects() {
           location: "",
           descriptionShort: "",
           descriptionDetailed: "",
-          reportingDate: new Date(),
+          reportingDate: new Date().getTime(),
           status: "Offen",
         });
       })
@@ -252,8 +252,8 @@ export default function Defects() {
                     <TextField
                       label="Melddatum"
                       type="date"
-                      value={newDefect.reportingDate ? newDefect.reportingDate.toISOString().split("T")[0] : ""}
-                      onChange={(e) => setNewDefect({ ...newDefect, reportingDate: new Date(e.target.value) })}
+                      value={newDefect.reportingDate ? new Date(newDefect.reportingDate).toISOString().split("T")[0] : ""}
+                      onChange={(e) => setNewDefect({ ...newDefect, reportingDate: new Date(e.target.value).getTime() })}
                       required
                       fullWidth
                     />
@@ -351,45 +351,39 @@ export default function Defects() {
 
                       {isExpanded && (
                         <>
-                          <Typography variant='h6'>
-                            Standort:
-                          </Typography>
+                          <Typography variant="h6">Standort:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {defect.location}
                           </Typography>
-                          <Typography variant='h6'>
-                            Detailbeschreibung:
-                          </Typography>
+                          <Typography variant="h6">Detailbeschreibung:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {defect.descriptionDetailed}
                           </Typography>
-                          <Typography variant='h6'>
-                            Meldedatum:
-                          </Typography>
+                          <Typography variant="h6">Meldedatum:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {defect.reportingDate ? new Date(defect.reportingDate).toLocaleDateString('de-DE') : 'Kein Datum'}
                           </Typography>
-                          <Typography variant='h6'>
-                            Status:
-                          </Typography>
-                          <Typography>
-                            <Select
-                              value={defect.status}
-                              onChange={(e) => defect.id && handleUpdateStatus(e as React.ChangeEvent<{ value: unknown }>, defect, e.target.value as DefectStatusEnum)}
-                              onOpen={handleOpen}
-                              onClose={handleClose}
-                              className={styles[defect.status?.toLowerCase() || "undefined"]}
-                              variant="standard"
-                              size="small">
-                              <MenuItem value="Offen" className={styles['offen']}>Offen</MenuItem>
-                              <MenuItem value="In-Bearbeitung" className={styles['in-bearbeitung']}>In Bearbeitung</MenuItem>
-                              <MenuItem value="Geschlossen" className={styles['geschlossen']}>Geschlossen</MenuItem>
-                              <MenuItem value="Abgelehnt" className={styles['abgelehnt']}>Abgelehnt</MenuItem>
-                            </Select>
-                          </Typography>
+                          <Typography variant="h6">Status:</Typography>
+
+                          {/* Select außerhalb von Typography */}
+                          <Select
+                            value={defect.status}
+                            onChange={(e) => defect.id && handleUpdateStatus(e as React.ChangeEvent<{ value: unknown }>, defect, e.target.value as DefectStatusEnum)}
+                            onOpen={handleOpen}
+                            onClose={handleClose}
+                            className={styles[defect.status?.toLowerCase() || "undefined"]}
+                            variant="standard"
+                            size="small"
+                          >
+                            <MenuItem value="Offen" className={styles['offen']}>Offen</MenuItem>
+                            <MenuItem value="In-Bearbeitung" className={styles['in-bearbeitung']}>In Bearbeitung</MenuItem>
+                            <MenuItem value="Geschlossen" className={styles['geschlossen']}>Geschlossen</MenuItem>
+                            <MenuItem value="Abgelehnt" className={styles['abgelehnt']}>Abgelehnt</MenuItem>
+                          </Select>
                         </>
                       )}
                     </CardContent>
+
                     {isExpanded && (
                       <CardActions>
                         <Button size="small" color="error" onClick={() => defect.id && handleDeleteDefect(defect.id)}>
@@ -402,6 +396,7 @@ export default function Defects() {
               );
             })}
           </Box>
+
 
           <div style={{ marginTop: "40px" }}>
             <Typography variant="h4">Kontakt</Typography>
