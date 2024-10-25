@@ -429,7 +429,7 @@ export default function Defects() {
                         <>
                           <img
                             src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
-                            alt="new"
+                            alt={`Bild des Defekts in ${defect.image}`} // Sinnvoller alt-Text
                           />
                           <Typography variant="h6">Standort:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
