@@ -1,9 +1,19 @@
 services:
+    # Spring Boot Application Service
+  firestore_emulator:
+    image: mtlynch/firestore-emulator
+    environment:
+      - FIRESTORE_PROJECT_ID=dummy-project-id
+      - PORT=8200
+    ports:
+      - 8200:8200
+    networks:
+      - spring-network
   gm-backend:
     container_name: gm-backend
     image: com/group/gm-backend:latest
     ports:
-      - "8000:8000"
+      - "8081:8081"
   gm-frontend:
     container_name: gm-frontend
     image: com/group/gm-frontend:latest

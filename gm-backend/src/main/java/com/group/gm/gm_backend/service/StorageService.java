@@ -1,3 +1,4 @@
+/*
 package com.group.gm.gm_backend.service;
 
 
@@ -35,7 +36,7 @@ public class StorageService {
         // String filePath = "path/to/your/file"
         Storage storage = StorageOptions.newBuilder()
                 .setProjectId(projectId)
-                .setCredentials(ServiceAccountCredentials.fromStream(new FileInputStream("./ca-test2-438111-5eb50a3640c3.json")))
+                .setCredentials(GoogleCredentials.getApplicationDefault())
                 .build()
                 .getService();
 
@@ -96,3 +97,4 @@ public class StorageService {
                         + destFilePath);
     }
 }
+*/

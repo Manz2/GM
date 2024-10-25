@@ -4,12 +4,14 @@ package com.group.gm.gm_backend.db;
 import com.group.gm.openapi.model.Defect;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
 import java.io.*;
 import java.util.*;
 import java.util.stream.Collectors;
 import java.time.LocalDate;
 
+@Service
 public class TextFileDefectDatabase implements GMDBService {
 
     //Pfad zur Textdatei welche Defects speichert
@@ -124,11 +126,11 @@ public class TextFileDefectDatabase implements GMDBService {
     }
 
     // Hilfsmethode zum Parsen des Datums
-    private LocalDate parseDate(String dateString) {
+    private long parseDate(String dateString) {
         if (dateString == null || dateString.isEmpty()) {
-            return null; // oder eine Standarddatum, falls nötig
+            return 0; // oder eine Standarddatum, falls nötig
         }
-        return LocalDate.parse(dateString); // Datum im Format "yyyy-MM-dd" parsen
+        return LocalDate.parse(dateString).toEpochDay(); // Datum im Format "yyyy-MM-dd" parsen
     }
 
 
@@ -159,4 +161,5 @@ public class TextFileDefectDatabase implements GMDBService {
         }
     }
 }
+
 */

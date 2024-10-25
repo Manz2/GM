@@ -1,3 +1,4 @@
+
 package com.group.gm.gm_backend.db;
 
 import com.group.gm.openapi.model.Defect;
@@ -8,6 +9,7 @@ import com.google.cloud.firestore.Firestore;
 import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -24,15 +26,10 @@ public class FirestoreDefectDatabase implements GMDBService {
     private final Firestore firestore;
     private final CollectionReference defectCollection;
 
-    public FirestoreDefectDatabase() {
-        // Firestore-Instanz initialisieren
-        FirestoreOptions firestoreOptions = FirestoreOptions.getDefaultInstance().toBuilder()
-                .setProjectId(PROJECT_ID)
-                .build();
-        firestore = firestoreOptions.getService();
-        defectCollection = firestore.collection(COLLECTION_NAME);
-
-
+    @Autowired
+    public FirestoreDefectDatabase(Firestore firestore) {
+        this.firestore = firestore;
+        defectCollection = firestore.collection("defects");
     }
     @Override
     public Defect addDefect(Defect defect) {
@@ -137,3 +134,4 @@ public class FirestoreDefectDatabase implements GMDBService {
         }
     }
 }
+
