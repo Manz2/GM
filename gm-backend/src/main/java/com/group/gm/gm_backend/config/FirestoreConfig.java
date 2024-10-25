@@ -31,6 +31,9 @@ public class FirestoreConfig {
             // Use emulator settings
             firestoreOptionsBuilder.setEmulatorHost(emulatorHost);
             System.out.println("Using Firestore Emulator at " + emulatorHost);
+        } else {
+            // Use actual Firestore credentials
+            firestoreOptionsBuilder.setCredentials(GoogleCredentials.getApplicationDefault());
         }
 
         return firestoreOptionsBuilder.build().getService();

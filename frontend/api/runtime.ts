@@ -13,7 +13,7 @@
  */
 
 
-export const BASE_PATH = "http://localhost:8080".replace(/\/+$/, "");
+export const BASE_PATH = "https://gm-backend-563205931618.europe-west1.run.app".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path

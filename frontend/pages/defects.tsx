@@ -4,10 +4,11 @@ import localFont from "next/font/local";
 import { DefectsApi, DeleteDefectRequest } from "@/api/apis/DefectsApi";
 import { Defect } from "@/api/models/Defect";
 import { DefectStatusEnum } from "@/api/models/Defect";
-import { useEffect, useState, useRef } from "react";
+import { useEffect, useState, createRef } from "react";
 import styles from "@/styles/Defects.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import Dropzone, { DropzoneRef } from 'react-dropzone';
 import {
   Accordion,
   AccordionSummary,
@@ -24,8 +25,9 @@ import {
   CardContent,
   CardActions,
   Box,
-  IconButton,
+  IconButton, List, ListItem, ListItemAvatar, Avatar, ListItemText
 } from "@mui/material";
+import { maxHeaderSize } from "http";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -62,6 +64,7 @@ export default function Defects() {
   const [expanded, setExpanded] = useState<string | null>(null);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
+  const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
 
   useEffect(() => {
     fetchDefects();
@@ -104,6 +107,7 @@ export default function Defects() {
   };
 
   const handleAddDefect = (e: { preventDefault: () => void }) => {
+    console.log("Verwendete Dateien: ", acceptedFiles);
     e.preventDefault();
     const defectsApi = new DefectsApi();
     defectsApi
@@ -178,7 +182,13 @@ export default function Defects() {
     });
   };
 
-  const handleAddImage = async () => {
+  const dropzoneRef = createRef<DropzoneRef>();
+  const openDialog = () => {
+    // Note that the ref is set async,
+    // so it might be null at some point 
+    if (dropzoneRef.current) {
+      dropzoneRef.current.open()
+    }
   };
 
 
@@ -279,10 +289,68 @@ export default function Defects() {
                       </Select>
                     </FormControl>
                   </Box>
+                  <Dropzone ref={dropzoneRef} noClick noKeyboard accept={{ 'image/*': [] }} onDrop={(files) => {
+                    setAcceptedFiles(files); // Dateien im Zustand speichern
+                  }}>
+                    {({ getRootProps, getInputProps, acceptedFiles }) => (
+                      <Box
+                        {...getRootProps()}
+                        sx={{
+                          border: '2px dashed #90caf9',
+                          borderRadius: 2,
+                          padding: 1,
+                          width: "100%",
+                          textAlign: 'center',
+                          bgcolor: 'background',
+                          color: 'text.primary',
+                          '&:hover': {
+                            bgcolor: '#37474f'
+                          }
+                        }}
+                      >
+                        <input {...getInputProps()} />
+                        <Typography variant="body1" color="textSecondary">
+                          Drag-and-drop
+                        </Typography>
+                        <Button
+                          variant="contained"
+                          color="primary"
+                          onClick={openDialog}
+                          sx={{ marginTop: 2 }}
+                        >
+                          Dateien ansehen
+                        </Button>
+                        <Box display="flex" justifyContent="center" >
+                          <List>
+                            {acceptedFiles.map((file) => (
+                              <ListItem key={file.path}>
+                                <ListItemAvatar>
+                                  {file.type.startsWith('image/') ? (
+                                    <Avatar
+                                      variant="square"
+                                      src={URL.createObjectURL(file)}
+                                      alt={file.path}
+                                      sx={{ width: 60, height: 60 }}
+                                    />
+                                  ) : (
+                                    <Avatar>
+                                      <Typography variant="caption">DOC</Typography>
+                                    </Avatar>
+                                  )}
+                                </ListItemAvatar>
+                                <ListItemText
+                                  primary={file.path}
+                                  sx={{ ml: 2 }} // Fügt einen linken Außenabstand hinzu
+                                />
+                              </ListItem>
+
+                            ))}
+                          </List>
+                        </Box>
+                      </Box>
+                    )}
+                  </Dropzone>
                   <Box flexBasis="100%">
-                    <Button onClick={handleAddImage} variant="contained" style={{ marginRight: '10px' }}>
-                      Bild anhängen
-                    </Button>
                     <Button type="submit" variant="contained" color="primary">
                       Defect hinzufügen
                     </Button>
@@ -359,6 +427,10 @@ export default function Defects() {
 
                       {isExpanded && (
                         <>
+                          <img
+                            src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
+                            alt="new"
+                          />
                           <Typography variant="h6">Standort:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {defect.location}
