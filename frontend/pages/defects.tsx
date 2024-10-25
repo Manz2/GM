@@ -4,7 +4,7 @@ import localFont from "next/font/local";
 import { DefectsApi, DeleteDefectRequest } from "@/api/apis/DefectsApi";
 import { Defect } from "@/api/models/Defect";
 import { DefectStatusEnum } from "@/api/models/Defect";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import styles from "@/styles/Defects.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
@@ -47,6 +47,7 @@ export default function Defects() {
     descriptionDetailed: "",
     reportingDate: new Date().getTime(),
     status: "Offen",
+    image: "",
   });
   const [filter, setFilter] = useState({
     property: "",
@@ -117,6 +118,7 @@ export default function Defects() {
           descriptionDetailed: "",
           reportingDate: new Date().getTime(),
           status: "Offen",
+          image: "",
         });
       })
       .catch((error) => {
@@ -174,6 +176,9 @@ export default function Defects() {
       property: '',
       status: '',
     });
+  };
+
+  const handleAddImage = async () => {
   };
 
 
@@ -275,6 +280,9 @@ export default function Defects() {
                     </FormControl>
                   </Box>
                   <Box flexBasis="100%">
+                    <Button onClick={handleAddImage} variant="contained" style={{ marginRight: '10px' }}>
+                      Bild anhängen
+                    </Button>
                     <Button type="submit" variant="contained" color="primary">
                       Defect hinzufügen
                     </Button>
