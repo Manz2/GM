@@ -4,6 +4,7 @@ import com.group.gm.gm_backend.db.GMDBService;
 import com.group.gm.openapi.api.DefectsApiDelegate;
 import com.group.gm.openapi.model.Defect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
@@ -25,6 +26,12 @@ public class DefectsService implements DefectsApiDelegate {
 
     @Autowired
     GoogleCloudStorageService storageService;
+
+    @Value("${google.cloud.projectId}")
+    private String projectId;
+
+    @Value("${google.cloud.bucket}")
+    private String bucket;
 
     @Override
     public ResponseEntity<Defect> getDefectById(String id) {
@@ -53,8 +60,12 @@ public class DefectsService implements DefectsApiDelegate {
         if (defect == null || defect.getProperty() == null) {
             return ResponseEntity.badRequest().build(); // 400 Bad Request
         }
-        String imagePath = storageService.uploadObject(file);
-        defect.setImage(imagePath);
+        if(file != null){
+            String imagePath = storageService.uploadObject(file);
+            defect.setImage(imagePath);
+        } else {
+            defect.setImage("");
+        }
         gmdbService.addDefect(defect);
         return ResponseEntity.status(HttpStatus.CREATED).body(defect); // 201 Created
     }
@@ -87,13 +98,22 @@ public class DefectsService implements DefectsApiDelegate {
 
     @Override
     public ResponseEntity<Void> deleteDefect(String id) {
-        boolean deleted = gmdbService.deleteDefect(id); // Löschen des Defects durch den GMDB-Service
-
-        if (deleted) {
-            return ResponseEntity.noContent().build(); // Erfolgreich gelöscht, Rückgabe 204 No Content
-        } else {
-            return ResponseEntity.notFound().build(); // Defect nicht gefunden, Rückgabe 404 Not Found
+        try{
+            Defect defect = gmdbService.getDefectById(id);
+            String image = defect.getImage();
+            if(image != ""){
+                storageService.deleteObject(projectId,bucket, defect.getImage());
+            }
+            boolean deleted = gmdbService.deleteDefect(id); // Löschen des Defects durch den GMDB-Service
+            if (deleted) {
+                return ResponseEntity.noContent().build(); // Erfolgreich gelöscht, Rückgabe 204 No Content
+            } else {
+                return ResponseEntity.notFound().build(); // Defect nicht gefunden, Rückgabe 404 Not Found
+            }
+        } catch (Exception e){
+            return ResponseEntity.notFound().build();
         }
+
     }
 
     @Override

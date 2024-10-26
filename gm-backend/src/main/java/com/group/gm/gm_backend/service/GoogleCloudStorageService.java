@@ -2,13 +2,10 @@
 package com.group.gm.gm_backend.service;
 
 
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Storage;
+import com.google.cloud.storage.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.google.cloud.storage.Blob;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.nio.file.Path;
@@ -32,18 +29,38 @@ public class GoogleCloudStorageService {
     }
 
     public String uploadObject(MultipartFile file) {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
 
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
 
-        // The ID of your GCS object
-        // String objectName = "your-object-name";
+        // MIME-Type ermitteln
+        String contentType = file.getContentType();
+        String extension;
 
-        // The path to your file to upload
-        // String filePath = "path/to/your/file"
-        String objectName = UUID.randomUUID() + "_" + "upload";
+        // Dateiendung basierend auf dem MIME-Type bestimmen
+        switch (contentType) {
+            case "image/png":
+                extension = ".png";
+                break;
+            case "image/jpeg":
+                extension = ".jpg";
+                break;
+            case "image/gif":
+                extension = ".gif";
+                break;
+            case "image/bmp":
+                extension = ".bmp";
+                break;
+            case "image/heic":
+                extension = ".heic";
+                break;
+            case "image/heif":
+                extension = ".heif";
+                break;
+            default:
+                throw new IllegalArgumentException("Unsupported file format. Only common image and video formats are allowed.");
+        }
+
+
+        String objectName = UUID.randomUUID() + extension;
         BlobInfo blobInfo = BlobInfo.newBuilder(bucket, objectName)
                 .setContentType(file.getContentType())
                 .build();
@@ -101,6 +118,37 @@ public class GoogleCloudStorageService {
                         + bucket
                         + " to "
                         + destFilePath);
+    }
+
+    public static void deleteObject(String projectId, String bucketName, String objectName) {
+        // The ID of your GCP project
+        // String projectId = "your-project-id";
+
+        // The ID of your GCS bucket
+        // String bucketName = "your-unique-bucket-name";
+
+        // The ID of your GCS object
+        // String objectName = "your-object-name";
+
+        Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
+        Blob blob = storage.get(bucketName, objectName);
+        if (blob == null) {
+            System.out.println("The object " + objectName + " wasn't found in " + bucketName);
+            return;
+        }
+        BlobId idWithGeneration = blob.getBlobId();
+        // Deletes the blob specified by its id. When the generation is present and non-null it will be
+        // specified in the request.
+        // If versioning is enabled on the bucket and the generation is present in the delete request,
+        // only the version of the object with the matching generation will be deleted.
+        // If instead you want to delete the current version, the generation should be dropped by
+        // performing the following.
+        // BlobId idWithoutGeneration =
+        //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
+        // storage.delete(idWithoutGeneration);
+        storage.delete(idWithGeneration);
+
+        System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
     }
 }
 

@@ -106,12 +106,40 @@ export default function Defects() {
     setFilter(filterForm);
   };
 
+  const getMimeType = (fileName: string) => {
+    const extension = fileName.split('.').pop()?.toLowerCase() || '';
+    switch (extension) {
+      case 'png':
+        return 'image/png';
+      case 'jpg':
+      case 'jpeg':
+        return 'image/jpeg';
+      case 'gif':
+        return 'image/gif';
+      case 'bmp':
+        return 'image/bmp';
+      case 'heic':
+        return 'image/heic';
+      case 'heif':
+        return 'image/heif';
+      default:
+        return 'application/octet-stream'; // Fallback für unbekannte Formate
+    }
+  };
+
+
   const handleAddDefect = (e: { preventDefault: () => void }) => {
-    console.log("Verwendete Dateien: ", acceptedFiles);
     e.preventDefault();
+    var fileBlob = undefined;
+    if (acceptedFiles.length != 0) {
+      const file = acceptedFiles[0];
+      const mimeType = getMimeType(file.name);
+      fileBlob = new Blob([file], { type: mimeType });
+    }
+
     const defectsApi = new DefectsApi();
     defectsApi
-      .addDefect({ defect: newDefect })
+      .addDefect({ defect: newDefect, file: fileBlob })
       .then((response) => {
         console.log("Defekt erfolgreich hinzugefügt:", response);
         fetchDefects();
@@ -124,6 +152,7 @@ export default function Defects() {
           status: "Offen",
           image: "",
         });
+        setAcceptedFiles([]);
       })
       .catch((error) => {
         console.error("Fehler beim Hinzufügen des Defekts:", error);
@@ -289,10 +318,16 @@ export default function Defects() {
                       </Select>
                     </FormControl>
                   </Box>
-                  <Dropzone ref={dropzoneRef} noClick noKeyboard accept={{ 'image/*': [] }} onDrop={(files) => {
-                    setAcceptedFiles(files); // Dateien im Zustand speichern
-                  }}>
-                    {({ getRootProps, getInputProps, acceptedFiles }) => (
+                  <Dropzone
+                    ref={dropzoneRef}
+                    noClick
+                    noKeyboard
+                    accept={{ 'image/*': [] }}
+                    onDrop={(files) => {
+                      setAcceptedFiles(files); // Dateien im Zustand speichern
+                    }}
+                  >
+                    {({ getRootProps, getInputProps }) => (
                       <Box
                         {...getRootProps()}
                         sx={{
@@ -320,16 +355,16 @@ export default function Defects() {
                         >
                           Dateien ansehen
                         </Button>
-                        <Box display="flex" justifyContent="center" >
+                        <Box display="flex" justifyContent="center">
                           <List>
-                            {acceptedFiles.map((file) => (
-                              <ListItem key={file.path}>
+                            {acceptedFiles.length > 0 && acceptedFiles.map((file) => (
+                              <ListItem key={file.name}>
                                 <ListItemAvatar>
                                   {file.type.startsWith('image/') ? (
                                     <Avatar
                                       variant="square"
                                       src={URL.createObjectURL(file)}
-                                      alt={file.path}
+                                      alt={file.name}
                                       sx={{ width: 60, height: 60 }}
                                     />
                                   ) : (
@@ -339,17 +374,17 @@ export default function Defects() {
                                   )}
                                 </ListItemAvatar>
                                 <ListItemText
-                                  primary={file.path}
-                                  sx={{ ml: 2 }} // Fügt einen linken Außenabstand hinzu
+                                  primary={file.name}
+                                  sx={{ ml: 2 }}
                                 />
                               </ListItem>
-
                             ))}
                           </List>
                         </Box>
                       </Box>
                     )}
                   </Dropzone>
+
                   <Box flexBasis="100%">
                     <Button type="submit" variant="contained" color="primary">
                       Defect hinzufügen
@@ -428,8 +463,9 @@ export default function Defects() {
                       {isExpanded && (
                         <>
                           <img
-                            src="https://images.pexels.com/photos/20787/pexels-photo.jpg?auto=compress&cs=tinysrgb&h=350"
-                            alt={`Bild des Defekts in ${defect.image}`} // Sinnvoller alt-Text
+                            src={`https://storage.googleapis.com/gm-storage-ca/${defect.image}`}
+                            alt={`Bild des Defekts in ${"https://storage.googleapis.com/gm-storage/" + defect.image}`}
+                            style={{ maxWidth: '300px', width: '100%', height: 'auto' }}
                           />
                           <Typography variant="h6">Standort:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>

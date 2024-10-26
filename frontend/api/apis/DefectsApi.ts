@@ -26,7 +26,8 @@ import {
 } from '../models/index';
 
 export interface AddDefectRequest {
-    defect: Defect;
+    defect?: Defect;
+    file?: Blob;
 }
 
 export interface DeleteDefectRequest {
@@ -34,6 +35,10 @@ export interface DeleteDefectRequest {
 }
 
 export interface GetDefectByIdRequest {
+    id: string;
+}
+
+export interface GetDefectImageByIdRequest {
     id: string;
 }
 
@@ -57,25 +62,40 @@ export class DefectsApi extends runtime.BaseAPI {
      * Defect hinzufügen
      */
     async addDefectRaw(requestParameters: AddDefectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Defect>> {
-        if (requestParameters['defect'] == null) {
-            throw new runtime.RequiredError(
-                'defect',
-                'Required parameter "defect" was null or undefined when calling addDefect().'
-            );
-        }
-
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
 
-        headerParameters['Content-Type'] = 'application/json';
+        const consumes: runtime.Consume[] = [
+            { contentType: 'multipart/form-data' },
+        ];
+        // @ts-ignore: canConsumeForm may be unused
+        const canConsumeForm = runtime.canConsumeForm(consumes);
+
+        let formParams: { append(param: string, value: any): any };
+        let useForm = false;
+        // use FormData to transmit files using content-type "multipart/form-data"
+        useForm = canConsumeForm;
+        if (useForm) {
+            formParams = new FormData();
+        } else {
+            formParams = new URLSearchParams();
+        }
+
+        if (requestParameters['defect'] != null) {
+            formParams.append('defect', new Blob([JSON.stringify(DefectToJSON(requestParameters['defect']))], { type: "application/json", }));
+                    }
+
+        if (requestParameters['file'] != null) {
+            formParams.append('file', requestParameters['file'] as any);
+        }
 
         const response = await this.request({
             path: `/api/defects`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: DefectToJSON(requestParameters['defect']),
+            body: formParams,
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => DefectFromJSON(jsonValue));
@@ -85,7 +105,7 @@ export class DefectsApi extends runtime.BaseAPI {
      * Fügt einen neuen Defect hinzu
      * Defect hinzufügen
      */
-    async addDefect(requestParameters: AddDefectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Defect> {
+    async addDefect(requestParameters: AddDefectRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Defect> {
         const response = await this.addDefectRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -107,7 +127,7 @@ export class DefectsApi extends runtime.BaseAPI {
         const headerParameters: runtime.HTTPHeaders = {};
 
         const response = await this.request({
-            path: `/api/defects/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            path: `/api/defects/image/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -156,6 +176,41 @@ export class DefectsApi extends runtime.BaseAPI {
      */
     async getDefectById(requestParameters: GetDefectByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Defect> {
         const response = await this.getDefectByIdRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Gibt das Bild eines Defects anhand der entsprechenden Image id turück
+     * Defect Image anhand dessen id
+     */
+    async getDefectImageByIdRaw(requestParameters: GetDefectImageByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getDefectImageById().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        const response = await this.request({
+            path: `/api/defects/image/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.BlobApiResponse(response);
+    }
+
+    /**
+     * Gibt das Bild eines Defects anhand der entsprechenden Image id turück
+     * Defect Image anhand dessen id
+     */
+    async getDefectImageById(requestParameters: GetDefectImageByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
+        const response = await this.getDefectImageByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
@@ -221,7 +276,7 @@ export class DefectsApi extends runtime.BaseAPI {
         headerParameters['Content-Type'] = 'application/json';
 
         const response = await this.request({
-            path: `/api/defects/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            path: `/api/defects/image/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
