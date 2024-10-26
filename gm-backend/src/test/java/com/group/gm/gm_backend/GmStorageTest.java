@@ -1,39 +1,37 @@
-/*
+
 package com.group.gm.gm_backend;
 
-import com.group.gm.gm_backend.service.StorageService;
+import com.group.gm.gm_backend.service.GoogleCloudStorageService;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.web.multipart.MultipartFile;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 
 @SpringBootTest
 public class GmStorageTest {
 
+    @Autowired
+    GoogleCloudStorageService storageService;
+
     @Test
     public void testStorage() throws IOException {
 
-        StorageService.uploadObject("ca-test2-438111","gm-storage-ca","test/test.txt","./test.txt");
-        StorageService.downloadObject("ca-test2-438111","gm-storage-ca","test/test.txt","./test2.txt");
-        String content = "";
-        try (BufferedReader reader = new BufferedReader(new FileReader("./test2.txt"))) {
-            String line;
-            while ((line = reader.readLine()) != null) {
-                content = line;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        MultipartFile file = new MockMultipartFile("testName", new byte[]{10, 10, 10});
+        String objectID = storageService.uploadObject(file);
+        Path path = Files.createTempFile("downloadedImage", ".jpg");
+        storageService.downloadObject(objectID, path);
 
-        assertEquals("test1234", content);
+        assertFalse(objectID.isEmpty());
 
     }
 
 
 }
-*/
+

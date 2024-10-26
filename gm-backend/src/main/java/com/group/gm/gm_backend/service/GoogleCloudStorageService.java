@@ -6,6 +6,7 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import com.google.cloud.storage.Blob;
 import org.springframework.web.multipart.MultipartFile;
@@ -18,15 +19,16 @@ import java.util.UUID;
 @Service
 public class GoogleCloudStorageService {
 
+
     private final Storage storage;
 
-    private final String bucket;
+    @Value("${google.cloud.bucket}")
+    private String bucket;
 
     @Autowired
-    public GoogleCloudStorageService(Storage storage, String bucket)
+    public GoogleCloudStorageService(Storage storage)
     {
         this.storage = storage;
-        this.bucket = bucket;
     }
 
     public String uploadObject(MultipartFile file) {
