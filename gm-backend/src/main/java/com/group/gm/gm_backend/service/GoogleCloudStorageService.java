@@ -10,7 +10,7 @@ import org.springframework.stereotype.Service;
 import com.google.cloud.storage.Blob;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.nio.file.Paths;
+import java.nio.file.Path;
 
 import java.io.IOException;
 import java.util.UUID;
@@ -29,7 +29,7 @@ public class GoogleCloudStorageService {
         this.bucket = bucket;
     }
 
-    public void uploadObject(MultipartFile file) throws IOException {
+    public String uploadObject(MultipartFile file) {
         // The ID of your GCP project
         // String projectId = "your-project-id";
 
@@ -41,8 +41,8 @@ public class GoogleCloudStorageService {
 
         // The path to your file to upload
         // String filePath = "path/to/your/file"
-        String fileName = UUID.randomUUID() + "_" + "upload";
-        BlobInfo blobInfo = BlobInfo.newBuilder(bucket, fileName)
+        String objectName = UUID.randomUUID() + "_" + "upload";
+        BlobInfo blobInfo = BlobInfo.newBuilder(bucket, objectName)
                 .setContentType(file.getContentType())
                 .build();
 
@@ -50,7 +50,7 @@ public class GoogleCloudStorageService {
         // conditions and data corruptions. The request returns a 412 error if the
         // preconditions are not met.
         Storage.BlobWriteOption precondition;
-        if (storage.get(bucket, fileName) == null) {
+        if (storage.get(bucket, objectName) == null) {
             // For a target object that does not yet exist, set the DoesNotExist precondition.
             // This will cause the request to fail if the object is created before the request runs.
             precondition = Storage.BlobWriteOption.doesNotExist();
@@ -60,16 +60,23 @@ public class GoogleCloudStorageService {
             // changes before the request runs.
             precondition =
                     Storage.BlobWriteOption.generationMatch(
-                            storage.get(bucket, fileName).getGeneration());
+                            storage.get(bucket, objectName).getGeneration());
         }
-        storage.createFrom(blobInfo, file.getInputStream(), precondition);
+        try {
+            storage.createFrom(blobInfo, file.getInputStream(), precondition);
+        } catch (IOException e)
+        {
+            System.out.println(
+                    "File " + file + " COULDNT be uploaded to bucket " + bucket + " as " + objectName);
+            return null;
+        }
 
         System.out.println(
-                "File " + file + " uploaded to bucket " + bucket + " as " + fileName);
+                "File " + file + " uploaded to bucket " + bucket + " as " + objectName);
+        return objectName;
     }
 
-    public void downloadObject(
-            String projectId, String objectName, String destFilePath) throws IOException {
+    public void downloadObject(String objectName, Path destFilePath) throws IOException {
         // The ID of your GCP project
         // String projectId = "your-project-id";
 
@@ -83,7 +90,7 @@ public class GoogleCloudStorageService {
         // String destFilePath = "/local/path/to/file.txt";
 
         Blob blob = storage.get(BlobId.of(bucket, objectName));
-        blob.downloadTo(Paths.get(destFilePath));
+        blob.downloadTo(destFilePath);
 
         System.out.println(
                 "Downloaded object "

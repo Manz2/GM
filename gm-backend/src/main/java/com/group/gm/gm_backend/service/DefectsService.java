@@ -4,13 +4,17 @@ import com.group.gm.gm_backend.db.GMDBService;
 import com.group.gm.openapi.api.DefectsApiDelegate;
 import com.group.gm.openapi.model.Defect;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Service
@@ -18,6 +22,9 @@ public class DefectsService implements DefectsApiDelegate {
 
     @Autowired
     GMDBService gmdbService;
+
+    @Autowired
+    GoogleCloudStorageService storageService;
 
     @Override
     public ResponseEntity<Defect> getDefectById(String id) {
@@ -30,10 +37,24 @@ public class DefectsService implements DefectsApiDelegate {
     }
 
     @Override
+    public ResponseEntity<Resource> getDefectImageById(String id) {
+        try {
+            Path path = Files.createTempFile("downloadedImage", ".jpg");
+            storageService.downloadObject(id, path);
+            return ResponseEntity.ok(new UrlResource(path.toUri()));
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
+        }
+
+    }
+
+    @Override
     public ResponseEntity<Defect> addDefect(Defect defect, MultipartFile file) {
         if (defect == null || defect.getProperty() == null) {
             return ResponseEntity.badRequest().build(); // 400 Bad Request
         }
+        String imagePath = storageService.uploadObject(file);
+        defect.setImage(imagePath);
         gmdbService.addDefect(defect);
         return ResponseEntity.status(HttpStatus.CREATED).body(defect); // 201 Created
     }
