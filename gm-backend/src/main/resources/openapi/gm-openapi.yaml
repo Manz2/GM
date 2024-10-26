@@ -51,9 +51,16 @@ paths:
       requestBody:
         required: true
         content:
-          application/json:
+          multipart/form-data:
             schema:
-              $ref: '#/components/schemas/Defect'
+              type: object
+              properties:
+                defect:
+                  $ref: '#/components/schemas/Defect'
+                file:
+                  type: string
+                  format: binary
+                  description: "Das hochzuladende Bild oder die Datei"
       responses:
         '201':
           description: "Defect wurde erfolgreich erstellt"
