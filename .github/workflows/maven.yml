@@ -29,3 +29,11 @@ jobs:
         cache: maven
     - name: Build with Maven
       run: mvn -B clean install --file gm-backend/pom.xml
+  docker:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Build the Docker image
+      run: docker build -t com/group/gm-frontend . --file gm-backend/Dockerfile
