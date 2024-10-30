@@ -39,7 +39,7 @@ jobs:
           path: ./gm-backend/target
       - name: Build the Docker image
         run: |
-          docker build -t com/group/gm-backend-prod . ./gm-backend  # Ersetze 'YOUR_PROJECT_ID' mit deiner Google Cloud Projekt-ID
+          docker build -t com/group/gm-backend-prod ./gm-backend  # Ersetze 'YOUR_PROJECT_ID' mit deiner Google Cloud Projekt-ID
           docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod  # Tagging des Images
       - name: Authenticate to Google Cloud
         uses: google-github-actions/setup-gcloud@v1
