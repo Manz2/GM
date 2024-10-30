@@ -44,8 +44,11 @@ jobs:
       - name: Authenticate to Google Cloud
         uses: google-github-actions/setup-gcloud@v1
         with:
-          project_id: ca-test2-438111  # Ersetze 'YOUR_PROJECT_ID' mit deiner Google Cloud Projekt-ID
-          service_account_key: ${{ secrets.GCP_SA_KEY }}  # Füge deinen Service Account Schlüssel in die GitHub Secrets ein
+          project_id: ca-test2-438111
+          service_account_key: ${{ secrets.GCP_SA_KEY }}
+      - name: Configure Docker to use gcloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
       - name: Push Docker image to GCR
         run: |
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod  # Push des getaggten Images
