@@ -1,4 +1,4 @@
-name: Java CI with Maven
+name: gm-deploy-prod
 
 on:
   push:
@@ -19,7 +19,12 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B clean install --file gm-backend/pom.xml  # Nutzt "package" anstelle von "install", um das JAR zu erstellen
+        run: mvn -B clean package --file gm-backend/pom.xml  # Nutzt "package" anstelle von "install"
+      - name: Upload JAR Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: gm-backend-jar
+          path: gm-backend/target/*.jar  # Passe den Pfad an, falls das JAR anders benannt ist
 
   docker:
     needs: build
@@ -27,5 +32,10 @@ jobs:
 
     steps:
       - uses: actions/checkout@v4
+      - name: Download JAR Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: gm-backend-jar
+          path: ./gm-backend/target
       - name: Build the Docker image
         run: docker build -t com/group/gm-backend ./gm-backend  # Nutzt den Ordner "gm-backend" als Kontext
