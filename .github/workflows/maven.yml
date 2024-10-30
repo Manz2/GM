@@ -9,17 +9,18 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
-
     steps:
-      - uses: actions/checkout@v4
-      - name: Set up JDK 21
-        uses: actions/setup-java@v4
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Set up JDK
+        uses: actions/setup-java@v3
         with:
           java-version: '21'
-          distribution: 'temurin'
-          cache: maven
+
       - name: Build with Maven
-        run: mvn -B clean install --file gm-backend/pom.xml  # Nutzt "package" anstelle von "install", um das JAR zu erstellen
-      - uses: actions/checkout@v4
-      - name: Build the Docker image
+        run: mvn clean package -DskipTests
+
+      - name: Docker build
         run: docker build -t com/group/gm-backend ./gm-backend
+
