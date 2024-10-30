@@ -19,7 +19,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
       - name: Build with Maven
-        run: mvn -B clean package --file gm-backend/pom.xml  # Nutzt "package" anstelle von "install", um das JAR zu erstellen
+        run: mvn -B clean intstall --file gm-backend/pom.xml  # Nutzt "package" anstelle von "install", um das JAR zu erstellen
 
   docker:
     needs: build
