@@ -20,12 +20,6 @@ jobs:
           cache: maven
       - name: Build with Maven
         run: mvn -B clean install --file gm-backend/pom.xml  # Nutzt "package" anstelle von "install", um das JAR zu erstellen
-
-  docker:
-    needs: build
-    runs-on: ubuntu-latest
-
-    steps:
       - uses: actions/checkout@v4
       - name: Build the Docker image
-        run: docker build -t com/group/gm-backend ./gm-backend  # Nutzt den Ordner "gm-backend" als Kontext
+        run: docker build -t com/group/gm-backend ./gm-backend
