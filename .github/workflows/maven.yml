@@ -37,12 +37,6 @@ jobs:
         with:
           name: gm-backend-jar
           path: ./gm-backend/target
-      - name: Build the Docker image
-        run: |
-          docker build -t com/group/gm-backend-prod ./gm-backend
-          docker build -t com/group/gm-frontend-prod ./frontend
-          docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
-          docker tag com/group/gm-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/frontend-prod
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -52,11 +46,15 @@ jobs:
         run: |
           gcloud auth configure-docker europe-west1-docker.pkg.dev
           gcloud config set project ca-test2-438111
-      - name: Push Docker image to GCR
+      - name: Build the Docker image
         run: |
+          docker build -t com/group/gm-backend-prod ./gm-backend
+          docker build -t com/group/gm-frontend-prod ./frontend
+          docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
+          docker tag com/group/gm-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/frontend-prod
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-prod
-
+        
   deploy:
     needs: docker
     runs-on: ubuntu-latest
