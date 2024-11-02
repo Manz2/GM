@@ -46,6 +46,11 @@ jobs:
         with:
           project_id: ca-test2-438111
           credentials_json: ${{ secrets.GCP_SA_KEY }}
+      - name: Configure Docker to use gcloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+          gcloud config set project ca-test2-438111
+
       - name: Push Docker image to GCR
         run: |
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod  # Push des getaggten Images
