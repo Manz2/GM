@@ -39,6 +39,12 @@ jobs:
           path: ./gm-backend/target
       - name: Create .env file
         run: echo "REACT_APP_BASE_PATH=${{ secrets.PROD_BASE_PATH }}" >> .env
+      - name: Build the Docker image
+        run: |
+          docker build -t com/group/gm-backend-prod ./gm-backend
+          docker build -t com/group/gm-frontend-prod ./frontend
+          docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
+          docker tag com/group/gm-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-prod
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -48,15 +54,11 @@ jobs:
         run: |
           gcloud auth configure-docker europe-west1-docker.pkg.dev
           gcloud config set project ca-test2-438111
-      - name: Build the Docker image
+      - name: Push Docker image to GCR
         run: |
-          docker build -t com/group/gm-backend-prod ./gm-backend
-          docker build -t com/group/gm-frontend-prod ./frontend
-          docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
-          docker tag com/group/gm-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/frontend-prod
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-prod
-        
+
   deploy:
     needs: docker
     runs-on: ubuntu-latest
@@ -75,4 +77,4 @@ jobs:
      - name: Deploy to Cloud Run
        run: |
           gcloud run deploy gm-backend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
-          gcloud run deploy gm-frontend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/frontend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy gm-frontend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
