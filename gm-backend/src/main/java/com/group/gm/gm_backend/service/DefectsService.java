@@ -46,7 +46,10 @@ public class DefectsService implements DefectsApiDelegate {
     @Override
     public ResponseEntity<Resource> getDefectImageById(String id) {
         try {
-            Path path = Files.createTempFile("downloadedImage", ".jpg");
+            String prefix = id.substring(0, id.lastIndexOf('.')); // Alles bis zur letzten Punkt
+            String suffix = id.substring(id.lastIndexOf('.')); // Alles ab dem letzten Punkt
+
+            Path path = Files.createTempFile(prefix, suffix); // Erstelle die temporäre Datei
             storageService.downloadObject(id, path);
             return ResponseEntity.ok(new UrlResource(path.toUri()));
         } catch (IOException e) {

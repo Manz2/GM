@@ -37,7 +37,9 @@ jobs:
           name: gm-backend-jar
           path: ./gm-backend/target
       - name: Create .env file
-        run: echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGING_BASE_PATH }}" > frontend/.env.production
+        run: |
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGING_BASE_PATH }}" > frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.STAGING_APPLICATION_NAME }}" >> frontend/.env.production
       - name: Build Backend
         run: |
           docker build -t com/group/gm-backend-staging ./gm-backend
