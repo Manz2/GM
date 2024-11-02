@@ -27,9 +27,8 @@ jobs:
 #           path: gm-backend/target/*.jar  # Passe den Pfad an, falls das JAR anders benannt ist
 
   docker:
-    needs: build
+    # needs: build
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v4
       #- name: Download JAR Artifact
@@ -68,7 +67,6 @@ jobs:
   deploy:
     needs: docker
     runs-on: ubuntu-latest
-
     steps:
      - uses: actions/checkout@v4
      - name: Authenticate to Google Cloud
