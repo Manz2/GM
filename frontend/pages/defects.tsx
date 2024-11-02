@@ -86,6 +86,7 @@ export default function Defects() {
   };
 
   const fetchDefects = async () => {
+    console.log("env:", process.env.NEXT_PUBLIC_BASE_PATH);
     const defectsApi = new DefectsApi();
     try {
       const requestParameters = {

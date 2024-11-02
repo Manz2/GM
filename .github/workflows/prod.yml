@@ -37,12 +37,7 @@ jobs:
       #    name: gm-backend-jar
       #    path: ./gm-backend/target
       - name: Create .env file
-        uses: SpicyPizza/create-envfile@v2.0
-        with:
-          envkey_REACT_APP_BASE_PATH: ${{ secrets.PROD_BASE_PATH }}
-          file_name: .env
-          fail_on_empty: false
-          sort_keys: false
+        run: echo "NEXT_PUBLIC_BASE_PATH=${{ vars.PROD_BASE_PATH }}" > frontend/.env.production
       # - name: Build Backend
       #   run: |
       #     docker build -t com/group/gm-backend-prod ./gm-backend
