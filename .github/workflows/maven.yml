@@ -40,7 +40,7 @@ jobs:
       - name: Build the Docker image
         run: |
           docker build -t com/group/gm-backend-prod ./gm-backend
-          docker build -t com/group/gm-frontend-prod ./gm-frontend
+          docker build -t com/group/gm-frontend-prod ./frontend
           docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
           docker tag com/group/gm-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/frontend-prod
       - name: Authenticate to Google Cloud
