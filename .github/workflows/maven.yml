@@ -37,6 +37,8 @@ jobs:
         with:
           name: gm-backend-jar
           path: ./gm-backend/target
+      - name: Create .env file
+        run: echo "REACT_APP_BASE_PATH=${{ secrets.PROD_BASE_PATH }}" >> .env
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
