@@ -26,6 +26,21 @@
 		<tag/>
 		<url/>
 	</scm>
+	<profiles>
+		<profile>
+			<id>dev</id>
+			<properties>
+				<spring.config.location>classpath:/application-dev.properties</spring.config.location>
+			</properties>
+		</profile>
+		<profile>
+			<id>prod</id>
+			<properties>
+				<spring.config.location>classpath:/application-prod.properties</spring.config.location>
+			</properties>
+		</profile>
+	</profiles>
+
 	<properties>
 		<java.version>17</java.version>
 	</properties>

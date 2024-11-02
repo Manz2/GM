@@ -7,7 +7,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 
 @Configuration
@@ -22,10 +21,13 @@ public class FirestoreConfig {
     @Value("${firestore.emulator-host:localhost:8080}")
     private String emulatorHost;
 
+    @Value("${firestore.db-id}")
+    private String dbId;
+
     @Bean
     public Firestore firestore() throws IOException {
         FirestoreOptions.Builder firestoreOptionsBuilder = FirestoreOptions.newBuilder()
-                .setProjectId(projectId).setDatabaseId("gm-db");
+                .setProjectId(projectId).setDatabaseId(dbId);
 
         if (useEmulator) {
             // Use emulator settings
