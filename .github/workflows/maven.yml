@@ -39,8 +39,10 @@ jobs:
           path: ./gm-backend/target
       - name: Build the Docker image
         run: |
-          docker build -t com/group/gm-backend-prod ./gm-backend  # Ersetze 'YOUR_PROJECT_ID' mit deiner Google Cloud Projekt-ID
-          docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod  # Tagging des Images
+          docker build -t com/group/gm-backend-prod ./gm-backend
+          docker build -t com/group/gm-frontend-prod ./gm-frontend
+          docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
+          docker tag com/group/gm-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/frontend-prod
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -52,7 +54,8 @@ jobs:
           gcloud config set project ca-test2-438111
       - name: Push Docker image to GCR
         run: |
-          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod  # Push des getaggten Images
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-prod
 
   deploy:
     needs: docker
@@ -72,3 +75,4 @@ jobs:
      - name: Deploy to Cloud Run
        run: |
           gcloud run deploy gm-backend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy gm-frontend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/frontend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
