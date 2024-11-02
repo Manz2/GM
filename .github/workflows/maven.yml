@@ -42,10 +42,10 @@ jobs:
           docker build -t com/group/gm-backend-prod ./gm-backend  # Ersetze 'YOUR_PROJECT_ID' mit deiner Google Cloud Projekt-ID
           docker tag com/group/gm-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod  # Tagging des Images
       - name: Authenticate to Google Cloud
-        uses: 'google-github-actions/auth@v2'
+        uses: google-github-actions/auth@v2
         with:
           project_id: ca-test2-438111
-          service_account_key: ${{ secrets.GCP_SA_KEY }}
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
       - name: Push Docker image to GCR
         run: |
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-prod  # Push des getaggten Images
