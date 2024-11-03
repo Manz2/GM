@@ -6,7 +6,6 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.CollectionReference;
 import com.google.cloud.firestore.DocumentReference;
 import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.FirestoreOptions;
 import com.google.cloud.firestore.QuerySnapshot;
 import com.google.cloud.firestore.WriteResult;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -15,38 +14,31 @@ import org.springframework.stereotype.Component;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Component
 public class FirestoreDefectDatabase implements GMDBService {
 
-    // Statische Konstanten für die Firestore Konfiguration
-    private static final String PROJECT_ID = "ca-test2-438111";
-    private static final String COLLECTION_NAME = "gm-firestore";
-
-    private final Firestore firestore;
     private final CollectionReference defectCollection;
+    private static final Logger logger = LoggerFactory.getLogger(FirestoreDefectDatabase.class);
 
     @Autowired
     public FirestoreDefectDatabase(Firestore firestore) {
-        this.firestore = firestore;
         defectCollection = firestore.collection("defects");
     }
     @Override
     public Defect addDefect(Defect defect) {
         try {
-            // Dokument zu Firestore hinzufügen
             ApiFuture<DocumentReference> future = defectCollection.add(defect);
-            // Warten auf die Antwort und das neue Dokumentreferenzobjekt erhalten
             DocumentReference document = future.get();
-            // Setzt die generierte ID zurück in das Defect-Objekt
             defect.setId(document.getId());
-
-            // Optional: Defect erneut in Firestore speichern, wenn du die ID in der Datenbank benötigst
             document.set(defect);
+            logger.info("Added defect: {}to: {}", defect, defectCollection.getId());
 
-            return defect; // Gibt das aktualisierte Defect-Objekt zurück
+            return defect;
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -64,7 +56,7 @@ public class FirestoreDefectDatabase implements GMDBService {
                 defects.add(defect);
             });
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return defects;
     }
@@ -85,7 +77,8 @@ public class FirestoreDefectDatabase implements GMDBService {
                 return null;
             }
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -103,7 +96,7 @@ public class FirestoreDefectDatabase implements GMDBService {
                 defects.add(defect);
             });
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
         }
         return defects;
     }
@@ -113,10 +106,11 @@ public class FirestoreDefectDatabase implements GMDBService {
         try {
             DocumentReference docRef = defectCollection.document(defect.getId());
             ApiFuture<WriteResult> future = docRef.set(defect);
-            future.get(); // Wartet, bis das Update abgeschlossen ist
+            future.get();
+            logger.info("Updated defect: {} in: {}", defect, defectCollection.getId());
             return defect;
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return null;
         }
     }
@@ -126,10 +120,11 @@ public class FirestoreDefectDatabase implements GMDBService {
         try {
             DocumentReference docRef = defectCollection.document(id);
             ApiFuture<WriteResult> future = docRef.delete();
-            future.get(); // Wartet, bis das Löschen abgeschlossen ist
+            future.get();
+            logger.info("Successfully deleted defect with id: {} in: {}", id, defectCollection.getId());
             return true;
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
+            logger.error(e.getMessage());
             return false;
         }
     }

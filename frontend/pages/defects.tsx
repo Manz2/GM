@@ -66,6 +66,7 @@ export default function Defects() {
   const [open, setOpen] = useState(false);
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
+  const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
 
   useEffect(() => {
     fetchDefects();
@@ -258,7 +259,7 @@ export default function Defects() {
             />
             <Typography variant="h3" gutterBottom>
               <Typography variant="h3" gutterBottom>
-                {process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local"}
+                appName
               </Typography>
 
             </Typography>
