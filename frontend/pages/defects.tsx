@@ -258,11 +258,9 @@ export default function Defects() {
               }
             />
             <Typography variant="h3" gutterBottom>
-              <Typography variant="h3" gutterBottom>
-                appName
-              </Typography>
-
+              {appName}
             </Typography>
+
           </div>
 
           <Typography variant="h4" gutterBottom>
