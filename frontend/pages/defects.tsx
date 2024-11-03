@@ -487,9 +487,7 @@ export default function Defects() {
                               alt={`Bild des Defekts in ${defect.property}`}
                               style={{ maxWidth: '300px', width: '100%', height: 'auto' }}
                             />
-                          ) : (
-                            null
-                          )}
+                          ) : null}
                           <Typography variant="h6">Standort:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {defect.location}
