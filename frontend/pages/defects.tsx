@@ -65,6 +65,8 @@ export default function Defects() {
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
+  const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
+  const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
 
   useEffect(() => {
     fetchDefects();
@@ -164,11 +166,25 @@ export default function Defects() {
     setExpanded(isExpanded ? panel : null); // Setzt expanded auf null, wenn das Panel geschlossen wird
   };
 
-  const toggleCard = (index: number) => {
+  const toggleCard = (index: number, id: string | undefined) => {
     if (!open) {
       setExpandedCard(expandedCard === index ? null : index);
     }
+    if (expandedCard !== index && id) {
+      loadImageAsBlob(index, id);
+    }
 
+  };
+  const loadImageAsBlob = async (index: number, defectId: string) => {
+    try {
+      const defectsApi = new DefectsApi();
+      const response = await defectsApi.getDefectImageById({ id: defectId });
+      const url = URL.createObjectURL(response);
+
+      setBlobUrls((prev) => ({ ...prev, [index]: url }));
+    } catch (error) {
+      console.error('Fehler beim Laden des Bildes:', error);
+    }
   };
 
   const handleUpdateStatus = (e: React.ChangeEvent<{ value: unknown }>, defect: Defect, status: DefectStatusEnum) => {
@@ -242,8 +258,9 @@ export default function Defects() {
               }
             />
             <Typography variant="h3" gutterBottom>
-              GM-Parking Solutions
+              {appName}
             </Typography>
+
           </div>
 
           <Typography variant="h4" gutterBottom>
@@ -452,10 +469,11 @@ export default function Defects() {
           <Box display="flex" flexWrap="wrap" gap={2}>
             {defects.map((defect, index) => {
               const isExpanded = expandedCard === index;
+              const imageUrl = blobUrls[index];
               return (
                 <Box key={index} flexBasis={{ xs: '100%', sm: '48%', md: '30%' }} mb={2}>
                   <Card style={{ height: isExpanded ? 'auto' : '100px' }}> {/* Festgelegte Höhe für eingeklappte Karten */}
-                    <CardContent onClick={() => toggleCard(index)} style={{ cursor: 'pointer' }}>
+                    <CardContent onClick={() => toggleCard(index, defect.image)} style={{ cursor: 'pointer' }}>
                       <Typography variant="h5">{defect.property}</Typography>
                       <Typography color="textSecondary">
                         <strong>{defect.descriptionShort}</strong>
@@ -463,11 +481,13 @@ export default function Defects() {
 
                       {isExpanded && (
                         <>
-                          <img
-                            src={`https://storage.googleapis.com/gm-storage-ca/${defect.image}`}
-                            alt={`Bild des Defekts in ${"https://storage.googleapis.com/gm-storage/" + defect.image}`}
-                            style={{ maxWidth: '300px', width: '100%', height: 'auto' }}
-                          />
+                          {imageUrl ? (
+                            <img
+                              src={imageUrl}
+                              alt={`Bild des Defekts in ${defect.property}`}
+                              style={{ maxWidth: '300px', width: '100%', height: 'auto' }}
+                            />
+                          ) : null}
                           <Typography variant="h6">Standort:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {defect.location}

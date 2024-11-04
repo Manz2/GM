@@ -37,7 +37,9 @@ jobs:
           name: gm-backend-jar
           path: ./gm-backend/target
       - name: Create .env file
-        run: echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGING_BASE_PATH }}" > frontend/.env.production
+        run: |
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGING_BASE_PATH }}" > frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.STAGING_APPLICATION_NAME }}" >> frontend/.env.production
       - name: Build Backend
         run: |
           docker build -t com/group/gm-backend-staging ./gm-backend
@@ -78,7 +80,7 @@ jobs:
           gcloud config set project ca-test2-438111
      - name: Deploy Backend to Cloud Run
        run: |
-          gcloud run deploy gm-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy gm-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
      - name: Deploy Frontend to Cloud Run
        run: |
-          gcloud run deploy gm-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy gm-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"

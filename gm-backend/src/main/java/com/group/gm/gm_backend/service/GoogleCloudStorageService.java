@@ -11,13 +11,17 @@ import org.springframework.web.multipart.MultipartFile;
 import java.nio.file.Path;
 
 import java.io.IOException;
+import java.util.Objects;
 import java.util.UUID;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Service
 public class GoogleCloudStorageService {
 
 
     private final Storage storage;
+    private static final Logger logger = LoggerFactory.getLogger(GoogleCloudStorageService.class);
 
     @Value("${google.cloud.bucket}")
     private String bucket;
@@ -30,34 +34,7 @@ public class GoogleCloudStorageService {
 
     public String uploadObject(MultipartFile file) {
 
-
-        // MIME-Type ermitteln
-        String contentType = file.getContentType();
-        String extension;
-
-        // Dateiendung basierend auf dem MIME-Type bestimmen
-        switch (contentType) {
-            case "image/png":
-                extension = ".png";
-                break;
-            case "image/jpeg":
-                extension = ".jpg";
-                break;
-            case "image/gif":
-                extension = ".gif";
-                break;
-            case "image/bmp":
-                extension = ".bmp";
-                break;
-            case "image/heic":
-                extension = ".heic";
-                break;
-            case "image/heif":
-                extension = ".heif";
-                break;
-            default:
-                throw new IllegalArgumentException("Unsupported file format. Only common image and video formats are allowed.");
-        }
+        String extension = getExtension(file);
 
 
         String objectName = UUID.randomUUID() + extension;
@@ -65,18 +42,10 @@ public class GoogleCloudStorageService {
                 .setContentType(file.getContentType())
                 .build();
 
-        // Optional: set a generation-match precondition to avoid potential race
-        // conditions and data corruptions. The request returns a 412 error if the
-        // preconditions are not met.
         Storage.BlobWriteOption precondition;
         if (storage.get(bucket, objectName) == null) {
-            // For a target object that does not yet exist, set the DoesNotExist precondition.
-            // This will cause the request to fail if the object is created before the request runs.
             precondition = Storage.BlobWriteOption.doesNotExist();
         } else {
-            // If the destination already exists in your bucket, instead set a generation-match
-            // precondition. This will cause the request to fail if the existing object's generation
-            // changes before the request runs.
             precondition =
                     Storage.BlobWriteOption.generationMatch(
                             storage.get(bucket, objectName).getGeneration());
@@ -85,70 +54,45 @@ public class GoogleCloudStorageService {
             storage.createFrom(blobInfo, file.getInputStream(), precondition);
         } catch (IOException e)
         {
-            System.out.println(
-                    "File " + file + " COULDNT be uploaded to bucket " + bucket + " as " + objectName);
+            logger.error("File {} COULDNT be uploaded to bucket {} as {}", file, bucket, objectName);
             return null;
         }
-
-        System.out.println(
-                "File " + file + " uploaded to bucket " + bucket + " as " + objectName);
+        logger.info("File {} uploaded to bucket {} as {}", file, bucket, objectName);
         return objectName;
     }
 
+    private static String getExtension(MultipartFile file) {
+        String contentType = file.getContentType();
+        return switch (Objects.requireNonNull(contentType)) {
+            case "image/png" -> ".png";
+            case "image/jpeg" -> ".jpg";
+            case "image/gif" -> ".gif";
+            case "image/bmp" -> ".bmp";
+            case "image/heic" -> ".heic";
+            case "image/heif" -> ".heif";
+            default ->
+                    throw new IllegalArgumentException("Unsupported file format. Only common image and video formats are allowed.");
+        };
+    }
+
     public void downloadObject(String objectName, Path destFilePath) throws IOException {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
-
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
-
-        // The ID of your GCS object
-        // String objectName = "your-object-name";
-
-        // The path to which the file should be downloaded
-        // String destFilePath = "/local/path/to/file.txt";
-
         Blob blob = storage.get(BlobId.of(bucket, objectName));
         blob.downloadTo(destFilePath);
 
-        System.out.println(
-                "Downloaded object "
-                        + objectName
-                        + " from bucket name "
-                        + bucket
-                        + " to "
-                        + destFilePath);
+        logger.info("Downloaded object {} from bucket name {} to {}", objectName, bucket, destFilePath);
     }
 
     public static void deleteObject(String projectId, String bucketName, String objectName) {
-        // The ID of your GCP project
-        // String projectId = "your-project-id";
-
-        // The ID of your GCS bucket
-        // String bucketName = "your-unique-bucket-name";
-
-        // The ID of your GCS object
-        // String objectName = "your-object-name";
-
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
         Blob blob = storage.get(bucketName, objectName);
         if (blob == null) {
-            System.out.println("The object " + objectName + " wasn't found in " + bucketName);
+            logger.info("The object {} wasn't found in {}", objectName, bucketName);
             return;
         }
         BlobId idWithGeneration = blob.getBlobId();
-        // Deletes the blob specified by its id. When the generation is present and non-null it will be
-        // specified in the request.
-        // If versioning is enabled on the bucket and the generation is present in the delete request,
-        // only the version of the object with the matching generation will be deleted.
-        // If instead you want to delete the current version, the generation should be dropped by
-        // performing the following.
-        // BlobId idWithoutGeneration =
-        //    BlobId.of(idWithGeneration.getBucket(), idWithGeneration.getName());
-        // storage.delete(idWithoutGeneration);
         storage.delete(idWithGeneration);
 
-        System.out.println("Object " + objectName + " was permanently deleted from " + bucketName);
+        logger.info("Deleted object {} from {}", objectName, bucketName);
     }
 }
 
