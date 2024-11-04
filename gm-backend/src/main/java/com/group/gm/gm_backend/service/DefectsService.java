@@ -3,6 +3,8 @@ package com.group.gm.gm_backend.service;
 import com.group.gm.gm_backend.db.GMDBService;
 import com.group.gm.openapi.api.DefectsApiDelegate;
 import com.group.gm.openapi.model.Defect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.UrlResource;
@@ -25,6 +27,8 @@ public class DefectsService implements DefectsApiDelegate {
     private final GoogleCloudStorageService storageService;
     private final String projectId;
     private final String bucket;
+
+    Logger logger = LoggerFactory.getLogger(DefectsService.class);
 
     public DefectsService(GMDBService gmdbService,
                           GoogleCloudStorageService storageService,
@@ -78,6 +82,7 @@ public class DefectsService implements DefectsApiDelegate {
     @Override
     public ResponseEntity<List<Defect>> listDefects(String property, String status) {
         List<Defect> defects = gmdbService.getAllDefects();
+        logger.warn("test");
 
         if (property != null && !property.isEmpty() && status != null && !status.isEmpty()) {
             defects = defects.stream()
