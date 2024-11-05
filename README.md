@@ -1,6 +1,10 @@
 # GM 
 a project for the Cloud Application Development course
 
+## Actions
+![staging](https://github.com/Manz2/GM/actions/workflows/dev.yml/badge.svg)
+![prod](https://github.com/Manz2/GM/actions/workflows/prod.yml/badge.svg)
+
 ## Deploy
 How to deploy this application to Gcloud run
 ```
