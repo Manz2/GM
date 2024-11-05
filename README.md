@@ -1,6 +1,13 @@
 # GM 
 a project for the Cloud Application Development course
 
+
+![Google Cloud](https://img.shields.io/badge/GoogleCloud-%234285F4.svg?style=for-the-badge&logo=google-cloud&logoColor=white)
+![React](https://img.shields.io/badge/react-%2320232a.svg?style=for-the-badge&logo=react&logoColor=%2361DAFB)
+![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![openapi initiative](https://img.shields.io/badge/openapiinitiative-%23000000.svg?style=for-the-badge&logo=openapiinitiative&logoColor=white)
+
 ## Actions
 ![staging](https://github.com/Manz2/GM/actions/workflows/dev.yml/badge.svg)
 ![prod](https://github.com/Manz2/GM/actions/workflows/prod.yml/badge.svg)
