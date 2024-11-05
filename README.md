@@ -5,7 +5,7 @@ a project for the Cloud Application Development course
 ![staging](https://github.com/Manz2/GM/actions/workflows/dev.yml/badge.svg)
 ![prod](https://github.com/Manz2/GM/actions/workflows/prod.yml/badge.svg)
 
-## Deploy
+## Deploy Manualy
 How to deploy this application to Gcloud run
 ```
 gcloud auth configure-docker europe-west1-docker.pkg.dev
