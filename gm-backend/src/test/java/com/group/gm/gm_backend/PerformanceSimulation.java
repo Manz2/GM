@@ -13,7 +13,7 @@ import static io.gatling.javaapi.http.internal.HttpCheckBuilders.status;
 public class PerformanceSimulation extends Simulation {
 
     HttpProtocolBuilder httpProtocol = http
-            .baseUrl("https://gm-backend-prod-563205931618.europe-west1.run.app")
+            .baseUrl("https://gm-backend-staging-563205931618.europe-west1.run.app")
             //.baseUrl("http://localhost:8081")
             .acceptHeader("application/json")
             .shareConnections()
@@ -46,7 +46,7 @@ public class PerformanceSimulation extends Simulation {
 
 
     ScenarioBuilder changingLoadScn = scenario("Constantly Changing Workload")
-            .repeat(60) // Endlose Wiederholung des folgenden Blocks
+            .repeat(120) // Endlose Wiederholung des folgenden Blocks
             .on(
                     exec(
                             http("Get Request")
@@ -60,15 +60,17 @@ public class PerformanceSimulation extends Simulation {
         setUp(
                 changingLoadScn.injectOpen(
                         // Zunächst 50 Benutzer pro Sekunde für 1 Minute
+                        atOnceUsers(10),
+                        nothingFor(Duration.ofSeconds(120)),
+                        atOnceUsers(100),
+                        nothingFor(Duration.ofSeconds(120)),
+                        atOnceUsers(900),
+                        nothingFor(Duration.ofSeconds(120)),
                         atOnceUsers(50),
-                        constantUsersPerSec(5).during(Duration.ofMinutes(1)),
-                        constantUsersPerSec(10).during(Duration.ofMinutes(1)),
-                        // Dann ansteigend auf 100 Benutzer pro Sekunde für 1 Minute
-                        constantUsersPerSec(50).during(Duration.ofSeconds(10)),
-                        // Schließlich einen Rückgang auf 20 Benutzer pro Sekunde für 2 Minuten
-                        constantUsersPerSec(20).during(Duration.ofSeconds(30))
+                        nothingFor(Duration.ofSeconds(120)),
+                        atOnceUsers(20)
                 ).protocols(httpProtocol)
-        ).maxDuration(Duration.ofMinutes(5)); // Maximale Dauer des Tests
+        ).maxDuration(Duration.ofMinutes(10)); // Maximale Dauer des Tests
     }
 }
 
