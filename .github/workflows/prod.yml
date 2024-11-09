@@ -39,6 +39,7 @@ jobs:
         run: |
           echo "NEXT_PUBLIC_BASE_PATH=${{ vars.PROD_BASE_PATH }}" > frontend/.env.production
           echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.PROD_APPLICATION_NAME }}" >> frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_PROFILE=production" >> frontend/.env.production
       - name: Build Backend
         run: |
           docker build -t com/group/gm-backend-prod ./gm-backend
