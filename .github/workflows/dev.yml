@@ -40,6 +40,8 @@ jobs:
         run: |
           echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGING_BASE_PATH }}" > frontend/.env.production
           echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.STAGING_APPLICATION_NAME }}" >> frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> frontend/.env.production
       - name: Build Backend
         run: |
           docker build -t com/group/gm-backend-staging ./gm-backend

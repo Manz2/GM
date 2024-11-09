@@ -12,7 +12,7 @@ public class WebConfig implements WebMvcConfigurer {
                 .allowedOrigins("*") // Erlaube Anfragen von diesem Ursprung
                 .allowedMethods("GET", "POST", "PUT", "DELETE") // Erlaubte HTTP-Methoden
                 .allowedHeaders("*") // Erlaube alle Header
-                .allowCredentials(true);
+                .allowCredentials(false);
     }
 }
 
