@@ -3,12 +3,14 @@ import 'firebase/compat/auth';
 import { getAuth } from "firebase/auth";
 import { TextField, Button, Container, Typography, Box, CircularProgress } from '@mui/material';
 import { firebase } from '../config/firebaseConfig';
+import { useRouter } from 'next/router';
 
 function SignInScreen() {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
+    const router = useRouter();
 
     // Anmeldung bei Firebase
     const handleSignIn = async (event: React.FormEvent) => {
@@ -22,7 +24,7 @@ function SignInScreen() {
             console.log("login successful");
             setToken(await generateToken());
             // Weiterleitung nach erfolgreichem Login
-            window.location.href = '/defects';
+            router.push('/defects');
         } catch (err) {
             setError('Fehler bei der Anmeldung. Überprüfe deine Daten.');
         } finally {

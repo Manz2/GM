@@ -29,6 +29,7 @@ import {
   IconButton, List, ListItem, ListItemAvatar, Avatar, ListItemText
 } from "@mui/material";
 import {firebase} from "@/config/firebaseConfig";
+import {useRouter} from "next/router";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -68,6 +69,7 @@ export default function Defects() {
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
   const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
+  const router = useRouter();
 
 
   useEffect(() => {
