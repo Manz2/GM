@@ -29,7 +29,7 @@ paths:
           required: false
           schema:
             type: string
-            enum: ["Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt"]
+            enum: [ "Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt" ]
       responses:
         '200':
           description: "Liste der Defects erfolgreich zurückgegeben"
@@ -127,9 +127,9 @@ paths:
           content:
             image/png:
               schema:
-                  type: string
-                  format: binary
-                  description: "Das Bild des Defects"
+                type: string
+                format: binary
+                description: "Das Bild des Defects"
         '404':
           description: "Das Image des Defects mit der ID wurde nicht gefunden"
         '400':
@@ -231,7 +231,10 @@ components:
         status:
           description: "Detaillierte Beschreibung des Schadens"
           type: string
-          enum: ["Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt"]
+          enum: [ "Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt" ]
+        updatedAt:
+          description: "zuletzt aktuallisiert"
+          type: long
 
 
     ErrorResponse:

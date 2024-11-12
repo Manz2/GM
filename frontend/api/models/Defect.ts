@@ -67,6 +67,12 @@ export interface Defect {
      * @memberof Defect
      */
     status?: DefectStatusEnum;
+    /**
+     * zuletzt aktuallisiert
+     * @type {number}
+     * @memberof Defect
+     */
+    updatedAt?: number;
 }
 
 
@@ -107,6 +113,7 @@ export function DefectFromJSONTyped(json: any, ignoreDiscriminator: boolean): De
         'reportingDate': json['reporting_date'] == null ? undefined : json['reporting_date'],
         'image': json['image'] == null ? undefined : json['image'],
         'status': json['status'] == null ? undefined : json['status'],
+        'updatedAt': json['updatedAt'] == null ? undefined : json['updatedAt'],
     };
 }
 
@@ -129,6 +136,7 @@ export function DefectFromJSONTyped(json: any, ignoreDiscriminator: boolean): De
         'reporting_date': value['reportingDate'],
         'image': value['image'],
         'status': value['status'],
+        'updatedAt': value['updatedAt'],
     };
 }
 
