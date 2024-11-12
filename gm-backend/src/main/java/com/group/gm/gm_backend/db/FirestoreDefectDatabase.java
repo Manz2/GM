@@ -1,21 +1,18 @@
-
 package com.group.gm.gm_backend.db;
 
-import com.group.gm.openapi.model.Defect;
 import com.google.api.core.ApiFuture;
-import com.google.cloud.firestore.CollectionReference;
-import com.google.cloud.firestore.DocumentReference;
-import com.google.cloud.firestore.Firestore;
-import com.google.cloud.firestore.QuerySnapshot;
-import com.google.cloud.firestore.WriteResult;
+import com.google.cloud.firestore.*;
+import com.group.gm.openapi.model.Defect;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.time.Instant;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Component
 public class FirestoreDefectDatabase implements GMDBService {
@@ -27,12 +24,14 @@ public class FirestoreDefectDatabase implements GMDBService {
     public FirestoreDefectDatabase(Firestore firestore) {
         defectCollection = firestore.collection("defects");
     }
+
     @Override
     public Defect addDefect(Defect defect) {
         try {
             ApiFuture<DocumentReference> future = defectCollection.add(defect);
             DocumentReference document = future.get();
             defect.setId(document.getId());
+            defect.setUpdatedAt(Instant.now().atZone(ZoneId.of("UTC+1")).toEpochSecond());
             document.set(defect);
             logger.info("Added defect: {}to: {}", defect, defectCollection.getId());
 
@@ -105,6 +104,7 @@ public class FirestoreDefectDatabase implements GMDBService {
     public Defect updateDefect(Defect defect) {
         try {
             DocumentReference docRef = defectCollection.document(defect.getId());
+            defect.setUpdatedAt(Instant.now().atZone(ZoneId.of("UTC+1")).toEpochSecond());
             ApiFuture<WriteResult> future = docRef.set(defect);
             future.get();
             logger.info("Updated defect: {} in: {}", defect, defectCollection.getId());
