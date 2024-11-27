@@ -27,11 +27,11 @@ gcloud run deploy gm-frontend --image=europe-west1-docker.pkg.dev/ca-test2-43811
 
 
 
-docker build -t com/group/gm-backend .
+docker build -t com/group/property-backend .
 
-docker tag com/group/gm-backend europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend
+docker tag com/group/property-backend europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend
 
-docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend
+docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend
 
-gcloud run deploy gm-backend --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-backend --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+gcloud run deploy property-backend --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
 ```

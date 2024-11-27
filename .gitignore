@@ -1,4 +1,4 @@
-gm-backend/HELP.md
+property-backend/HELP.md
 target/
 !.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
@@ -31,5 +31,5 @@ build/
 
 ### VS Code ###
 .vscode/
-/gm-backend/.mvn/
+/property-backend/.mvn/
 frontend/.env

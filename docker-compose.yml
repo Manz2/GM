@@ -9,9 +9,9 @@ services:
       - 8200:8200
     networks:
       - spring-network
-  gm-backend:
-    container_name: gm-backend
-    image: com/group/gm-backend:latest
+  property-backend:
+    container_name: property-backend
+    image: com/group/property-backend:latest
     ports:
       - "8081:8081"
   gm-frontend:
