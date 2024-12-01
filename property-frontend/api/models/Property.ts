@@ -27,13 +27,6 @@ import {
     ExpenseToJSON,
     ExpenseToJSONTyped,
 } from './Expense';
-import type { ModelString } from './ModelString';
-import {
-    ModelStringFromJSON,
-    ModelStringFromJSONTyped,
-    ModelStringToJSON,
-    ModelStringToJSONTyped,
-} from './ModelString';
 import type { Pricing } from './Pricing';
 import {
     PricingFromJSON,
@@ -86,10 +79,10 @@ export interface Property {
     image?: string;
     /**
      * Bilder mit Grundrissen des Parkhauses
-     * @type {Array<ModelString>}
+     * @type {Array<string>}
      * @memberof Property
      */
-    floors?: Array<ModelString>;
+    floors?: Array<string>;
     /**
      * Status
      * @type {string}
@@ -150,7 +143,7 @@ export function PropertyFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'capacity': json['capacity'] == null ? undefined : json['capacity'],
         'constructionDate': json['construction_date'] == null ? undefined : json['construction_date'],
         'image': json['image'] == null ? undefined : json['image'],
-        'floors': json['floors'] == null ? undefined : ((json['floors'] as Array<any>).map(ModelStringFromJSON)),
+        'floors': json['floors'] == null ? undefined : json['floors'],
         'status': json['status'] == null ? undefined : json['status'],
         'pricing': json['pricing'] == null ? undefined : PricingFromJSON(json['pricing']),
         'expenses': json['expenses'] == null ? undefined : ((json['expenses'] as Array<any>).map(ExpenseFromJSON)),
@@ -175,7 +168,7 @@ export function PropertyFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'capacity': value['capacity'],
         'construction_date': value['constructionDate'],
         'image': value['image'],
-        'floors': value['floors'] == null ? undefined : ((value['floors'] as Array<any>).map(ModelStringToJSON)),
+        'floors': value['floors'],
         'status': value['status'],
         'pricing': PricingToJSON(value['pricing']),
         'expenses': value['expenses'] == null ? undefined : ((value['expenses'] as Array<any>).map(ExpenseToJSON)),

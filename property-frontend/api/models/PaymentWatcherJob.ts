@@ -13,14 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ModelString } from './ModelString';
-import {
-    ModelStringFromJSON,
-    ModelStringFromJSONTyped,
-    ModelStringToJSON,
-    ModelStringToJSONTyped,
-} from './ModelString';
-
 /**
  * 
  * @export
@@ -29,16 +21,16 @@ import {
 export interface PaymentWatcherJob {
     /**
      * Der zu prüfende Mailserver
-     * @type {ModelString}
+     * @type {string}
      * @memberof PaymentWatcherJob
      */
-    targetMail?: ModelString;
+    targetMail?: string;
     /**
      * Credentials
-     * @type {ModelString}
+     * @type {string}
      * @memberof PaymentWatcherJob
      */
-    credentials?: ModelString;
+    credentials?: string;
     /**
      * Sender der Rechnung
      * @type {string}
@@ -70,8 +62,8 @@ export function PaymentWatcherJobFromJSONTyped(json: any, ignoreDiscriminator: b
     }
     return {
         
-        'targetMail': json['targetMail'] == null ? undefined : ModelStringFromJSON(json['targetMail']),
-        'credentials': json['credentials'] == null ? undefined : ModelStringFromJSON(json['credentials']),
+        'targetMail': json['targetMail'] == null ? undefined : json['targetMail'],
+        'credentials': json['credentials'] == null ? undefined : json['credentials'],
         'sender': json['sender'] == null ? undefined : json['sender'],
         'keywords': json['keywords'] == null ? undefined : json['keywords'],
     };
@@ -88,8 +80,8 @@ export function PaymentWatcherJobFromJSONTyped(json: any, ignoreDiscriminator: b
 
     return {
         
-        'targetMail': ModelStringToJSON(value['targetMail']),
-        'credentials': ModelStringToJSON(value['credentials']),
+        'targetMail': value['targetMail'],
+        'credentials': value['credentials'],
         'sender': value['sender'],
         'keywords': value['keywords'],
     };

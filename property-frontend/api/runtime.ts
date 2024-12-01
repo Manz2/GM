@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * GM Defects API
- * OpenAPI-Spezifikation der GM Defects-API
+ * GM Properties API
+ * OpenAPI-Spezifikation der GM Properties-API
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -13,7 +13,7 @@
  */
 
 
-export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "http://localhost:8081".replace(/\/+$/, "");
+export const BASE_PATH = "https://property-backend-563205931618.us-central1.run.app".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path

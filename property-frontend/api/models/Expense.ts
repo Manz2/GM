@@ -13,21 +13,6 @@
  */
 
 import { mapValues } from '../runtime';
-import type { ModelDate } from './ModelDate';
-import {
-    ModelDateFromJSON,
-    ModelDateFromJSONTyped,
-    ModelDateToJSON,
-    ModelDateToJSONTyped,
-} from './ModelDate';
-import type { ModelString } from './ModelString';
-import {
-    ModelStringFromJSON,
-    ModelStringFromJSONTyped,
-    ModelStringToJSON,
-    ModelStringToJSONTyped,
-} from './ModelString';
-
 /**
  * 
  * @export
@@ -36,16 +21,16 @@ import {
 export interface Expense {
     /**
      * Empfänger der Zahlung
-     * @type {ModelString}
+     * @type {string}
      * @memberof Expense
      */
-    receiver?: ModelString;
+    receiver?: string;
     /**
      * Verwendungszweck
-     * @type {ModelString}
+     * @type {string}
      * @memberof Expense
      */
-    purposeOfUse?: ModelString;
+    purposeOfUse?: string;
     /**
      * Betrag
      * @type {number}
@@ -54,10 +39,10 @@ export interface Expense {
     sum?: number;
     /**
      * Rechnungsdatum
-     * @type {ModelDate}
+     * @type {number}
      * @memberof Expense
      */
-    invoiceDate?: ModelDate;
+    invoiceDate?: number;
 }
 
 /**
@@ -77,10 +62,10 @@ export function ExpenseFromJSONTyped(json: any, ignoreDiscriminator: boolean): E
     }
     return {
         
-        'receiver': json['receiver'] == null ? undefined : ModelStringFromJSON(json['receiver']),
-        'purposeOfUse': json['purposeOfUse'] == null ? undefined : ModelStringFromJSON(json['purposeOfUse']),
+        'receiver': json['receiver'] == null ? undefined : json['receiver'],
+        'purposeOfUse': json['purposeOfUse'] == null ? undefined : json['purposeOfUse'],
         'sum': json['sum'] == null ? undefined : json['sum'],
-        'invoiceDate': json['invoiceDate'] == null ? undefined : ModelDateFromJSON(json['invoiceDate']),
+        'invoiceDate': json['invoiceDate'] == null ? undefined : json['invoiceDate'],
     };
 }
 
@@ -95,10 +80,10 @@ export function ExpenseFromJSONTyped(json: any, ignoreDiscriminator: boolean): E
 
     return {
         
-        'receiver': ModelStringToJSON(value['receiver']),
-        'purposeOfUse': ModelStringToJSON(value['purposeOfUse']),
+        'receiver': value['receiver'],
+        'purposeOfUse': value['purposeOfUse'],
         'sum': value['sum'],
-        'invoiceDate': ModelDateToJSON(value['invoiceDate']),
+        'invoiceDate': value['invoiceDate'],
     };
 }
 

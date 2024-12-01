@@ -451,7 +451,7 @@ components:
           description: "Bilder mit Grundrissen des Parkhauses"
           type: array
           items:
-            type: String
+            type: string
         status:
           description: "Status"
           type: string
@@ -487,26 +487,26 @@ components:
       properties:
         receiver:
           description: "Empfänger der Zahlung"
-          type: String
+          type: string
         purposeOfUse:
           description: "Verwendungszweck"
-          type: String
+          type: string
         sum:
           description: "Betrag"
           type: double
         invoiceDate:
           description: "Rechnungsdatum"
-          type: Date
+          type: long
 
     PaymentWatcherJob:
       type: object
       properties:
         targetMail:
           description: "Der zu prüfende Mailserver"
-          type: String
+          type: string
         credentials:
           description: "Credentials"
-          type: String
+          type: string
         sender:
           description: "Sender der Rechnung"
           type: string
