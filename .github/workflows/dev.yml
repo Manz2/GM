@@ -38,18 +38,18 @@ jobs:
           path: ./property-backend/target
       - name: Create .env file
         run: |
-          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGING_BASE_PATH }}" > frontend/.env.production
-          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.STAGING_APPLICATION_NAME }}" >> frontend/.env.production
-          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> frontend/.env.production
-          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> frontend/.env.production
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.STAGING_BASE_PATH }}" > property-frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.STAGING_APPLICATION_NAME }}" >> property-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> property-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> property-frontend/.env.production
       - name: Build Backend
         run: |
           docker build -t com/group/property-backend-staging ./property-backend
           docker tag com/group/property-backend-staging europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging
-      - name: Build Frontend
+      - name: Build property-frontend
         run: |
-          docker build -t com/group/gm-frontend-staging ./frontend
-          docker tag com/group/gm-frontend-staging europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-staging
+          docker build -t com/group/property-frontend-staging ./property-frontend
+          docker tag com/group/property-frontend-staging europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-frontend-staging
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -62,9 +62,9 @@ jobs:
       - name: Push Bakend image to GCR
         run: |
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging
-      - name: Push Frontend image to GCR
+      - name: Push property-frontend image to GCR
         run: |
-          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-staging
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-frontend-staging
 
   deploy:
     needs: docker
@@ -83,6 +83,6 @@ jobs:
      - name: Deploy Backend to Cloud Run
        run: |
           gcloud run deploy property-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
-     - name: Deploy Frontend to Cloud Run
+     - name: Deploy property-frontend to Cloud Run
        run: |
-          gcloud run deploy gm-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy property-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-frontend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"

@@ -17,13 +17,13 @@ How to deploy this application to Gcloud run
 ```
 gcloud auth configure-docker europe-west1-docker.pkg.dev
 
-docker build -t com/group/gm-frontend .
+docker build -t com/group/gm-property-frontend .
 
-docker tag com/group/gm-frontend europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend
+docker tag com/group/gm-property-frontend europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-property-frontend
 
-docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend
+docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-property-frontend
 
-gcloud run deploy gm-frontend --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-frontend --platform=managed --region=europe-west1 --allow-unauthenticated --port=3000 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+gcloud run deploy gm-property-frontend --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/gm-property-frontend --platform=managed --region=europe-west1 --allow-unauthenticated --port=3000 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
 
 
 

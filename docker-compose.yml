@@ -1,5 +1,5 @@
 services:
-    # Spring Boot Application Service
+  # Spring Boot Application Service
   firestore_emulator:
     image: mtlynch/firestore-emulator
     environment:
@@ -14,8 +14,8 @@ services:
     image: com/group/property-backend:latest
     ports:
       - "8081:8081"
-  gm-frontend:
-    container_name: gm-frontend
-    image: com/group/gm-frontend:latest
+  gm-property-frontend:
+    container_name: gm-property-frontend
+    image: com/group/gm-property-frontend:latest
     ports:
       - "3000:3000"

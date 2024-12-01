@@ -1,4 +1,4 @@
-# Frontend Dockerfile
+# property-frontend Dockerfile
 FROM node:18-alpine AS builder
 WORKDIR /usr/app
 COPY package*.json ./
