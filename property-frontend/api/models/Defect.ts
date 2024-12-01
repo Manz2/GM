@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * GM Defects API
- * OpenAPI-Spezifikation der GM Defects-API
+ * GM Properties API
+ * OpenAPI-Spezifikation der GM Properties-API
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -62,7 +62,7 @@ export interface Defect {
      */
     image?: string;
     /**
-     * Detaillierte Beschreibung des Schadens
+     * Status halt
      * @type {string}
      * @memberof Defect
      */

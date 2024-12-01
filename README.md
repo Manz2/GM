@@ -34,4 +34,7 @@ docker tag com/group/property-backend europe-west1-docker.pkg.dev/ca-test2-43811
 docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend
 
 gcloud run deploy property-backend --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+
+
+openapi-generator-cli generate -i D:\Projekte\GM\openapi\property-openapi.yaml -g typescript-fetch -o ./api
 ```

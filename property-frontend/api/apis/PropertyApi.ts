@@ -15,53 +15,53 @@
 
 import * as runtime from '../runtime';
 import type {
-  Defect,
   ErrorResponse,
+  Property,
 } from '../models/index';
 import {
-    DefectFromJSON,
-    DefectToJSON,
     ErrorResponseFromJSON,
     ErrorResponseToJSON,
+    PropertyFromJSON,
+    PropertyToJSON,
 } from '../models/index';
 
-export interface AddDefectRequest {
-    defect?: Defect;
+export interface AddPropertyRequest {
+    defect?: Property;
     file?: Blob;
 }
 
-export interface DeleteDefectRequest {
+export interface DeletePropertyRequest {
     id: string;
 }
 
-export interface GetDefectByIdRequest {
+export interface GetPropertyByIdRequest {
     id: string;
 }
 
-export interface GetDefectImageByIdRequest {
+export interface GetPropertyImageByIdRequest {
     id: string;
 }
 
-export interface ListDefectsRequest {
-    property?: string;
-    status?: ListDefectsStatusEnum;
+export interface ListPropertiesRequest {
+    city?: string;
+    capacity?: number;
 }
 
-export interface UpdateDefectRequest {
+export interface UpdatePropertyRequest {
     id: string;
-    defect: Defect;
+    property: Property;
 }
 
 /**
  * 
  */
-export class DefectsApi extends runtime.BaseAPI {
+export class PropertyApi extends runtime.BaseAPI {
 
     /**
-     * Fügt einen neuen Defect hinzu
-     * Defect hinzufügen
+     * Fügt eine neue Property hinzu
+     * Property hinzufügen
      */
-    async addDefectRaw(requestParameters: AddDefectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Defect>> {
+    async addPropertyRaw(requestParameters: AddPropertyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Property>> {
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -91,7 +91,7 @@ export class DefectsApi extends runtime.BaseAPI {
         }
 
         if (requestParameters['defect'] != null) {
-            formParams.append('defect', new Blob([JSON.stringify(DefectToJSON(requestParameters['defect']))], { type: "application/json", }));
+            formParams.append('defect', new Blob([JSON.stringify(PropertyToJSON(requestParameters['defect']))], { type: "application/json", }));
                     }
 
         if (requestParameters['file'] != null) {
@@ -99,34 +99,34 @@ export class DefectsApi extends runtime.BaseAPI {
         }
 
         const response = await this.request({
-            path: `/api/defects`,
+            path: `/api/properties`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
             body: formParams,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DefectFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PropertyFromJSON(jsonValue));
     }
 
     /**
-     * Fügt einen neuen Defect hinzu
-     * Defect hinzufügen
+     * Fügt eine neue Property hinzu
+     * Property hinzufügen
      */
-    async addDefect(requestParameters: AddDefectRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Defect> {
-        const response = await this.addDefectRaw(requestParameters, initOverrides);
+    async addProperty(requestParameters: AddPropertyRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Property> {
+        const response = await this.addPropertyRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Löscht einen spezifischen Defect anhand der ID
-     * Defect löschen
+     * Löscht eine spezifische Property anhand der ID
+     * Property löschen
      */
-    async deleteDefectRaw(requestParameters: DeleteDefectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
+    async deletePropertyRaw(requestParameters: DeletePropertyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<void>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling deleteDefect().'
+                'Required parameter "id" was null or undefined when calling deleteProperty().'
             );
         }
 
@@ -143,7 +143,7 @@ export class DefectsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/defects/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            path: `/api/properties/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
             method: 'DELETE',
             headers: headerParameters,
             query: queryParameters,
@@ -153,22 +153,22 @@ export class DefectsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Löscht einen spezifischen Defect anhand der ID
-     * Defect löschen
+     * Löscht eine spezifische Property anhand der ID
+     * Property löschen
      */
-    async deleteDefect(requestParameters: DeleteDefectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
-        await this.deleteDefectRaw(requestParameters, initOverrides);
+    async deleteProperty(requestParameters: DeletePropertyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<void> {
+        await this.deletePropertyRaw(requestParameters, initOverrides);
     }
 
     /**
-     * Gibt einen spezifischen Defect anhand der ID zurück
-     * Defect per ID abrufen
+     * Gibt eine spezifische Property anhand der ID zurück
+     * Property per ID abrufen
      */
-    async getDefectByIdRaw(requestParameters: GetDefectByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Defect>> {
+    async getPropertyByIdRaw(requestParameters: GetPropertyByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Property>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling getDefectById().'
+                'Required parameter "id" was null or undefined when calling getPropertyById().'
             );
         }
 
@@ -185,33 +185,33 @@ export class DefectsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/defects/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            path: `/api/properties/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DefectFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PropertyFromJSON(jsonValue));
     }
 
     /**
-     * Gibt einen spezifischen Defect anhand der ID zurück
-     * Defect per ID abrufen
+     * Gibt eine spezifische Property anhand der ID zurück
+     * Property per ID abrufen
      */
-    async getDefectById(requestParameters: GetDefectByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Defect> {
-        const response = await this.getDefectByIdRaw(requestParameters, initOverrides);
+    async getPropertyById(requestParameters: GetPropertyByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Property> {
+        const response = await this.getPropertyByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Gibt das Bild eines Defects anhand der entsprechenden Image id turück
-     * Defect Image anhand dessen id
+     * Gibt das Bild einer Property anhand der entsprechenden Image id turück
+     * Property Image anhand dessen id
      */
-    async getDefectImageByIdRaw(requestParameters: GetDefectImageByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
+    async getPropertyImageByIdRaw(requestParameters: GetPropertyImageByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling getDefectImageById().'
+                'Required parameter "id" was null or undefined when calling getPropertyImageById().'
             );
         }
 
@@ -228,7 +228,7 @@ export class DefectsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/defects/image/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            path: `/api/properties/image/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
@@ -238,27 +238,27 @@ export class DefectsApi extends runtime.BaseAPI {
     }
 
     /**
-     * Gibt das Bild eines Defects anhand der entsprechenden Image id turück
-     * Defect Image anhand dessen id
+     * Gibt das Bild einer Property anhand der entsprechenden Image id turück
+     * Property Image anhand dessen id
      */
-    async getDefectImageById(requestParameters: GetDefectImageByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
-        const response = await this.getDefectImageByIdRaw(requestParameters, initOverrides);
+    async getPropertyImageById(requestParameters: GetPropertyImageByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
+        const response = await this.getPropertyImageByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Gibt alle gemeldeten Defects zurück. Optional kann nach Property und Status gefiltert werden.
-     * Defects Liste abfragen
+     * Gibt alle Properties zurück. Optional kann nach Stadt und Anzahl der Parkplätze gefiltert werden.
+     * Properties Liste abfragen
      */
-    async listDefectsRaw(requestParameters: ListDefectsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Defect>>> {
+    async listPropertiesRaw(requestParameters: ListPropertiesRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Property>>> {
         const queryParameters: any = {};
 
-        if (requestParameters['property'] != null) {
-            queryParameters['property'] = requestParameters['property'];
+        if (requestParameters['city'] != null) {
+            queryParameters['city'] = requestParameters['city'];
         }
 
-        if (requestParameters['status'] != null) {
-            queryParameters['status'] = requestParameters['status'];
+        if (requestParameters['capacity'] != null) {
+            queryParameters['capacity'] = requestParameters['capacity'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -272,40 +272,40 @@ export class DefectsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/defects`,
+            path: `/api/properties`,
             method: 'GET',
             headers: headerParameters,
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(DefectFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(PropertyFromJSON));
     }
 
     /**
-     * Gibt alle gemeldeten Defects zurück. Optional kann nach Property und Status gefiltert werden.
-     * Defects Liste abfragen
+     * Gibt alle Properties zurück. Optional kann nach Stadt und Anzahl der Parkplätze gefiltert werden.
+     * Properties Liste abfragen
      */
-    async listDefects(requestParameters: ListDefectsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Defect>> {
-        const response = await this.listDefectsRaw(requestParameters, initOverrides);
+    async listProperties(requestParameters: ListPropertiesRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Property>> {
+        const response = await this.listPropertiesRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
     /**
-     * Aktualisiert einen spezifischen Defect anhand der ID
-     * Defect aktualisieren
+     * Aktualisiert eine spezifische Property anhand der ID
+     * Property aktualisieren
      */
-    async updateDefectRaw(requestParameters: UpdateDefectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Defect>> {
+    async updatePropertyRaw(requestParameters: UpdatePropertyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Property>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
-                'Required parameter "id" was null or undefined when calling updateDefect().'
+                'Required parameter "id" was null or undefined when calling updateProperty().'
             );
         }
 
-        if (requestParameters['defect'] == null) {
+        if (requestParameters['property'] == null) {
             throw new runtime.RequiredError(
-                'defect',
-                'Required parameter "defect" was null or undefined when calling updateDefect().'
+                'property',
+                'Required parameter "property" was null or undefined when calling updateProperty().'
             );
         }
 
@@ -324,34 +324,23 @@ export class DefectsApi extends runtime.BaseAPI {
             }
         }
         const response = await this.request({
-            path: `/api/defects/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            path: `/api/properties/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: DefectToJSON(requestParameters['defect']),
+            body: PropertyToJSON(requestParameters['property']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => DefectFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => PropertyFromJSON(jsonValue));
     }
 
     /**
-     * Aktualisiert einen spezifischen Defect anhand der ID
-     * Defect aktualisieren
+     * Aktualisiert eine spezifische Property anhand der ID
+     * Property aktualisieren
      */
-    async updateDefect(requestParameters: UpdateDefectRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Defect> {
-        const response = await this.updateDefectRaw(requestParameters, initOverrides);
+    async updateProperty(requestParameters: UpdatePropertyRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Property> {
+        const response = await this.updatePropertyRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
 }
-
-/**
- * @export
- */
-export const ListDefectsStatusEnum = {
-    Offen: 'Offen',
-    InBearbeitung: 'In-Bearbeitung',
-    Geschlossen: 'Geschlossen',
-    Abgelehnt: 'Abgelehnt'
-} as const;
-export type ListDefectsStatusEnum = typeof ListDefectsStatusEnum[keyof typeof ListDefectsStatusEnum];
