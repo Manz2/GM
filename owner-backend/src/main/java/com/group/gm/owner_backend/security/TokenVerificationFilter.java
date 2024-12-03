@@ -1,4 +1,4 @@
-package com.group.gm.property_backend.security;
+package com.group.gm.owner_backend.security;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
@@ -30,10 +30,15 @@ public class TokenVerificationFilter extends OncePerRequestFilter {
             try {
                 FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
                 // Optional: Rollen oder andere Benutzerinformationen speichern
+                if(!decodedToken.getTenantId().equals("owner-jotom")) {
+                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                    return;
+                }
                 String uid = decodedToken.getUid();
                 System.out.println(uid);
                 Authentication authentication = new FirebaseAuthenticationToken(uid);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
+
             } catch (FirebaseAuthException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
                 return;

@@ -65,7 +65,7 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-  /api/tenant/{id}:
+  /api/tenants/{id}:
     get:
       security:
         - BearerAuth: [ ]
@@ -98,7 +98,7 @@ paths:
       security:
         - BearerAuth: [ ]
       tags:
-        - "Tenant"
+        - "Tenants"
       summary: "Tenant aktualisieren"
       description: "Aktualisiert einen spezifischen Tenant anhand der ID"
       operationId: "updateTenant"

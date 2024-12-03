@@ -1,7 +1,7 @@
-package com.group.gm.property_backend.config;
+package com.group.gm.owner_backend.config;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.group.gm.property_backend.security.TokenVerificationFilter;
+import com.group.gm.owner_backend.security.TokenVerificationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -32,7 +32,7 @@ public class SecurityConfig {
 
         http.addFilterBefore(tokenVerificationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .requestMatchers("/api/defects").authenticated()
+                .requestMatchers("/api/tenants").authenticated()
                 .anyRequest().permitAll();
 
         return http.build();
