@@ -1,7 +1,7 @@
 openapi: 3.0.3
 info:
-  title: GM Properties API
-  description: OpenAPI-Spezifikation der GM Properties-API
+  title: GM-Owner API
+  description: OpenAPI-Spezifikation der owner-API
   version: 1.0.0
 
 paths:
@@ -167,6 +167,9 @@ components:
         id:
           description: "Id"
           type: string
+        tenant-id:
+          description: "Die tenant-id im iam"
+          type: string
         name:
           description: "Der Name des Tenant"
           type: string
@@ -177,6 +180,12 @@ components:
         services:
           description: "Die Namen bzw. ids der Services"
           $ref: '#/components/schemas/Services'
+        customisation:
+          description: "Die Personalisierten Komponenten"
+          $ref: '#/components/schemas/Services'
+        prefered-region:
+          description: "bevorzugte Region des Tenant"
+          type: string
 
     Services:
       type: object
@@ -223,6 +232,19 @@ components:
           type: string
         region:
           description: "region des Service"
+          type: string
+
+    customisation:
+      type: object
+      properties:
+        application-name:
+          description: "name der application"
+          type: string
+        background-image:
+          description: "Background image"
+          type: string
+        color-scheme:
+          description: "color Scheme der Anwendung"
           type: string
 
 

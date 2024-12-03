@@ -164,7 +164,7 @@
 						</goals>
 						<configuration>
 							<inputSpec>
-								${project.basedir}/../openapi/property-openapi.yaml
+								${project.basedir}/../openapi/owner-openapi.yaml
 							</inputSpec>
 							<generatorName>spring</generatorName>
 							<apiPackage>com.group.gm.openapi.api</apiPackage>
