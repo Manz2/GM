@@ -14,8 +14,8 @@ services:
     image: com/group/property-backend:latest
     ports:
       - "8081:8081"
-  gm-property-frontend:
-    container_name: gm-property-frontend
-    image: com/group/gm-property-frontend:latest
+  gm-management-frontend:
+    container_name: gm-management-frontend
+    image: com/group/gm-management-frontend:latest
     ports:
       - "3000:3000"
