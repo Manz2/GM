@@ -4,18 +4,16 @@ info:
   description: OpenAPI-Spezifikation der GM Properties-API
   version: 1.0.0
 
-servers:
-  - url: 'https://property-backend-563205931618.us-central1.run.app'
 paths:
-  /api/defects:
+  /api/finance/defectreport:
     get:
       security:
         - BearerAuth: [ ]
       tags:
-        - "Defects"
-      summary: "Defects Liste abfragen"
-      description: "Gibt alle gemeldeten Defects zurück. Optional kann nach Property und Status gefiltert werden."
-      operationId: "listDefects"
+        - "Finance"
+      summary: "Defect-Report generieren und exportieren"
+      description: "Erstellt und exportiert einen Report über Defekte, basierend auf den vorhandenen Daten. Der Report kann nach Properties und Zeiträumen gefiltert werden."
+      operationId: "generateDefectReport"
       parameters:
         - name: "property"
           in: query
@@ -30,166 +28,63 @@ paths:
           schema:
             type: string
             enum: [ "Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt" ]
+        - name: "start_date"
+          in: query
+          description: "Startdatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: "end_date"
+          in: query
+          description: "Enddatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
       responses:
         '200':
-          description: "Liste der Defects erfolgreich zurückgegeben"
+          description: "Der Report wurde erfolgreich erstellt und zurückgegeben"
           content:
             application/json:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Defect'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    post:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Defects"
-      summary: "Defect hinzufügen"
-      description: "Fügt einen neuen Defect hinzu"
-      operationId: "addDefect"
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                defect:
-                  $ref: '#/components/schemas/Defect'
-                file:
-                  type: string
-                  format: binary
-                  description: "Das hochzuladende Bild oder die Datei"
-      responses:
-        '201':
-          description: "Defect wurde erfolgreich erstellt"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Defect'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/defects/{id}:
-    get:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Defects"
-      summary: "Defect per ID abrufen"
-      description: "Gibt einen spezifischen Defect anhand der ID zurück"
-      operationId: "getDefectById"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: "Der Defect wurde gefunden und zurückgegeben"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Defect'
-        '404':
-          description: "Defect mit der angegebenen ID wurde nicht gefunden"
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    put:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Defects"
-      summary: "Defect aktualisieren"
-      description: "Aktualisiert einen spezifischen Defect anhand der ID"
-      operationId: "updateDefect"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Defect'
-      responses:
-        '200':
-          description: "Defect wurde erfolgreich aktualisiert"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Defect'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          description: "Defect mit der angegebenen ID wurde nicht gefunden"
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    delete:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Defects"
-      summary: "Defect löschen"
-      description: "Löscht einen spezifischen Defect anhand der ID"
-      operationId: "deleteDefect"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: "Defect wurde erfolgreich gelöscht"
-        '404':
-          description: "Defect mit der angegebenen ID wurde nicht gefunden"
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/defects/image/{id}:
-    get:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Defects"
-      summary: "Defect Image anhand dessen id"
-      description: "Gibt das Bild eines Defects anhand der entsprechenden Image id turück"
-      operationId: "getDefectImageById"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: "Das Defect Image wurde gefunden und zurückgegeben"
-          content:
-            image/png:
-              schema:
-                type: string
-                format: binary
-                description: "Das Bild des Defects"
-        '404':
-          description: "Das Image des Defects mit der ID wurde nicht gefunden"
+                type: object
+                properties:
+                  defects:
+                    type: array
+                    description: "Liste der Defects im Report"
+                    items:
+                      $ref: '#/components/schemas/Defect'
+                  properties:
+                    type: array
+                    description: "Liste der zugehörigen Properties im Report"
+                    items:
+                      $ref: '#/components/schemas/Property'
+                  report_metadata:
+                    type: object
+                    description: "Zusammenfassung des Reports"
+                    properties:
+                      generated_at:
+                        type: string
+                        format: date-time
+                        description: "Zeitpunkt der Generierung des Reports"
+                      total_defects:
+                        type: integer
+                        description: "Anzahl der Defects im Report"
+                      filtered_by:
+                        type: object
+                        description: "Filterparameter des Reports"
+                        properties:
+                          property:
+                            type: string
+                          status:
+                            type: string
+                          start_date:
+                            type: string
+                            format: date
+                          end_date:
+                            type: string
+                            format: date
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -197,28 +92,115 @@ paths:
 
   ########################
 
-  /api/properties:
+  /api/finance/financereport:
     get:
       security:
         - BearerAuth: [ ]
       tags:
-        - "Property"
-      summary: "Properties Liste abfragen"
-      description: "Gibt alle Properties zurück. Optional kann nach Stadt und Anzahl der Parkplätze gefiltert werden."
-      operationId: "listProperties"
+        - "Finance"
+      summary: "Generiere einen Finanz-Bericht (Revenue oder Profit)"
+      description: "Erstellt und exportiert entweder einen Revenue- oder Profit-Report basierend auf den angegebenen Parametern."
+      operationId: "generateViewFinanceReport"
       parameters:
-        - name: "city"
+        - name: "report_type"
           in: query
-          description: "Die Stadt in dem das Parkhaus liegt"
+          description: "Typ des zu generierenden Berichts ('revenue' oder 'profit')"
+          required: true
+          schema:
+            type: string
+            enum: [ "revenue", "profit" ]
+        - name: "property"
+          in: query
+          description: "Das Parkhaus, für das der Bericht erstellt werden soll"
           required: false
           schema:
             type: string
-        - name: "capacity"
+        - name: "start_date"
           in: query
-          description: "Kapazität des Parkhauses"
+          description: "Startdatum des Berichtszeitraums (im Format YYYY-MM-DD)"
           required: false
           schema:
-            type: int
+            type: string
+            format: date
+        - name: "end_date"
+          in: query
+          description: "Enddatum des Berichtszeitraums (im Format YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: "Der Report wurde erfolgreich erstellt und zurückgegeben"
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report_type:
+                    type: string
+                    description: "Typ des generierten Berichts"
+                    enum: [ "revenue", "profit" ]
+                  report_data:
+                    type: object
+                    description: "Die spezifischen Daten des Berichts"
+                    additionalProperties: true
+                  report_metadata:
+                    type: object
+                    description: "Metadaten des Berichts"
+                    properties:
+                      generated_at:
+                        type: string
+                        format: date-time
+                        description: "Zeitpunkt der Generierung"
+                      filters:
+                        type: object
+                        description: "Angewendete Filter"
+                        properties:
+                          property:
+                            type: string
+                          start_date:
+                            type: string
+                            format: date
+                          end_date:
+                            type: string
+                            format: date
+            '400':
+              $ref: '#/components/responses/BadRequest'
+            '500':
+              $ref: '#/components/responses/InternalServerError'
+
+
+  ########################
+
+  /api/finance/exportdata:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Finance"
+      summary: "Rohdaten ausgeben"
+      description: "Gibt alle Rohdaten zurück. Optional kann nach Datum und Property."
+      operationId: "exportData"
+      parameters:
+        - name: "property"
+          in: query
+          description: "Das betroffene Parkhaus"
+          required: false
+          schema:
+            type: string
+        - name: "start_date"
+          in: query
+          description: "Start Datum des Filters"
+          required: false
+          schema:
+            type: date
+        - name: "end_date"
+            in: query
+            description: "End Datum des Filters"
+            required: false
+            schema:
+              type: date
 
       responses:
         '200':
@@ -234,157 +216,6 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
-    post:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Property"
-      summary: "Property hinzufügen"
-      description: "Fügt eine neue Property hinzu"
-      operationId: "addProperty"
-      requestBody:
-        required: true
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                defect:
-                  $ref: '#/components/schemas/Property'
-                file:
-                  type: string
-                  format: binary
-                  description: "Das hochzuladende Bild oder die Datei"
-      responses:
-        '201':
-          description: "Property wurde erfolgreich erstellt"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Property'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/properties/{id}:
-    get:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Property"
-      summary: "Property per ID abrufen"
-      description: "Gibt eine spezifische Property anhand der ID zurück"
-      operationId: "getPropertyById"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: "Die Property wurde gefunden und zurückgegeben"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Property'
-        '404':
-          description: "Property mit der angegebenen ID wurde nicht gefunden"
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    put:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Property"
-      summary: "Property aktualisieren"
-      description: "Aktualisiert eine spezifische Property anhand der ID"
-      operationId: "updateProperty"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Property'
-      responses:
-        '200':
-          description: "Property wurde erfolgreich aktualisiert"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Property'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '404':
-          description: "Property mit der angegebenen ID wurde nicht gefunden"
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-    delete:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Property"
-      summary: "Property löschen"
-      description: "Löscht eine spezifische Property anhand der ID"
-      operationId: "deleteProperty"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: "Property wurde erfolgreich gelöscht"
-        '404':
-          description: "Property mit der angegebenen ID wurde nicht gefunden"
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/properties/image/{id}:
-    get:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Property"
-      summary: "Property Image anhand dessen id"
-      description: "Gibt das Bild einer Property anhand der entsprechenden Image id turück"
-      operationId: "getPropertyImageById"
-      parameters:
-        - name: "id"
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: "Das Property Image wurde gefunden und zurückgegeben"
-          content:
-            image/png:
-              schema:
-                type: string
-                format: binary
-                description: "Das Bild der Property"
-        '404':
-          description: "Das Image der Property mit der ID wurde nicht gefunden"
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
 components:
   securitySchemes:
     BearerAuth:
@@ -392,129 +223,62 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Defect:
-      description: "Defect am Parkhaus"
+    DefectReport:
       type: object
       properties:
-        id:
-          description: "Id"
-          type: string
-        property:
-          description: "Das Parkhaus"
-          type: string
-        location:
-          description: "Ort des Defects im Parkhaus"
-          type: string
-        description_short:
-          description: "Kurzbeschreibung des Schadens"
-          type: string
-        description_detailed:
-          description: "Detaillierte Beschreibung des Schadens"
-          type: string
-        reporting_date:
-          description: "Datum der Schadensmeldung"
-          type: long
-        image:
-          description: "Bild des Schadens"
-          type: string
-        status:
-          description: "Status halt"
-          type: string
-          enum: [ "Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt" ]
-        updatedAt:
-          description: "zuletzt aktuallisiert"
-          type: long
-
-    Property:
-      description: "Parkhaus"
-      type: object
-      properties:
-        id:
-          description: "Id"
-          type: string
-        city:
-          description: "Die Stadt"
-          type: string
-        address:
-          description: "Adresse"
-          type: string
-        capacity:
-          description: "Anzahl Parkflächen"
-          type: int
-        construction_date:
-          description: "Baujahr"
-          type: long
-        image:
-          description: "Bild des Parkhauses"
-          type: string
-        floors:
-          description: "Bilder mit Grundrissen des Parkhauses"
+        defects:
           type: array
           items:
-            type: String
-        status:
-          description: "Status"
-          type: string
-          enum: [ "Offen", "Geschlossen"]
-        pricing:
-          description: "Preisstrategie"
-          $ref: '#/components/schemas/Pricing'
-        expenses:
-          description: "Liste der Ausgaben"
-          type: array
-          items:
-            $ref: '#/components/schemas/Expense'
-        paymentWatcherJob:
-          description: "Verlinkter Payment Watcher Job welcher automatisch Ausgaben einpflegt"
-          $ref: '#/components/schemas/PaymentWatcherJob'
+            $ref: '#/components/schemas/Defect'
+        metadata:
+          type: object
+          properties:
+            generated_at:
+              type: string
+              format: date-time
+            total_defects:
+              type: integer
+            filters:
+              type: object
+              properties:
+                property:
+                  type: string
+                status:
+                  type: string
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
 
-
-    Pricing:
-      type: object
-      properties:
-        firstHour:
-          description: "Preis für die erste Stunde"
-          type: double
-        hourly:
-          description: "Stundenpreis nach erster Stunde"
-          type: double
-        daily:
-          description: "Tagespreis"
-          type: double
-
-    Expense:
-      type: object
-      properties:
-        receiver:
-          description: "Empfänger der Zahlung"
-          type: String
-        purposeOfUse:
-          description: "Verwendungszweck"
-          type: String
-        sum:
-          description: "Betrag"
-          type: double
-        invoiceDate:
-          description: "Rechnungsdatum"
-          type: Date
-
-    PaymentWatcherJob:
-      type: object
-      properties:
-        targetMail:
-          description: "Der zu prüfende Mailserver"
-          type: String
-        credentials:
-          description: "Credentials"
-          type: String
-        sender:
-          description: "Sender der Rechnung"
-          type: string
-        keywords:
-          description: "Schlüsselwörter"
-          type: array
-          items:
+    FinanceReport:
+        type: object
+        properties:
+          report_type:
             type: string
+            enum: [ "revenue", "profit" ]
+          data:
+            type: object
+            additionalProperties: true
+          metadata:
+            type: object
+            properties:
+              generated_at:
+                type: string
+                format: date-time
+              filters:
+                type: object
+                properties:
+                  property:
+                    type: string
+                  start_date:
+                    type: string
+                    format: date
+                  end_date:
+                    type: string
+                    format: date
+
 
     ErrorResponse:
       description: "Basis Fehler-Response ohne Detailangaben"
