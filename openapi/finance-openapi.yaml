@@ -180,7 +180,7 @@ paths:
       tags:
         - "Finance"
       summary: "Rohdaten ausgeben"
-      description: "Gibt alle Rohdaten zurück. Optional kann nach Datum und Property."
+      description: "Gibt alle Rohdaten zurück. Optional kann nach Datum und Property gefiltert werden. Die Daten werden im CSV-Format zurückgegeben."
       operationId: "exportData"
       parameters:
         - name: "property"
@@ -191,26 +191,27 @@ paths:
             type: string
         - name: "start_date"
           in: query
-          description: "Start Datum des Filters"
+          description: "Startdatum des Filters"
           required: false
           schema:
-            type: date
+            type: string
+            format: date
         - name: "end_date"
-            in: query
-            description: "End Datum des Filters"
-            required: false
-            schema:
-              type: date
-
+          in: query
+          description: "Enddatum des Filters"
+          required: false
+          schema:
+            type: string
+            format: date
       responses:
         '200':
-          description: "Liste der Properties erfolgreich zurückgegeben"
+          description: "CSV-Datei mit Rohdaten erfolgreich zurückgegeben"
           content:
-            application/json:
+            text/csv:
               schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Property'
+                type: string
+                format: binary
+                description: "Die zurückgegebenen Rohdaten im CSV-Format"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
