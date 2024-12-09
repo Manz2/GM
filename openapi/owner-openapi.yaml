@@ -182,7 +182,7 @@ components:
           $ref: '#/components/schemas/Services'
         customisation:
           description: "Die Personalisierten Komponenten"
-          $ref: '#/components/schemas/Services'
+          $ref: '#/components/schemas/customisation'
         prefered-region:
           description: "bevorzugte Region des Tenant"
           type: string
