@@ -24,7 +24,7 @@ function SignInScreen() {
             console.log("login successful");
             setToken(await generateToken());
             // Weiterleitung nach erfolgreichem Login
-            router.push('/defects');
+            router.push('/home');
         } catch (err) {
             setError('Fehler bei der Anmeldung. Überprüfe deine Daten.');
         } finally {
