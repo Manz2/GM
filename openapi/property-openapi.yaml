@@ -249,7 +249,7 @@ paths:
             schema:
               type: object
               properties:
-                defect:
+                property:
                   $ref: '#/components/schemas/Property'
                 file:
                   type: string
@@ -431,6 +431,9 @@ components:
       properties:
         id:
           description: "Id"
+          type: string
+        name:
+          description: "Name des Parkhauses"
           type: string
         city:
           description: "Die Stadt"

@@ -48,6 +48,12 @@ export interface Property {
      */
     id?: string;
     /**
+     * Name des Parkhauses
+     * @type {string}
+     * @memberof Property
+     */
+    name?: string;
+    /**
      * Die Stadt
      * @type {string}
      * @memberof Property
@@ -138,6 +144,7 @@ export function PropertyFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     return {
         
         'id': json['id'] == null ? undefined : json['id'],
+        'name': json['name'] == null ? undefined : json['name'],
         'city': json['city'] == null ? undefined : json['city'],
         'address': json['address'] == null ? undefined : json['address'],
         'capacity': json['capacity'] == null ? undefined : json['capacity'],
@@ -163,6 +170,7 @@ export function PropertyFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     return {
         
         'id': value['id'],
+        'name': value['name'],
         'city': value['city'],
         'address': value['address'],
         'capacity': value['capacity'],

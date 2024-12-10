@@ -26,7 +26,7 @@ import {
 } from '../models/index';
 
 export interface AddPropertyRequest {
-    defect?: Property;
+    property?: Property;
     file?: Blob;
 }
 
@@ -90,8 +90,8 @@ export class PropertyApi extends runtime.BaseAPI {
             formParams = new URLSearchParams();
         }
 
-        if (requestParameters['defect'] != null) {
-            formParams.append('defect', new Blob([JSON.stringify(PropertyToJSON(requestParameters['defect']))], { type: "application/json", }));
+        if (requestParameters['property'] != null) {
+            formParams.append('property', new Blob([JSON.stringify(PropertyToJSON(requestParameters['property']))], { type: "application/json", }));
                     }
 
         if (requestParameters['file'] != null) {
