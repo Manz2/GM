@@ -385,6 +385,159 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/users:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "User"
+      summary: "User Liste abfragen"
+      description: "Gibt alle User zurück. Optional kann nach Role gefiltert werden."
+      operationId: "listUsers"
+      parameters:
+        - name: "role"
+          in: query
+          description: "Die Rolle des Nutzers"
+          required: false
+          schema:
+            type: string
+        - name: "name"
+          in: query
+          description: "Name des Nutzers"
+          required: false
+          schema:
+            type: string
+
+      responses:
+        '200':
+          description: "Liste der Nutzer erfolgreich zurückgegeben"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "User"
+      summary: "User hinzufügen"
+      description: "Fügt einen neuen User hinzu"
+      operationId: "addUser"
+      requestBody:
+        required: true
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                user:
+                  $ref: '#/components/schemas/User'
+      responses:
+        '201':
+          description: "User wurde erfolgreich erstellt"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/users/{id}:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "User"
+      summary: "User per ID abrufen"
+      description: "Gibt eine spezifischen User anhand der ID zurück"
+      operationId: "getUserById"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Der User wurde gefunden und zurückgegeben"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: "User mit der angegebenen ID wurde nicht gefunden"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "User"
+      summary: "User aktualisieren"
+      description: "Aktualisiert einen spezifischen User anhand der ID"
+      operationId: "updateUser"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+      responses:
+        '200':
+          description: "User wurde erfolgreich aktualisiert"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: "User mit der angegebenen ID wurde nicht gefunden"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "User"
+      summary: "User löschen"
+      description: "Löscht einen spezifischen User anhand der ID"
+      operationId: "deleteUser"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "User wurde erfolgreich gelöscht"
+        '404':
+          description: "User mit der angegebenen ID wurde nicht gefunden"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 components:
   securitySchemes:
     BearerAuth:
@@ -518,6 +671,23 @@ components:
           type: array
           items:
             type: string
+
+    User:
+      type: object
+      properties:
+        id:
+          description: "Id"
+          type: string
+        mail:
+          description: "Mail Adresse des Nutzers"
+          type: string
+        name:
+          description: "Name des Nutzers"
+          type: string
+        role:
+          description: "Role des nutzeres"
+          type: string
+          enum: [ "Admin", "Facility" ,"Finance", "Operations" ]
 
     ErrorResponse:
       description: "Basis Fehler-Response ohne Detailangaben"

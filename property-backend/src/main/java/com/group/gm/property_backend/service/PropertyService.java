@@ -131,7 +131,7 @@ public class PropertyService implements PropertyApiDelegate {
 
         existingProperty.setName(updatedProperty.getName());
         existingProperty.setAddress(updatedProperty.getAddress());
-        existingProperty.status(updatedProperty.getStatus());
+        existingProperty.setStatus(updatedProperty.getStatus());
         existingProperty.setCity(updatedProperty.getCity());
         existingProperty.setConstructionDate(updatedProperty.getConstructionDate());
         existingProperty.setImage(updatedProperty.getImage());
