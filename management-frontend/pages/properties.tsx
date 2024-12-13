@@ -8,6 +8,7 @@ import { useEffect, useState, createRef } from "react";
 import styles from "@/styles/Defects.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import * as Api from '../api';
 import {
@@ -26,7 +27,11 @@ import {
   CardContent,
   CardActions,
   Box,
-  IconButton, List, ListItem, ListItemAvatar, Avatar, ListItemText
+  IconButton, List, ListItem, ListItemAvatar, Avatar, ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from "@mui/material";
 import { firebase } from "@/config/firebaseConfig";
 import { useRouter } from "next/router";
@@ -73,6 +78,8 @@ export default function Properties() {
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
   const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
   const router = useRouter();
+  const [editProperty, setEditProperty] = useState<Property | null>(null);
+
 
 
   useEffect(() => {
@@ -256,6 +263,27 @@ export default function Properties() {
       city: '',
       capacity: 0,
     });
+  };
+
+  const handleEditProperty = (property: Property) => {
+    setEditProperty(property);
+    setOpen(true);  // Dialog öffnen
+  };
+
+  const handleUpdateProperty = () => {
+    if (!editProperty) return;
+
+    const propertyApi = new PropertyApi(config);
+    propertyApi.updateProperty({ id: editProperty.id!, property: editProperty })
+      .then(() => {
+        console.log("Property erfolgreich aktualisiert");
+        fetchProperties();
+        setOpen(false);
+        setEditProperty(null); // Dialog schließen und das bearbeitete Property zurücksetzen
+      })
+      .catch((error) => {
+        console.error("Fehler beim Aktualisieren der Property:", error);
+      });
   };
 
   const dropzoneRef = createRef<DropzoneRef>();
@@ -554,13 +582,70 @@ export default function Properties() {
                           onClick={() => property.id && handleDeleteProperty(property.id)}>
                           Löschen
                         </Button>
+                        <IconButton onClick={() => handleEditProperty(property)}>
+                          <EditIcon />
+                        </IconButton>
                       </CardActions>
                     )}
                   </Card>
                 </Box>
               );
             })}
+            <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+              <DialogTitle>Property bearbeiten</DialogTitle>
+              <DialogContent>
+                {editProperty && (
+                  <Box display="flex" flexDirection="column" gap={2}>
+                    <TextField
+                      label="Name"
+                      value={editProperty.name}
+                      onChange={(e) => setEditProperty({ ...editProperty, name: e.target.value })}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Stadt"
+                      value={editProperty.city}
+                      onChange={(e) => setEditProperty({ ...editProperty, city: e.target.value })}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Adresse"
+                      value={editProperty.address}
+                      onChange={(e) => setEditProperty({ ...editProperty, address: e.target.value })}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Anzahl Parkflächen"
+                      type="number"
+                      value={editProperty.capacity}
+                      onChange={(e) => setEditProperty({ ...editProperty, capacity: Number(e.target.value) })}
+                      fullWidth
+                    />
+                    <FormControl fullWidth required>
+                      <InputLabel>Status</InputLabel>
+                      <Select
+                        value={editProperty.status}
+                        onChange={(e) => setEditProperty({ ...editProperty, status: e.target.value as PropertyStatusEnum })}
+                        label="Status"
+                      >
+                        <MenuItem value="Offen">Offen</MenuItem>
+                        <MenuItem value="Geschlossen">Geschlossen</MenuItem>
+                      </Select>
+                    </FormControl>
+                  </Box>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpen(false)} color="primary">
+                  Abbrechen
+                </Button>
+                <Button onClick={handleUpdateProperty} color="primary">
+                  Speichern
+                </Button>
+              </DialogActions>
+            </Dialog>
           </Box>
+
 
 
           <div style={{ marginTop: "40px" }}>
@@ -582,5 +667,7 @@ export default function Properties() {
         </footer>
       </Container>
     </>
+
   );
+
 }

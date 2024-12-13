@@ -15,7 +15,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Component
-public class FirestoreDefectDatabase implements GMDBService {
+public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     private final CollectionReference defectCollection;
     private static final Logger logger = LoggerFactory.getLogger(FirestoreDefectDatabase.class);
@@ -26,25 +26,24 @@ public class FirestoreDefectDatabase implements GMDBService {
     }
 
     @Override
-    public Defect addDefect(Defect defect) {
+    public Defect add(Defect defect) {
         try {
             ApiFuture<DocumentReference> future = defectCollection.add(defect);
             DocumentReference document = future.get();
             defect.setId(document.getId());
             defect.setUpdatedAt(Instant.now().atZone(ZoneId.of("UTC+1")).toEpochSecond());
             document.set(defect);
-            logger.info("Added defect: {}to: {}", defect, defectCollection.getId());
+            logger.info("Added defect: {} to: {}", defect, defectCollection.getId());
 
             return defect;
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
+            logger.error("Error adding defect: {}", e.getMessage());
             return null;
         }
     }
 
-
     @Override
-    public List<Defect> getAllDefects() {
+    public List<Defect> getAll() {
         List<Defect> defects = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = defectCollection.get();
@@ -55,17 +54,17 @@ public class FirestoreDefectDatabase implements GMDBService {
                 defects.add(defect);
             });
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
+            logger.error("Error fetching all defects: {}", e.getMessage());
         }
         return defects;
     }
 
     @Override
-    public Defect getDefectById(String id) {
+    public Defect getById(String id) {
         try {
             DocumentReference docRef = defectCollection.document(id);
-            ApiFuture<com.google.cloud.firestore.DocumentSnapshot> future = docRef.get();
-            com.google.cloud.firestore.DocumentSnapshot document = future.get();
+            ApiFuture<DocumentSnapshot> future = docRef.get();
+            DocumentSnapshot document = future.get();
             if (document.exists()) {
                 Defect defect = document.toObject(Defect.class);
                 if (defect != null) {
@@ -73,17 +72,17 @@ public class FirestoreDefectDatabase implements GMDBService {
                 }
                 return defect;
             } else {
+                logger.warn("No defect found with id: {}", id);
                 return null;
             }
         } catch (InterruptedException | ExecutionException e) {
-
-            logger.error(e.getMessage());
+            logger.error("Error fetching defect by id: {}", e.getMessage());
             return null;
         }
     }
 
     @Override
-    public List<Defect> filterDefects(String property, String status) {
+    public List<Defect> filter(String property, String status) {
         List<Defect> defects = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = defectCollection.whereEqualTo("property", property)
@@ -95,13 +94,13 @@ public class FirestoreDefectDatabase implements GMDBService {
                 defects.add(defect);
             });
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
+            logger.error("Error filtering defects: {}", e.getMessage());
         }
         return defects;
     }
 
     @Override
-    public Defect updateDefect(Defect defect) {
+    public Defect update(Defect defect) {
         try {
             DocumentReference docRef = defectCollection.document(defect.getId());
             defect.setUpdatedAt(Instant.now().atZone(ZoneId.of("UTC+1")).toEpochSecond());
@@ -110,13 +109,13 @@ public class FirestoreDefectDatabase implements GMDBService {
             logger.info("Updated defect: {} in: {}", defect, defectCollection.getId());
             return defect;
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
+            logger.error("Error updating defect: {}", e.getMessage());
             return null;
         }
     }
 
     @Override
-    public boolean deleteDefect(String id) {
+    public boolean delete(String id) {
         try {
             DocumentReference docRef = defectCollection.document(id);
             ApiFuture<WriteResult> future = docRef.delete();
@@ -124,9 +123,8 @@ public class FirestoreDefectDatabase implements GMDBService {
             logger.info("Successfully deleted defect with id: {} in: {}", id, defectCollection.getId());
             return true;
         } catch (InterruptedException | ExecutionException e) {
-            logger.error(e.getMessage());
+            logger.error("Error deleting defect: {}", e.getMessage());
             return false;
         }
     }
 }
-

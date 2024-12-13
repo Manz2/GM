@@ -1,57 +1,54 @@
 package com.group.gm.property_backend.db;
 
-import com.group.gm.openapi.model.Defect;
-
 import java.util.List;
 
-public interface GMDBService {
+public interface GMDBService<T> {
 
     /**
-     * Fügt einen neuen Defect hinzu.
+     * Fügt ein neues Objekt hinzu.
      *
-     * @param defect Das hinzuzufügende Defect-Objekt.
-     * @return Das hinzugefügte Defect mit generierter ID.
+     * @param entity Das hinzuzufügende Objekt.
+     * @return Das hinzugefügte Objekt mit generierter ID.
      */
-    Defect addDefect(Defect defect);
+    T add(T entity);
 
     /**
-     * Gibt eine Liste aller Defects zurück.
+     * Gibt eine Liste aller Objekte zurück.
      *
-     * @return Liste aller Defects.
+     * @return Liste aller Objekte.
      */
-    List<Defect> getAllDefects();
+    List<T> getAll();
 
     /**
-     * Ruft einen spezifischen Defect anhand der ID ab.
+     * Ruft ein spezifisches Objekt anhand der ID ab.
      *
-     * @param id Die ID des Defects.
-     * @return Das Defect mit der angegebenen ID, falls vorhanden.
+     * @param id Die ID des Objekts.
+     * @return Das Objekt mit der angegebenen ID, falls vorhanden.
      */
-    Defect getDefectById(String id);
+    T getById(String id);
 
     /**
-     * Filtert die Defects nach Property und Status.
+     * Filtert die Objekte nach einem bestimmten Attribut (z. B. Property) und Status.
      *
-     * @param property Das Parkhaus, nach dem gefiltert werden soll.
-     * @param status Der Status der Defects (z.B. Offen, Geschlossen).
-     * @return Gefilterte Liste der Defects.
+     * @param attribute Ein Filterattribut, wie z. B. Property.
+     * @param status Der Status der Objekte (z. B. Offen, Geschlossen).
+     * @return Gefilterte Liste der Objekte.
      */
-    List<Defect> filterDefects(String property, String status);
+    List<T> filter(String attribute, String status);
 
     /**
-     * Aktualisiert einen vorhandenen Defect.
+     * Aktualisiert ein vorhandenes Objekt.
      *
-     * @param defect Das zu aktualisierende Defect-Objekt.
-     * @return Das aktualisierte Defect, oder null, wenn es nicht gefunden wurde.
+     * @param entity Das zu aktualisierende Objekt.
+     * @return Das aktualisierte Objekt, oder null, wenn es nicht gefunden wurde.
      */
-    Defect updateDefect(Defect defect);
+    T update(T entity);
 
     /**
-     * Löscht einen Defect anhand der ID.
+     * Löscht ein Objekt anhand der ID.
      *
-     * @param id Die ID des zu löschenden Defects.
-     * @return true, wenn der Defect erfolgreich gelöscht wurde, andernfalls false.
+     * @param id Die ID des zu löschenden Objekts.
+     * @return true, wenn das Objekt erfolgreich gelöscht wurde, andernfalls false.
      */
-    boolean deleteDefect(String id);
+    boolean delete(String id);
 }
-
