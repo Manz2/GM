@@ -5,6 +5,8 @@ import { Container, Typography, Box, Button, Card, CardContent, CardActions } fr
 import HomeIcon from "@mui/icons-material/Home";
 import BuildIcon from "@mui/icons-material/Build";
 import ApartmentIcon from "@mui/icons-material/Apartment";
+import GroupIcon from "@mui/icons-material/Group";
+
 
 export default function Home() {
   return (
@@ -60,6 +62,25 @@ export default function Home() {
               <Link href="/defects" passHref>
                 <Button variant="contained" color="secondary" fullWidth>
                   Gehe zu Defects
+                </Button>
+              </Link>
+            </CardActions>
+          </Card>
+
+          <Card sx={{ maxWidth: 345, flex: 1 }}>
+            <CardContent>
+              <GroupIcon color="success" sx={{ fontSize: 50, marginBottom: 2 }} />
+              <Typography variant="h5" component="div">
+                Benutzer
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Erstellen und verwalten Sie die Benutzer ihrer Anwendung.
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Link href="/users" passHref>
+                <Button variant="contained" color="success" fullWidth>
+                  Gehe zu Users
                 </Button>
               </Link>
             </CardActions>

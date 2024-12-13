@@ -1,5 +1,6 @@
 apis/DefectsApi.ts
 apis/PropertyApi.ts
+apis/UserApi.ts
 apis/index.ts
 index.ts
 models/Defect.ts
@@ -8,5 +9,6 @@ models/Expense.ts
 models/PaymentWatcherJob.ts
 models/Pricing.ts
 models/Property.ts
+models/User.ts
 models/index.ts
 runtime.ts

@@ -8,9 +8,11 @@ import java.util.Collections;
 
 public class FirebaseAuthenticationToken implements Authentication {
     private final String uid;
+    private final String tenantId;
 
-    public FirebaseAuthenticationToken(String uid) {
+    public FirebaseAuthenticationToken(String uid, String tenantId) {
         this.uid = uid;
+        this.tenantId = tenantId;
     }
 
     @Override
@@ -26,7 +28,7 @@ public class FirebaseAuthenticationToken implements Authentication {
 
     @Override
     public Object getDetails() {
-        return null;
+        return tenantId;
     }
 
     @Override
@@ -47,6 +49,10 @@ public class FirebaseAuthenticationToken implements Authentication {
     @Override
     public String getName() {
         return uid;
+    }
+
+    public String getTenantId() {
+        return tenantId;
     }
 }
 

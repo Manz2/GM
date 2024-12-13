@@ -433,12 +433,9 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              type: object
-              properties:
-                user:
-                  $ref: '#/components/schemas/User'
+              $ref: '#/components/schemas/User'
       responses:
         '201':
           description: "User wurde erfolgreich erstellt"
@@ -685,7 +682,7 @@ components:
           description: "Name des Nutzers"
           type: string
         role:
-          description: "Role des nutzeres"
+          description: "Role des Nutzers"
           type: string
           enum: [ "Admin", "Facility" ,"Finance", "Operations" ]
 

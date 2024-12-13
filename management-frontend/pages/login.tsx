@@ -7,6 +7,7 @@ import { useRouter } from 'next/router';
 
 function SignInScreen() {
     const [email, setEmail] = useState('');
+    const [tenantId, setTenantId] = useState('');
     const [password, setPassword] = useState('');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -20,6 +21,11 @@ function SignInScreen() {
         setError(null);
 
         try {
+            const auth = getAuth();
+            if (tenantId != '') {
+                auth.tenantId = tenantId;
+            }
+
             await firebase.auth().signInWithEmailAndPassword(email, password);
             console.log("login successful");
             setToken(await generateToken());
@@ -44,6 +50,9 @@ function SignInScreen() {
     // Token des angemeldeten Benutzers generieren
     const generateToken = async () => {
         const auth = getAuth();
+        if (tenantId != '') {
+            auth.tenantId = tenantId;
+        }
         const user = auth.currentUser;
 
         if (user) {
@@ -62,6 +71,14 @@ function SignInScreen() {
 
                 {/* Form-Tag für das Formular */}
                 <form onSubmit={handleSignIn}>
+                    <TextField
+                        label="Tenant ID"
+                        variant="outlined"
+                        fullWidth
+                        margin="normal"
+                        value={tenantId}
+                        onChange={(e) => setTenantId(e.target.value)}
+                    />
                     <TextField
                         label="E-Mail"
                         variant="outlined"
