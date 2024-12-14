@@ -26,7 +26,7 @@ import {
 } from '../models/index';
 
 export interface AddTenantRequest {
-    tenant?: Tenant;
+    tenant: Tenant;
 }
 
 export interface DeleteTenantRequest {
@@ -56,9 +56,18 @@ export class TenantsApi extends runtime.BaseAPI {
      * Tenant hinzufügen
      */
     async addTenantRaw(requestParameters: AddTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Tenant>> {
+        if (requestParameters['tenant'] == null) {
+            throw new runtime.RequiredError(
+                'tenant',
+                'Required parameter "tenant" was null or undefined when calling addTenant().'
+            );
+        }
+
         const queryParameters: any = {};
 
         const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
 
         if (this.configuration && this.configuration.accessToken) {
             const token = this.configuration.accessToken;
@@ -68,30 +77,12 @@ export class TenantsApi extends runtime.BaseAPI {
                 headerParameters["Authorization"] = `Bearer ${tokenString}`;
             }
         }
-        const consumes: runtime.Consume[] = [
-            { contentType: 'multipart/form-data' },
-        ];
-        // @ts-ignore: canConsumeForm may be unused
-        const canConsumeForm = runtime.canConsumeForm(consumes);
-
-        let formParams: { append(param: string, value: any): any };
-        let useForm = false;
-        if (useForm) {
-            formParams = new FormData();
-        } else {
-            formParams = new URLSearchParams();
-        }
-
-        if (requestParameters['tenant'] != null) {
-            formParams.append('tenant', new Blob([JSON.stringify(TenantToJSON(requestParameters['tenant']))], { type: "application/json", }));
-                    }
-
         const response = await this.request({
             path: `/api/tenants`,
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: formParams,
+            body: TenantToJSON(requestParameters['tenant']),
         }, initOverrides);
 
         return new runtime.JSONApiResponse(response, (jsonValue) => TenantFromJSON(jsonValue));
@@ -101,7 +92,7 @@ export class TenantsApi extends runtime.BaseAPI {
      * Fügt einen neuen Tenant hinzu
      * Tenant hinzufügen
      */
-    async addTenant(requestParameters: AddTenantRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tenant> {
+    async addTenant(requestParameters: AddTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tenant> {
         const response = await this.addTenantRaw(requestParameters, initOverrides);
         return await response.value();
     }

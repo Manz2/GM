@@ -17,38 +17,64 @@ jobs:
           java-version: '21'
           distribution: 'temurin'
           cache: maven
-      - name: Build with Maven
+      - name: Build Property with Maven
         run: mvn -B clean package -Dspring.profiles.active=prod --file property-backend/pom.xml
-      - name: Upload JAR Artifact
+      - name: Build owner with Maven
+        run: mvn -B clean package -Dspring.profiles.active=prod --file owner-backend/pom.xml
+      - name: Upload Property JAR Artifact
         uses: actions/upload-artifact@v3
         with:
           name: property-backend-jar
           path: property-backend/target/*.jar
+      - name: Upload Owner JAR Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: owner-backend-jar
+          path: owner-backend/target/*.jar
 
   docker:
     needs: build
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Download JAR Artifact
+      - name: Download Property JAR Artifact
         uses: actions/download-artifact@v3
         with:
           name: property-backend-jar
           path: ./property-backend/target
-      - name: Create .env file
+      - name: Download Owner JAR Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: owner-backend-jar
+          path: ./owner-backend/target
+      - name: Create Management .env file
         run: |
           echo "NEXT_PUBLIC_BASE_PATH=${{ vars.PROD_BASE_PATH }}" > management-frontend/.env.production
           echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.PROD_APPLICATION_NAME }}" >> management-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> management-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> management-frontend/.env.production
-      - name: Build Backend
+      - name: Create owner .env file
+        run: |
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.OWNER_PROD_BASE_PATH }}" > management-frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.OWNER_PROD_APPLICATION_NAME }}" >> management-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> management-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> management-frontend/.env.production
+      - name: Build Property Backend
         run: |
           docker build -t com/group/property-backend-prod ./property-backend
           docker tag com/group/property-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-prod
+      - name: Build Owner Backend
+        run: |
+          docker build -t com/group/owner-backend-prod ./owner-backend
+          docker tag com/group/owner-backend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-prod
       - name: Build management-frontend
         run: |
           docker build -t com/group/management-frontend-prod ./management-frontend
           docker tag com/group/management-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-prod
+      - name: Build owner-frontend
+        run: |
+          docker build -t com/group/owner-frontend-prod ./owner-frontend
+          docker tag com/group/owner-frontend-prod europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-prod
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -58,30 +84,36 @@ jobs:
         run: |
           gcloud auth configure-docker europe-west1-docker.pkg.dev
           gcloud config set project ca-test2-438111
-      - name: Push Backend image to GCR
+      - name: Push backend images to GCR
         run: |
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-prod
-      - name: Push Frontend image to GCR
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-prod
+
+      - name: Push frontend images to GCR
         run: |
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-prod
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-prod
 
   deploy:
     needs: docker
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Authenticate to Google Cloud
-        uses: google-github-actions/auth@v2
-        with:
+     - uses: actions/checkout@v4
+     - name: Authenticate to Google Cloud
+       uses: google-github-actions/auth@v2
+       with:
           project_id: ca-test2-438111
           credentials_json: ${{ secrets.GCP_SA_KEY }}
-      - name: Configure Docker to use gcloud credentials
-        run: |
+     - name: Configure Docker to use gcloud credentials
+       run: |
           gcloud auth configure-docker europe-west1-docker.pkg.dev
           gcloud config set project ca-test2-438111
-      - name: Deploy Backend to Cloud Run
-        run: |
-          gcloud run deploy property-backend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod"
-      - name: Deploy management-frontend to Cloud Run
-        run: |
-          gcloud run deploy management-frontend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod"
+     - name: Deploy Backends to Cloud Run
+       run: |
+         gcloud run deploy property-backend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod"
+        gcloud run deploy owner-backend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod"
+
+     - name: Deploy frontends to Cloud Run
+       run: |
+         gcloud run deploy management-frontend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod" 
+         gcloud run deploy owner-frontend-prod --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-prod --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod"

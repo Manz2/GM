@@ -47,12 +47,9 @@ paths:
       requestBody:
         required: true
         content:
-          multipart/form-data:
+          application/json:
             schema:
-              type: object
-              properties:
-                tenant:
-                  $ref: '#/components/schemas/Tenant'
+              $ref: '#/components/schemas/Tenant'
       responses:
         '201':
           description: "Tenant wurde erfolgreich erstellt"

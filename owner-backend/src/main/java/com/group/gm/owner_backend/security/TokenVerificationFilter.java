@@ -29,13 +29,7 @@ public class TokenVerificationFilter extends OncePerRequestFilter {
             String token = header.substring(7);
             try {
                 FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
-                // Optional: Rollen oder andere Benutzerinformationen speichern
-                if(!decodedToken.getTenantId().equals("owner-jotom")) {
-                    response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
-                    return;
-                }
                 String uid = decodedToken.getUid();
-                System.out.println(uid);
                 Authentication authentication = new FirebaseAuthenticationToken(uid);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
 

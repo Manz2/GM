@@ -20,6 +20,13 @@ import {
     ServicesToJSON,
     ServicesToJSONTyped,
 } from './Services';
+import type { Customisation } from './Customisation';
+import {
+    CustomisationFromJSON,
+    CustomisationFromJSONTyped,
+    CustomisationToJSON,
+    CustomisationToJSONTyped,
+} from './Customisation';
 
 /**
  * Tenant der Anwendung
@@ -59,10 +66,10 @@ export interface Tenant {
     services?: Services;
     /**
      * 
-     * @type {Services}
+     * @type {Customisation}
      * @memberof Tenant
      */
-    customisation?: Services;
+    customisation?: Customisation;
     /**
      * bevorzugte Region des Tenant
      * @type {string}
@@ -105,7 +112,7 @@ export function TenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): Te
         'name': json['name'] == null ? undefined : json['name'],
         'tier': json['tier'] == null ? undefined : json['tier'],
         'services': json['services'] == null ? undefined : ServicesFromJSON(json['services']),
-        'customisation': json['customisation'] == null ? undefined : ServicesFromJSON(json['customisation']),
+        'customisation': json['customisation'] == null ? undefined : CustomisationFromJSON(json['customisation']),
         'preferedRegion': json['prefered-region'] == null ? undefined : json['prefered-region'],
     };
 }
@@ -126,7 +133,7 @@ export function TenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): Te
         'name': value['name'],
         'tier': value['tier'],
         'services': ServicesToJSON(value['services']),
-        'customisation': ServicesToJSON(value['customisation']),
+        'customisation': CustomisationToJSON(value['customisation']),
         'prefered-region': value['preferedRegion'],
     };
 }

@@ -5,7 +5,6 @@ import com.group.gm.openapi.model.Tenant;
 import com.group.gm.owner_backend.db.TenantDbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -19,15 +18,13 @@ public class TenantsService implements TenantsApiDelegate {
 
     Logger logger = LoggerFactory.getLogger(TenantsService.class);
 
-    public TenantsService(TenantDbService tenantDbService,
-                          @Value("${google.cloud.projectId}") String projectId,
-                          @Value("${google.cloud.bucket}") String bucket) {
+    public TenantsService(TenantDbService tenantDbService) {
         this.tenantDbService = tenantDbService;
     }
 
     @Override
     public ResponseEntity<Tenant> addTenant(Tenant tenant) {
-        if (tenant == null || tenant.getId() == null) {
+        if (tenant == null || tenant.getName() == null) {
             logger.error("Invalid tenant data provided.");
             return ResponseEntity.badRequest().build();
         }
