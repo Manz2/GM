@@ -16,17 +16,17 @@
 import * as runtime from '../runtime';
 import type {
   ErrorResponse,
-  Tenant,
+  GmTenant,
 } from '../models/index';
 import {
     ErrorResponseFromJSON,
     ErrorResponseToJSON,
-    TenantFromJSON,
-    TenantToJSON,
+    GmTenantFromJSON,
+    GmTenantToJSON,
 } from '../models/index';
 
 export interface AddTenantRequest {
-    tenant: Tenant;
+    gmTenant: GmTenant;
 }
 
 export interface DeleteTenantRequest {
@@ -43,7 +43,7 @@ export interface ListTenantsRequest {
 
 export interface UpdateTenantRequest {
     id: string;
-    tenant: Tenant;
+    gmTenant: GmTenant;
 }
 
 /**
@@ -55,11 +55,11 @@ export class TenantsApi extends runtime.BaseAPI {
      * Fügt einen neuen Tenant hinzu
      * Tenant hinzufügen
      */
-    async addTenantRaw(requestParameters: AddTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Tenant>> {
-        if (requestParameters['tenant'] == null) {
+    async addTenantRaw(requestParameters: AddTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GmTenant>> {
+        if (requestParameters['gmTenant'] == null) {
             throw new runtime.RequiredError(
-                'tenant',
-                'Required parameter "tenant" was null or undefined when calling addTenant().'
+                'gmTenant',
+                'Required parameter "gmTenant" was null or undefined when calling addTenant().'
             );
         }
 
@@ -82,17 +82,17 @@ export class TenantsApi extends runtime.BaseAPI {
             method: 'POST',
             headers: headerParameters,
             query: queryParameters,
-            body: TenantToJSON(requestParameters['tenant']),
+            body: GmTenantToJSON(requestParameters['gmTenant']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => TenantFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GmTenantFromJSON(jsonValue));
     }
 
     /**
      * Fügt einen neuen Tenant hinzu
      * Tenant hinzufügen
      */
-    async addTenant(requestParameters: AddTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tenant> {
+    async addTenant(requestParameters: AddTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GmTenant> {
         const response = await this.addTenantRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -143,7 +143,7 @@ export class TenantsApi extends runtime.BaseAPI {
      * Gibt einen spezifischen Tenant anhand der ID zurück
      * Tenant per ID abrufen
      */
-    async getTenantByIdRaw(requestParameters: GetTenantByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Tenant>> {
+    async getTenantByIdRaw(requestParameters: GetTenantByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GmTenant>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
@@ -170,14 +170,14 @@ export class TenantsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => TenantFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GmTenantFromJSON(jsonValue));
     }
 
     /**
      * Gibt einen spezifischen Tenant anhand der ID zurück
      * Tenant per ID abrufen
      */
-    async getTenantById(requestParameters: GetTenantByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tenant> {
+    async getTenantById(requestParameters: GetTenantByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GmTenant> {
         const response = await this.getTenantByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -186,7 +186,7 @@ export class TenantsApi extends runtime.BaseAPI {
      * Gibt alle Tenants zurück. Optional kann nach tier gefiltert werden.
      * Tenant Liste abfragen
      */
-    async listTenantsRaw(requestParameters: ListTenantsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<Tenant>>> {
+    async listTenantsRaw(requestParameters: ListTenantsRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Array<GmTenant>>> {
         const queryParameters: any = {};
 
         if (requestParameters['tier'] != null) {
@@ -210,14 +210,14 @@ export class TenantsApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(TenantFromJSON));
+        return new runtime.JSONApiResponse(response, (jsonValue) => jsonValue.map(GmTenantFromJSON));
     }
 
     /**
      * Gibt alle Tenants zurück. Optional kann nach tier gefiltert werden.
      * Tenant Liste abfragen
      */
-    async listTenants(requestParameters: ListTenantsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<Tenant>> {
+    async listTenants(requestParameters: ListTenantsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GmTenant>> {
         const response = await this.listTenantsRaw(requestParameters, initOverrides);
         return await response.value();
     }
@@ -226,7 +226,7 @@ export class TenantsApi extends runtime.BaseAPI {
      * Aktualisiert einen spezifischen Tenant anhand der ID
      * Tenant aktualisieren
      */
-    async updateTenantRaw(requestParameters: UpdateTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Tenant>> {
+    async updateTenantRaw(requestParameters: UpdateTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GmTenant>> {
         if (requestParameters['id'] == null) {
             throw new runtime.RequiredError(
                 'id',
@@ -234,10 +234,10 @@ export class TenantsApi extends runtime.BaseAPI {
             );
         }
 
-        if (requestParameters['tenant'] == null) {
+        if (requestParameters['gmTenant'] == null) {
             throw new runtime.RequiredError(
-                'tenant',
-                'Required parameter "tenant" was null or undefined when calling updateTenant().'
+                'gmTenant',
+                'Required parameter "gmTenant" was null or undefined when calling updateTenant().'
             );
         }
 
@@ -260,17 +260,17 @@ export class TenantsApi extends runtime.BaseAPI {
             method: 'PUT',
             headers: headerParameters,
             query: queryParameters,
-            body: TenantToJSON(requestParameters['tenant']),
+            body: GmTenantToJSON(requestParameters['gmTenant']),
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => TenantFromJSON(jsonValue));
+        return new runtime.JSONApiResponse(response, (jsonValue) => GmTenantFromJSON(jsonValue));
     }
 
     /**
      * Aktualisiert einen spezifischen Tenant anhand der ID
      * Tenant aktualisieren
      */
-    async updateTenant(requestParameters: UpdateTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Tenant> {
+    async updateTenant(requestParameters: UpdateTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GmTenant> {
         const response = await this.updateTenantRaw(requestParameters, initOverrides);
         return await response.value();
     }

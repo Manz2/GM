@@ -6,6 +6,8 @@ import com.group.gm.openapi.model.Defect;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
@@ -17,16 +19,24 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
-    private final CollectionReference defectCollection;
+    private CollectionReference defectCollection;
+    private final Firestore firestore;
     private static final Logger logger = LoggerFactory.getLogger(FirestoreDefectDatabase.class);
 
     @Autowired
     public FirestoreDefectDatabase(Firestore firestore) {
-        defectCollection = firestore.collection("defects");
+        this.firestore = firestore;
+    }
+
+    private void getDefectCollection(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String tenantId = (String) authentication.getDetails();
+        defectCollection = firestore.collection("tenants").document(tenantId).collection("defects");
     }
 
     @Override
     public Defect add(Defect defect) {
+        getDefectCollection();
         try {
             ApiFuture<DocumentReference> future = defectCollection.add(defect);
             DocumentReference document = future.get();
@@ -44,6 +54,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public List<Defect> getAll() {
+        getDefectCollection();
         List<Defect> defects = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = defectCollection.get();
@@ -61,6 +72,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public Defect getById(String id) {
+        getDefectCollection();
         try {
             DocumentReference docRef = defectCollection.document(id);
             ApiFuture<DocumentSnapshot> future = docRef.get();
@@ -83,6 +95,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public List<Defect> filter(String property, String status) {
+        getDefectCollection();
         List<Defect> defects = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = defectCollection.whereEqualTo("property", property)
@@ -101,6 +114,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public Defect update(Defect defect) {
+        getDefectCollection();
         try {
             DocumentReference docRef = defectCollection.document(defect.getId());
             defect.setUpdatedAt(Instant.now().atZone(ZoneId.of("UTC+1")).toEpochSecond());
@@ -116,6 +130,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public boolean delete(String id) {
+        getDefectCollection();
         try {
             DocumentReference docRef = defectCollection.document(id);
             ApiFuture<WriteResult> future = docRef.delete();

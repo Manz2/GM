@@ -31,7 +31,9 @@ function SignInScreen() {
                 auth.tenantId = tenantId;
                 sessionStorage.setItem("tenantId", tenantId);
             } else {
-                sessionStorage.setItem("tenantId", "default");
+                console.log("Tenant ID was empty")
+                return;
+                //sessionStorage.setItem("tenantId", "default");
             }
 
             await firebase.auth().signInWithEmailAndPassword(email, password);
@@ -86,6 +88,7 @@ function SignInScreen() {
                         margin="normal"
                         value={tenantId}
                         onChange={(e) => setTenantId(e.target.value)}
+                        required={true}
                     />
                     <TextField
                         label="E-Mail"
@@ -94,6 +97,7 @@ function SignInScreen() {
                         margin="normal"
                         value={email}
                         onChange={(e) => setEmail(e.target.value)}
+                        required={true}
                     />
                     <TextField
                         label="Passwort"
@@ -103,6 +107,7 @@ function SignInScreen() {
                         margin="normal"
                         value={password}
                         onChange={(e) => setPassword(e.target.value)}
+                        required={true}
                     />
 
                     <Button

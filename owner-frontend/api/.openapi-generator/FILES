@@ -4,7 +4,7 @@ index.ts
 models/Customisation.ts
 models/ErrorResponse.ts
 models/GmService.ts
+models/GmTenant.ts
 models/Services.ts
-models/Tenant.ts
 models/index.ts
 runtime.ts

@@ -30,7 +30,7 @@ paths:
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Tenant'
+                  $ref: '#/components/schemas/GmTenant'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -49,14 +49,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Tenant'
+              $ref: '#/components/schemas/GmTenant'
       responses:
         '201':
           description: "Tenant wurde erfolgreich erstellt"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tenant'
+                $ref: '#/components/schemas/GmTenant'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -83,7 +83,7 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tenant'
+                $ref: '#/components/schemas/GmTenant'
         '404':
           description: "Tenant mit der angegebenen ID wurde nicht gefunden"
         '400':
@@ -110,14 +110,14 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Tenant'
+              $ref: '#/components/schemas/GmTenant'
       responses:
         '200':
           description: "Tenant wurde erfolgreich aktualisiert"
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Tenant'
+                $ref: '#/components/schemas/GmTenant'
         '400':
           $ref: '#/components/responses/BadRequest'
         '404':
@@ -157,15 +157,12 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
-    Tenant:
+    GmTenant:
       description: "Tenant der Anwendung"
       type: object
       properties:
         id:
           description: "Id"
-          type: string
-        tenant-id:
-          description: "Die tenant-id im iam"
           type: string
         name:
           description: "Der Name des Tenant"
@@ -174,6 +171,9 @@ components:
           description: "Abo Stufe des Tenant"
           type: string
           enum: [ "Entry", "Enhanced", "Premium" ]
+        adminMail:
+          description: "Die Mail des Administrators"
+          type: string
         services:
           description: "Die Namen bzw. ids der Services"
           $ref: '#/components/schemas/Services'

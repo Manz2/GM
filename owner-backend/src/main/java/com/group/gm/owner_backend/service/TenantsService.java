@@ -1,9 +1,15 @@
 package com.group.gm.owner_backend.service;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthException;
+import com.google.firebase.auth.UserRecord;
+import com.google.firebase.auth.multitenancy.Tenant;
+import com.google.firebase.auth.multitenancy.TenantAwareFirebaseAuth;
 import com.group.gm.openapi.api.TenantsApiDelegate;
 import com.group.gm.openapi.model.GmService;
 import com.group.gm.openapi.model.Services;
-import com.group.gm.openapi.model.Tenant;
+import com.group.gm.openapi.model.GmTenant;
+import com.group.gm.owner_backend.config.FirebaseConfig;
 import com.group.gm.owner_backend.db.TenantDbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -11,8 +17,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.multitenancy.TenantManager;
+
+
 
 import java.util.List;
+import java.util.Locale;
 
 @Service
 public class TenantsService implements TenantsApiDelegate {
@@ -32,21 +43,45 @@ public class TenantsService implements TenantsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Tenant> addTenant(Tenant tenant) {
-        if (tenant == null || tenant.getName() == null) {
+    public ResponseEntity<GmTenant> addTenant(GmTenant gmTenant) {
+        if (gmTenant == null || gmTenant.getName() == null) {
             logger.error("Invalid tenant data provided.");
             return ResponseEntity.badRequest().build();
         }
-        Services services = getServices(tenant.getTier());
+        Services services = getServices(gmTenant.getTier());
+        gmTenant.setServices(services);
 
-        tenant.setServices(services);
+        Tenant googelTenant;
+        try {
+            Tenant.CreateRequest request = new Tenant.CreateRequest()
+                    .setDisplayName(gmTenant.getName().toLowerCase().trim())
+                    .setEmailLinkSignInEnabled(true)
+                    .setPasswordSignInAllowed(true);
+            googelTenant = FirebaseAuth.getInstance().getTenantManager().createTenant(request);
+            logger.info("Created tenant: {}", googelTenant.getTenantId());
+        } catch (FirebaseAuthException e) {
+            logger.error("Failed to create tenant.");
+            throw new RuntimeException(e);
+        }
+        gmTenant.setId(googelTenant.getTenantId());
+        tenantDbService.addTenant(gmTenant);
+        logger.info("Added tenant with ID: {}", gmTenant.getId());
 
-        tenantDbService.addTenant(tenant);
-        logger.info("Added tenant with ID: {}", tenant.getId());
-        return ResponseEntity.status(HttpStatus.CREATED).body(tenant);
+        TenantAwareFirebaseAuth auth = FirebaseAuth.getInstance().getTenantManager().getAuthForTenant(googelTenant.getTenantId());
+        try {
+            auth.createUser(new UserRecord.CreateRequest()
+                    .setEmail(gmTenant.getAdminMail())
+                    .setPassword("changeMe123")  // Initiales Passwort
+                    .setEmailVerified(false)); // Optional, Display Name setzen
+        } catch (FirebaseAuthException e) {
+            logger.error("Failed to create admin user.");
+            throw new RuntimeException(e);
+        }
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
     }
 
-    private Services getServices(Tenant.TierEnum tier) {
+    private Services getServices(GmTenant.TierEnum tier) {
         Services services = new Services();
         // TODO implement other tiers here
 
@@ -60,6 +95,7 @@ public class TenantsService implements TenantsApiDelegate {
         propertyDb.setName("Common Property DB");
         propertyDb.setUrl(commonPropertyDb);
         services.setPropertyDb(propertyDb);
+
         return services;
     }
 
@@ -68,6 +104,7 @@ public class TenantsService implements TenantsApiDelegate {
         try {
             boolean deleted = tenantDbService.deleteTenant(id);
             if (deleted) {
+                FirebaseAuth.getInstance().getTenantManager().deleteTenant(id);
                 return ResponseEntity.noContent().build();
             } else {
                 return ResponseEntity.notFound().build();
@@ -78,8 +115,8 @@ public class TenantsService implements TenantsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Tenant> getTenantById(String id) {
-        Tenant tenant = tenantDbService.getTenantById(id);
+    public ResponseEntity<GmTenant> getTenantById(String id) {
+        GmTenant tenant = tenantDbService.getTenantById(id);
         if (tenant != null) {
             logger.info("Retrieved tenant with ID: {}", id);
             return ResponseEntity.ok(tenant);
@@ -90,14 +127,13 @@ public class TenantsService implements TenantsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<Tenant> updateTenant(String id, Tenant Tenant) {
-        Tenant existingTenant = tenantDbService.getTenantById(id);
+    public ResponseEntity<GmTenant> updateTenant(String id, GmTenant Tenant) {
+        GmTenant existingTenant = tenantDbService.getTenantById(id);
 
         if (existingTenant == null) {
             return ResponseEntity.notFound().build();
         }
         existingTenant.setName(Tenant.getName());
-        existingTenant.setTenantId(Tenant.getTenantId());
         existingTenant.setServices(Tenant.getServices());
         existingTenant.setCustomisation(Tenant.getCustomisation());
         existingTenant.setPreferedRegion(Tenant.getPreferedRegion());
@@ -109,8 +145,8 @@ public class TenantsService implements TenantsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<List<Tenant>> listTenants(String tier) {
-        List<Tenant> tenants = tenantDbService.getAllTenants();
+    public ResponseEntity<List<GmTenant>> listTenants(String tier) {
+        List<GmTenant> tenants = tenantDbService.getAllTenants();
         if (tier != null && !tier.isEmpty()) {
             tenants = tenants.stream()
                     .filter(defect -> tier.equals(defect.getTier() != null ? defect.getTier().getValue() : null))

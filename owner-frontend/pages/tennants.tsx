@@ -2,8 +2,8 @@ import Head from "next/head";
 import Image from "next/image";
 import localFont from "next/font/local";
 import { TenantsApi } from "@/api/apis/TenantsApi";
-import { Tenant } from "@/api/models/Tenant";
-import { TenantTierEnum } from "@/api/models/Tenant";
+import { GmTenant } from "@/api/models/GmTenant";
+import { GmTenantTierEnum } from "@/api/models/GmTenant";
 import { useEffect, useState, createRef } from "react";
 import styles from "@/styles/owner.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -43,10 +43,11 @@ const geistMono = localFont({
 });
 
 export default function Tenants() {
-  const [tenants, setTenants] = useState<Tenant[]>([]);
-  const [newTenant, setNewTenant] = useState<Tenant>({
+  const [tenants, setTenants] = useState<GmTenant[]>([]);
+  const [newTenant, setNewTenant] = useState<GmTenant>({
     name: "",
-    tenantId: "",
+    id: "",
+    adminMail: "",
     services: undefined,
     customisation: undefined,
     tier: "Entry",
@@ -110,14 +111,14 @@ export default function Tenants() {
     const tenantsApi = new TenantsApi(config);
     try {
       const requestParameters = {
-        tier: filter.tier as TenantTierEnum || undefined,
+        tier: filter.tier as GmTenantTierEnum || undefined,
       };
 
       console.log("Fetching tenants with parameters:", requestParameters);
       const response = await tenantsApi.listTenants(requestParameters);
       setTenants(response);
     } catch (error: any) {
-      console.error("Fehler beim Laden der Mängel:", error);
+      console.error("Fehler beim Laden der Tenants:", error);
       if (error.response && error.response.status === 401) {
         window.location.href = '/login';
       }
@@ -129,46 +130,19 @@ export default function Tenants() {
     setFilter(filterForm);
   };
 
-  const getMimeType = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase() || '';
-    switch (extension) {
-      case 'png':
-        return 'image/png';
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-      case 'gif':
-        return 'image/gif';
-      case 'bmp':
-        return 'image/bmp';
-      case 'heic':
-        return 'image/heic';
-      case 'heif':
-        return 'image/heif';
-      default:
-        return 'application/octet-stream'; // Fallback für unbekannte Formate
-    }
-  };
-
 
   const handleAddTenant = (e: { preventDefault: () => void }) => {
     e.preventDefault();
-    var fileBlob = undefined;
-    if (acceptedFiles.length != 0) {
-      const file = acceptedFiles[0];
-      const mimeType = getMimeType(file.name);
-      fileBlob = new Blob([file], { type: mimeType });
-    }
-
     const tenantsApi = new TenantsApi(config);
     tenantsApi
-      .addTenant({ tenant: newTenant })
+      .addTenant({ gmTenant: newTenant })
       .then((response) => {
         console.log("Defekt erfolgreich hinzugefügt:", response);
         fetchTenants();
         setNewTenant({
           name: "",
-          tenantId: "",
+          id: "",
+          adminMail: "",
           services: undefined,
           customisation: undefined,
           tier: "Entry",
@@ -191,7 +165,7 @@ export default function Tenants() {
     }
   };
 
-  const handleUpdateTier = (e: React.ChangeEvent<{ value: unknown }>, tenant: Tenant, tier: TenantTierEnum) => {
+  const handleUpdateTier = (e: React.ChangeEvent<{ value: unknown }>, tenant: GmTenant, tier: GmTenantTierEnum) => {
     e.preventDefault();
     const tenantsApi = new TenantsApi(config);
     tenant.tier = tier;
@@ -199,7 +173,7 @@ export default function Tenants() {
       console.error("Defekt ID fehlt");
       return;
     }
-    const requestParameters = { id: tenant.id, tenant: tenant };
+    const requestParameters = { id: tenant.id, gmTenant: tenant };
 
     tenantsApi
       .updateTenant(requestParameters)
@@ -295,11 +269,20 @@ export default function Tenants() {
                     />
                   </Box>
                   <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Admin Mail"
+                      value={newTenant.adminMail}
+                      onChange={(e) => setNewTenant({ ...newTenant, adminMail: e.target.value })}
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                     <FormControl fullWidth required>
                       <InputLabel>Tier</InputLabel>
                       <Select
                         value={newTenant.tier}
-                        onChange={(e) => setNewTenant({ ...newTenant, tier: e.target.value as TenantTierEnum })}
+                        onChange={(e) => setNewTenant({ ...newTenant, tier: e.target.value as GmTenantTierEnum })}
                         label="Tier"
                       >
                         <MenuItem value="Entry">Entry</MenuItem>
@@ -381,14 +364,21 @@ export default function Tenants() {
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {tenant.preferedRegion}
                           </Typography>
+                          <Typography variant="h6">Admin Mail:</Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {tenant.adminMail}
+                          </Typography>
+                          <Typography variant="h6">ID:</Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {tenant.id}
+                          </Typography>
                           <Typography variant="h6">Tier:</Typography>
-
                           {/* Select außerhalb von Typography */}
                           <Select
                             value={tenant.tier}
                             onChange={(e) => tenant.id && handleUpdateTier(e as React.ChangeEvent<{
                               value: unknown
-                            }>, tenant, e.target.value as TenantTierEnum)}
+                            }>, tenant, e.target.value as GmTenantTierEnum)}
                             onOpen={handleOpen}
                             onClose={handleClose}
                             className={styles[tenant.tier?.toLowerCase() || "undefined"]}

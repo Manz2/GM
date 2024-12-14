@@ -1,4 +1,12 @@
 export async function fetchAndStoreServiceUrls() {
+
+    //set to true to use local backends
+    const debug = false;
+    if (debug) {
+        return;
+    }
+
+
     if (typeof window === "undefined") {
         console.log("Window was null")
         return null;

@@ -31,49 +31,49 @@ import {
 /**
  * Tenant der Anwendung
  * @export
- * @interface Tenant
+ * @interface GmTenant
  */
-export interface Tenant {
+export interface GmTenant {
     /**
      * Id
      * @type {string}
-     * @memberof Tenant
+     * @memberof GmTenant
      */
     id?: string;
     /**
-     * Die tenant-id im iam
-     * @type {string}
-     * @memberof Tenant
-     */
-    tenantId?: string;
-    /**
      * Der Name des Tenant
      * @type {string}
-     * @memberof Tenant
+     * @memberof GmTenant
      */
     name?: string;
     /**
      * Abo Stufe des Tenant
      * @type {string}
-     * @memberof Tenant
+     * @memberof GmTenant
      */
-    tier?: TenantTierEnum;
+    tier?: GmTenantTierEnum;
+    /**
+     * Die Mail des Administrators
+     * @type {string}
+     * @memberof GmTenant
+     */
+    adminMail?: string;
     /**
      * 
      * @type {Services}
-     * @memberof Tenant
+     * @memberof GmTenant
      */
     services?: Services;
     /**
      * 
      * @type {Customisation}
-     * @memberof Tenant
+     * @memberof GmTenant
      */
     customisation?: Customisation;
     /**
      * bevorzugte Region des Tenant
      * @type {string}
-     * @memberof Tenant
+     * @memberof GmTenant
      */
     preferedRegion?: string;
 }
@@ -82,46 +82,46 @@ export interface Tenant {
 /**
  * @export
  */
-export const TenantTierEnum = {
+export const GmTenantTierEnum = {
     Entry: 'Entry',
     Enhanced: 'Enhanced',
     Premium: 'Premium'
 } as const;
-export type TenantTierEnum = typeof TenantTierEnum[keyof typeof TenantTierEnum];
+export type GmTenantTierEnum = typeof GmTenantTierEnum[keyof typeof GmTenantTierEnum];
 
 
 /**
- * Check if a given object implements the Tenant interface.
+ * Check if a given object implements the GmTenant interface.
  */
-export function instanceOfTenant(value: object): value is Tenant {
+export function instanceOfGmTenant(value: object): value is GmTenant {
     return true;
 }
 
-export function TenantFromJSON(json: any): Tenant {
-    return TenantFromJSONTyped(json, false);
+export function GmTenantFromJSON(json: any): GmTenant {
+    return GmTenantFromJSONTyped(json, false);
 }
 
-export function TenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): Tenant {
+export function GmTenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): GmTenant {
     if (json == null) {
         return json;
     }
     return {
         
         'id': json['id'] == null ? undefined : json['id'],
-        'tenantId': json['tenant-id'] == null ? undefined : json['tenant-id'],
         'name': json['name'] == null ? undefined : json['name'],
         'tier': json['tier'] == null ? undefined : json['tier'],
+        'adminMail': json['adminMail'] == null ? undefined : json['adminMail'],
         'services': json['services'] == null ? undefined : ServicesFromJSON(json['services']),
         'customisation': json['customisation'] == null ? undefined : CustomisationFromJSON(json['customisation']),
         'preferedRegion': json['prefered-region'] == null ? undefined : json['prefered-region'],
     };
 }
 
-  export function TenantToJSON(json: any): Tenant {
-      return TenantToJSONTyped(json, false);
+  export function GmTenantToJSON(json: any): GmTenant {
+      return GmTenantToJSONTyped(json, false);
   }
 
-  export function TenantToJSONTyped(value?: Tenant | null, ignoreDiscriminator: boolean = false): any {
+  export function GmTenantToJSONTyped(value?: GmTenant | null, ignoreDiscriminator: boolean = false): any {
     if (value == null) {
         return value;
     }
@@ -129,9 +129,9 @@ export function TenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): Te
     return {
         
         'id': value['id'],
-        'tenant-id': value['tenantId'],
         'name': value['name'],
         'tier': value['tier'],
+        'adminMail': value['adminMail'],
         'services': ServicesToJSON(value['services']),
         'customisation': CustomisationToJSON(value['customisation']),
         'prefered-region': value['preferedRegion'],

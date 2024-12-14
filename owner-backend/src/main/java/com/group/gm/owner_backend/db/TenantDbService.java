@@ -1,6 +1,6 @@
 package com.group.gm.owner_backend.db;
 
-import com.group.gm.openapi.model.Tenant;
+import com.group.gm.openapi.model.GmTenant;
 
 import java.util.List;
 
@@ -12,14 +12,14 @@ public interface TenantDbService {
      * @param tenant Das hinzuzufügende Tenant-Objekt.
      * @return Das hinzugefügte Tenant mit generierter ID.
      */
-    Tenant addTenant(Tenant tenant);
+    void addTenant(GmTenant tenant);
 
     /**
      * Gibt eine Liste aller Tenants zurück.
      *
      * @return Liste aller Tenants.
      */
-    List<Tenant> getAllTenants();
+    List<GmTenant> getAllTenants();
 
     /**
      * Ruft einen spezifischen Tenant anhand der ID ab.
@@ -27,7 +27,7 @@ public interface TenantDbService {
      * @param id Die ID des Tenants.
      * @return Das Tenant mit der angegebenen ID, falls vorhanden.
      */
-    Tenant getTenantById(String id);
+    GmTenant getTenantById(String id);
 
     /**
      * Filtert die Tenants nach Property und Status.
@@ -36,7 +36,7 @@ public interface TenantDbService {
      * @param status Der Status der Tenants (z.B. Offen, Geschlossen).
      * @return Gefilterte Liste der Tenants.
      */
-    List<Tenant> filterTenants(String property, String status);
+    List<GmTenant> filterTenants(String property, String status);
 
     /**
      * Aktualisiert einen vorhandenen Tenant.
@@ -44,7 +44,7 @@ public interface TenantDbService {
      * @param tenant Das zu aktualisierende Tenant-Objekt.
      * @return Das aktualisierte Tenant, oder null, wenn es nicht gefunden wurde.
      */
-    Tenant updateTenant(Tenant tenant);
+    GmTenant updateTenant(GmTenant tenant);
 
     /**
      * Löscht einen Tenant anhand der ID.

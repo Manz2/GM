@@ -2,7 +2,7 @@ package com.group.gm.owner_backend.db;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
-import com.group.gm.openapi.model.Tenant;
+import com.group.gm.openapi.model.GmTenant;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,30 +26,25 @@ public class FirestoreTenantDatabase implements TenantDbService {
     }
 
     @Override
-    public Tenant addTenant(Tenant tenant) {
+    public void addTenant(GmTenant tenant) {
         try {
-            ApiFuture<DocumentReference> future = tenantCollection.add(tenant);
-            DocumentReference document = future.get();
-            tenant.setId(document.getId());
+            DocumentReference document = tenantCollection.document(tenant.getId());
             document.set(tenant);
             logger.info("Added tenant: {}to: {}", tenant, tenantCollection.getId());
-
-            return tenant;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             logger.error(e.getMessage());
-            return null;
         }
     }
 
 
     @Override
-    public List<Tenant> getAllTenants() {
-        List<Tenant> tenants = new ArrayList<>();
+    public List<GmTenant> getAllTenants() {
+        List<GmTenant> tenants = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = tenantCollection.get();
             QuerySnapshot snapshot = future.get();
             snapshot.getDocuments().forEach(doc -> {
-                Tenant tenant = doc.toObject(Tenant.class);
+                GmTenant tenant = doc.toObject(GmTenant.class);
                 tenant.setId(doc.getId());
                 tenants.add(tenant);
             });
@@ -60,13 +55,13 @@ public class FirestoreTenantDatabase implements TenantDbService {
     }
 
     @Override
-    public Tenant getTenantById(String id) {
+    public GmTenant getTenantById(String id) {
         try {
             DocumentReference docRef = tenantCollection.document(id);
             ApiFuture<com.google.cloud.firestore.DocumentSnapshot> future = docRef.get();
             com.google.cloud.firestore.DocumentSnapshot document = future.get();
             if (document.exists()) {
-                Tenant tenant = document.toObject(Tenant.class);
+                GmTenant tenant = document.toObject(GmTenant.class);
                 if (tenant != null) {
                     tenant.setId(document.getId());
                 }
@@ -82,14 +77,14 @@ public class FirestoreTenantDatabase implements TenantDbService {
     }
 
     @Override
-    public List<Tenant> filterTenants(String property, String status) {
-        List<Tenant> tenants = new ArrayList<>();
+    public List<GmTenant> filterTenants(String property, String status) {
+        List<GmTenant> tenants = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = tenantCollection.whereEqualTo("property", property)
                     .whereEqualTo("status", status).get();
             QuerySnapshot snapshot = future.get();
             snapshot.getDocuments().forEach(doc -> {
-                Tenant tenant = doc.toObject(Tenant.class);
+                GmTenant tenant = doc.toObject(GmTenant.class);
                 tenant.setId(doc.getId());
                 tenants.add(tenant);
             });
@@ -100,7 +95,7 @@ public class FirestoreTenantDatabase implements TenantDbService {
     }
 
     @Override
-    public Tenant updateTenant(Tenant tenant) {
+    public GmTenant updateTenant(GmTenant tenant) {
         try {
             DocumentReference docRef = tenantCollection.document(tenant.getId());
             ApiFuture<WriteResult> future = docRef.set(tenant);

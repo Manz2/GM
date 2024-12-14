@@ -6,6 +6,8 @@ import com.group.gm.openapi.model.Property;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
 import java.util.ArrayList;
@@ -15,16 +17,24 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class FirestorePropertyDatabase implements GMDBService<Property> {
 
-    private final CollectionReference propertyCollection;
+    private final Firestore firestore;
+    private CollectionReference propertyCollection;
     private static final Logger logger = LoggerFactory.getLogger(FirestorePropertyDatabase.class);
 
     @Autowired
     public FirestorePropertyDatabase(Firestore firestore) {
-        propertyCollection = firestore.collection("properties");
+        this.firestore = firestore;
+    }
+
+    private void getPropertyCollection() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String tenantId = (String) authentication.getDetails();
+        propertyCollection = firestore.collection("tenants").document(tenantId).collection("properties");
     }
 
     @Override
     public Property add(Property property) {
+        getPropertyCollection();
         try {
             ApiFuture<DocumentReference> future = propertyCollection.add(property);
             DocumentReference document = future.get();
@@ -41,6 +51,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public List<Property> getAll() {
+        getPropertyCollection();
         List<Property> properties = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = propertyCollection.get();
@@ -58,6 +69,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public Property getById(String id) {
+        getPropertyCollection();
         try {
             DocumentReference docRef = propertyCollection.document(id);
             ApiFuture<DocumentSnapshot> future = docRef.get();
@@ -80,6 +92,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public List<Property> filter(String city, String status) {
+        getPropertyCollection();
         List<Property> properties = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = propertyCollection.whereEqualTo("city", city)
@@ -98,6 +111,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public Property update(Property property) {
+        getPropertyCollection();
         try {
             DocumentReference docRef = propertyCollection.document(property.getId());
             ApiFuture<WriteResult> future = docRef.set(property);
@@ -112,6 +126,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public boolean delete(String id) {
+        getPropertyCollection();
         try {
             DocumentReference docRef = propertyCollection.document(id);
             ApiFuture<WriteResult> future = docRef.delete();
