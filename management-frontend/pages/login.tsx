@@ -23,6 +23,10 @@ function SignInScreen() {
 
         try {
             const auth = getAuth();
+            if (typeof window === "undefined") {
+                console.log("Window was null")
+                return;
+            }
             if (tenantId != '') {
                 auth.tenantId = tenantId;
                 sessionStorage.setItem("tenantId", tenantId);

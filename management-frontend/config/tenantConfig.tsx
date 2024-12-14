@@ -1,4 +1,8 @@
 export async function fetchAndStoreServiceUrls() {
+    if (typeof window === "undefined") {
+        console.log("Window was null")
+        return null;
+    }
     const tenantId = sessionStorage.getItem("tenantId");
 
     if (!tenantId) {
@@ -39,7 +43,13 @@ export async function fetchAndStoreServiceUrls() {
     return services;
 }
 
+
+
 export function getServiceUrl(serviceName: string): string | null {
+    if (typeof window === "undefined") {
+        console.log("Window was null")
+        return null;
+    }
     return sessionStorage.getItem(`${serviceName}Url`);
 }
 
