@@ -13,13 +13,13 @@
  */
 
 import { mapValues } from '../runtime';
-import type { Service } from './Service';
+import type { GmService } from './GmService';
 import {
-    ServiceFromJSON,
-    ServiceFromJSONTyped,
-    ServiceToJSON,
-    ServiceToJSONTyped,
-} from './Service';
+    GmServiceFromJSON,
+    GmServiceFromJSONTyped,
+    GmServiceToJSON,
+    GmServiceToJSONTyped,
+} from './GmService';
 
 /**
  * 
@@ -29,64 +29,64 @@ import {
 export interface Services {
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    financeBackend?: Service;
+    financeBackend?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    propertyBackend?: Service;
+    propertyBackend?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    parkingBackend?: Service;
+    parkingBackend?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    paymentWatcher?: Service;
+    paymentWatcher?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    reportGenerationWorker?: Service;
+    reportGenerationWorker?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    managementFrontend?: Service;
+    managementFrontend?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    parkingFrontend?: Service;
+    parkingFrontend?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    propertyDb?: Service;
+    propertyDb?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    parkingDb?: Service;
+    parkingDb?: GmService;
     /**
      * 
-     * @type {Service}
+     * @type {GmService}
      * @memberof Services
      */
-    storage?: Service;
+    storage?: GmService;
 }
 
 /**
@@ -106,16 +106,16 @@ export function ServicesFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'financeBackend': json['finance-backend'] == null ? undefined : ServiceFromJSON(json['finance-backend']),
-        'propertyBackend': json['property-backend'] == null ? undefined : ServiceFromJSON(json['property-backend']),
-        'parkingBackend': json['parking-backend'] == null ? undefined : ServiceFromJSON(json['parking-backend']),
-        'paymentWatcher': json['payment-watcher'] == null ? undefined : ServiceFromJSON(json['payment-watcher']),
-        'reportGenerationWorker': json['report-generation-worker'] == null ? undefined : ServiceFromJSON(json['report-generation-worker']),
-        'managementFrontend': json['management-frontend'] == null ? undefined : ServiceFromJSON(json['management-frontend']),
-        'parkingFrontend': json['parking-frontend'] == null ? undefined : ServiceFromJSON(json['parking-frontend']),
-        'propertyDb': json['property-db'] == null ? undefined : ServiceFromJSON(json['property-db']),
-        'parkingDb': json['parking-db'] == null ? undefined : ServiceFromJSON(json['parking-db']),
-        'storage': json['storage'] == null ? undefined : ServiceFromJSON(json['storage']),
+        'financeBackend': json['finance-backend'] == null ? undefined : GmServiceFromJSON(json['finance-backend']),
+        'propertyBackend': json['property-backend'] == null ? undefined : GmServiceFromJSON(json['property-backend']),
+        'parkingBackend': json['parking-backend'] == null ? undefined : GmServiceFromJSON(json['parking-backend']),
+        'paymentWatcher': json['payment-watcher'] == null ? undefined : GmServiceFromJSON(json['payment-watcher']),
+        'reportGenerationWorker': json['report-generation-worker'] == null ? undefined : GmServiceFromJSON(json['report-generation-worker']),
+        'managementFrontend': json['management-frontend'] == null ? undefined : GmServiceFromJSON(json['management-frontend']),
+        'parkingFrontend': json['parking-frontend'] == null ? undefined : GmServiceFromJSON(json['parking-frontend']),
+        'propertyDb': json['property-db'] == null ? undefined : GmServiceFromJSON(json['property-db']),
+        'parkingDb': json['parking-db'] == null ? undefined : GmServiceFromJSON(json['parking-db']),
+        'storage': json['storage'] == null ? undefined : GmServiceFromJSON(json['storage']),
     };
 }
 
@@ -130,16 +130,16 @@ export function ServicesFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
 
     return {
         
-        'finance-backend': ServiceToJSON(value['financeBackend']),
-        'property-backend': ServiceToJSON(value['propertyBackend']),
-        'parking-backend': ServiceToJSON(value['parkingBackend']),
-        'payment-watcher': ServiceToJSON(value['paymentWatcher']),
-        'report-generation-worker': ServiceToJSON(value['reportGenerationWorker']),
-        'management-frontend': ServiceToJSON(value['managementFrontend']),
-        'parking-frontend': ServiceToJSON(value['parkingFrontend']),
-        'property-db': ServiceToJSON(value['propertyDb']),
-        'parking-db': ServiceToJSON(value['parkingDb']),
-        'storage': ServiceToJSON(value['storage']),
+        'finance-backend': GmServiceToJSON(value['financeBackend']),
+        'property-backend': GmServiceToJSON(value['propertyBackend']),
+        'parking-backend': GmServiceToJSON(value['parkingBackend']),
+        'payment-watcher': GmServiceToJSON(value['paymentWatcher']),
+        'report-generation-worker': GmServiceToJSON(value['reportGenerationWorker']),
+        'management-frontend': GmServiceToJSON(value['managementFrontend']),
+        'parking-frontend': GmServiceToJSON(value['parkingFrontend']),
+        'property-db': GmServiceToJSON(value['propertyDb']),
+        'parking-db': GmServiceToJSON(value['parkingDb']),
+        'storage': GmServiceToJSON(value['storage']),
     };
 }
 

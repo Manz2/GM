@@ -4,6 +4,7 @@ import { getAuth } from "firebase/auth";
 import { TextField, Button, Container, Typography, Box, CircularProgress } from '@mui/material';
 import { firebase } from '../config/firebaseConfig';
 import { useRouter } from 'next/router';
+import { fetchAndStoreServiceUrls } from "../config/tenantConfig";
 
 function SignInScreen() {
     const [email, setEmail] = useState('');
@@ -24,12 +25,14 @@ function SignInScreen() {
             const auth = getAuth();
             if (tenantId != '') {
                 auth.tenantId = tenantId;
+                sessionStorage.setItem("tenantId", tenantId);
+            } else {
+                sessionStorage.setItem("tenantId", "default");
             }
 
             await firebase.auth().signInWithEmailAndPassword(email, password);
             console.log("login successful");
-            setToken(await generateToken());
-            // Weiterleitung nach erfolgreichem Login
+            await setToken(await generateToken());
             router.push('/home');
         } catch (err) {
             setError('Fehler bei der Anmeldung. Überprüfe deine Daten.');
@@ -39,12 +42,13 @@ function SignInScreen() {
     };
 
     // Token im Session Storage speichern
-    const setToken = (token: string) => {
+    const setToken = async (token: string) => {
         if (typeof window === "undefined") {
             console.log("Window was null")
             return;
         }
         sessionStorage.setItem("authToken", token);
+        await fetchAndStoreServiceUrls();
     };
 
     // Token des angemeldeten Benutzers generieren

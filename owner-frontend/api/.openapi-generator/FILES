@@ -3,7 +3,7 @@ apis/index.ts
 index.ts
 models/Customisation.ts
 models/ErrorResponse.ts
-models/Service.ts
+models/GmService.ts
 models/Services.ts
 models/Tenant.ts
 models/index.ts

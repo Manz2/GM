@@ -189,36 +189,36 @@ components:
       properties:
         finance-backend:
           description: "Das Finanz Backend"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         property-backend:
           description: "Das Property Backend"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         parking-backend:
           description: "Das Parking Backend"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         payment-watcher:
           description: "der PaymentWatcher Service"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         report-generation-worker:
           description: "Report generation Worker "
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         management-frontend:
           description: "das Management Frontend"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         parking-frontend:
           description: "das Parking Frontend"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         property-db:
           description: "Die Property DB"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         parking-db:
           description: "Die Parking DB"
-          $ref: '#/components/schemas/Service'
+          $ref: '#/components/schemas/GmService'
         storage:
             description: "Der Filestorage"
-            $ref: '#/components/schemas/Service'
+            $ref: '#/components/schemas/GmService'
 
-    Service:
+    GmService:
       type: object
       properties:
         name:

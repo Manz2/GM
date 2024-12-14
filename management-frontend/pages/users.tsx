@@ -37,6 +37,7 @@ import {
 } from "@mui/material";
 import { firebase } from "@/config/firebaseConfig";
 import { useRouter } from "next/router";
+import { getServiceUrl } from "@/config/tenantConfig";
 
 const geistSans = localFont({
     src: "./fonts/GeistVF.woff",
@@ -91,9 +92,15 @@ export default function Users() {
         return sessionStorage.getItem("authToken");
     };
 
+    const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
+    if (!propertyBackendUrl) {
+        console.error("Property Backend URL nicht gefunden");
+      }
+
     const configParameters: Api.ConfigurationParameters = {
+        basePath: propertyBackendUrl, // Setzt die URL des Backends
         headers: {
-            'Authorization': 'Bearer ' + getToken(),
+            Authorization: "Bearer " + getToken(),
         },
     };
     const config = new Api.Configuration(configParameters);

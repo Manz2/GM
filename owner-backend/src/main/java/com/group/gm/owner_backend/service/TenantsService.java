@@ -1,10 +1,13 @@
 package com.group.gm.owner_backend.service;
 
 import com.group.gm.openapi.api.TenantsApiDelegate;
+import com.group.gm.openapi.model.GmService;
+import com.group.gm.openapi.model.Services;
 import com.group.gm.openapi.model.Tenant;
 import com.group.gm.owner_backend.db.TenantDbService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -15,6 +18,12 @@ import java.util.List;
 public class TenantsService implements TenantsApiDelegate {
 
     private final TenantDbService tenantDbService;
+
+    @Value("${google.cloud.commonPropertyBackend.url}")
+    private String commonPropertyBackendUrl;
+
+    @Value("${google.cloud.commonPropertyDb.id}")
+    private String commonPropertyDb;
 
     Logger logger = LoggerFactory.getLogger(TenantsService.class);
 
@@ -28,9 +37,30 @@ public class TenantsService implements TenantsApiDelegate {
             logger.error("Invalid tenant data provided.");
             return ResponseEntity.badRequest().build();
         }
+        Services services = getServices(tenant.getTier());
+
+        tenant.setServices(services);
+
         tenantDbService.addTenant(tenant);
         logger.info("Added tenant with ID: {}", tenant.getId());
         return ResponseEntity.status(HttpStatus.CREATED).body(tenant);
+    }
+
+    private Services getServices(Tenant.TierEnum tier) {
+        Services services = new Services();
+        // TODO implement other tiers here
+
+        // This case is for Entry Tier
+        GmService propertyBackend = new GmService();
+        propertyBackend.setName("Common Property Backend");
+        propertyBackend.setUrl(commonPropertyBackendUrl);
+        services.setPropertyBackend(propertyBackend);
+
+        GmService propertyDb = new GmService();
+        propertyDb.setName("Common Property DB");
+        propertyDb.setUrl(commonPropertyDb);
+        services.setPropertyDb(propertyDb);
+        return services;
     }
 
     @Override

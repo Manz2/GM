@@ -10,6 +10,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
+import { getServiceUrl } from "../config/tenantConfig";
 import * as Api from '../api';
 import {
   Accordion,
@@ -96,9 +97,14 @@ export default function Properties() {
     return sessionStorage.getItem("authToken");
   };
 
+  const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
+  if (!propertyBackendUrl) {
+    console.error("Property Backend URL nicht gefunden");
+  }
   const configParameters: Api.ConfigurationParameters = {
+    basePath: propertyBackendUrl, // Setzt die URL des Backends
     headers: {
-      'Authorization': 'Bearer ' + getToken(),
+      Authorization: "Bearer " + getToken(),
     },
   };
   const config = new Api.Configuration(configParameters);
