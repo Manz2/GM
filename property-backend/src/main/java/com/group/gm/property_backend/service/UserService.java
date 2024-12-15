@@ -42,7 +42,7 @@ public class UserService implements UserApiDelegate {
     @Override
     public ResponseEntity<User> addUser(User user) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String tenantId = (String) authentication.getDetails();  // Tenant ID aus der Authentifizierung
+        String tenantId = (String) authentication.getCredentials();  // Tenant ID aus der Authentifizierung
 
         logger.info("Tenant ID: " + tenantId);
 
@@ -92,7 +92,7 @@ public class UserService implements UserApiDelegate {
     @Override
     public ResponseEntity<Void> deleteUser(String id) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String tenantId = (String) authentication.getDetails();  // Tenant ID aus der Authentifizierung
+        String tenantId = (String) authentication.getCredentials();  // Tenant ID aus der Authentifizierung
 
         logger.info("Tenant ID: " + tenantId);
         User user = gmdbService.getById(id);

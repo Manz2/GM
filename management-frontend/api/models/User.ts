@@ -38,7 +38,7 @@ export interface User {
      */
     name?: string;
     /**
-     * Role des >Nutzers
+     * Role des Nutzers
      * @type {string}
      * @memberof User
      */

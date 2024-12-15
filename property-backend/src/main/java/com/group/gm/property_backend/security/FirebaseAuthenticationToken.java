@@ -1,5 +1,6 @@
 package com.group.gm.property_backend.security;
 
+import com.group.gm.openapi.model.GmTenant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,10 +10,12 @@ import java.util.Collections;
 public class FirebaseAuthenticationToken implements Authentication {
     private final String uid;
     private final String tenantId;
+    private final String dbId;
 
-    public FirebaseAuthenticationToken(String uid, String tenantId) {
+    public FirebaseAuthenticationToken(String uid, String tenantId, String dbId) {
         this.uid = uid;
         this.tenantId = tenantId;
+        this.dbId = dbId;
     }
 
     @Override
@@ -23,12 +26,12 @@ public class FirebaseAuthenticationToken implements Authentication {
 
     @Override
     public Object getCredentials() {
-        return null; // Keine Passwörter, da nur das Token verwendet wird
+        return tenantId;
     }
 
     @Override
     public Object getDetails() {
-        return tenantId;
+        return dbId;
     }
 
     @Override

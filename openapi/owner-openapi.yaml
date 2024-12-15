@@ -21,7 +21,7 @@ paths:
           required: false
           schema:
             type: string
-            enum: [ "Entry", "Enhanced", "Premium" ]
+            enum: [ "ENTRY", "ENHANCED", "PREMIUM" ]
       responses:
         '200':
           description: "Liste der Tenants erfolgreich zurückgegeben"
@@ -170,7 +170,7 @@ components:
         tier:
           description: "Abo Stufe des Tenant"
           type: string
-          enum: [ "Entry", "Enhanced", "Premium" ]
+          enum: [ "ENTRY", "ENHANCED", "PREMIUM" ]
         adminMail:
           description: "Die Mail des Administrators"
           type: string

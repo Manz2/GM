@@ -686,6 +686,13 @@ components:
           type: string
           enum: [ "Admin", "Facility" ,"Finance", "Operations" ]
 
+    GmInfo:
+      type: object
+      properties:
+        tenant:
+          description: "der Tenant"
+          $ref: './owner-openapi.yaml#/components/schemas/GmTenant'
+
     ErrorResponse:
       description: "Basis Fehler-Response ohne Detailangaben"
       type: object

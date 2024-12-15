@@ -281,8 +281,8 @@ export class TenantsApi extends runtime.BaseAPI {
  * @export
  */
 export const ListTenantsTierEnum = {
-    Entry: 'Entry',
-    Enhanced: 'Enhanced',
-    Premium: 'Premium'
+    Entry: 'ENTRY',
+    Enhanced: 'ENHANCED',
+    Premium: 'PREMIUM'
 } as const;
 export type ListTenantsTierEnum = typeof ListTenantsTierEnum[keyof typeof ListTenantsTierEnum];

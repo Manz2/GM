@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * GM-Owner API
- * OpenAPI-Spezifikation der owner-API
+ * GM Properties API
+ * OpenAPI-Spezifikation der GM Properties-API
  *
  * The version of the OpenAPI document: 1.0.0
  * 

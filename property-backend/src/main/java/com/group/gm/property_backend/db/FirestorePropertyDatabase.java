@@ -2,7 +2,9 @@ package com.group.gm.property_backend.db;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
+import com.group.gm.openapi.model.GmTenant;
 import com.group.gm.openapi.model.Property;
+import com.group.gm.property_backend.config.FirestoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,24 +20,31 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class FirestorePropertyDatabase implements GMDBService<Property> {
 
-    private final Firestore firestore;
     private CollectionReference propertyCollection;
     private static final Logger logger = LoggerFactory.getLogger(FirestorePropertyDatabase.class);
 
-    @Autowired
-    public FirestorePropertyDatabase(Firestore firestore) {
-        this.firestore = firestore;
+
+    public FirestorePropertyDatabase() {
     }
 
-    private void getPropertyCollection() {
+    private void tenantSpecificConfig(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String tenantId = (String) authentication.getDetails();
+        String dbId = (String) authentication.getDetails();
+        Firestore firestore;
+        try {
+            firestore = new FirestoreConfig(dbId).firestore();
+            logger.info("Firestore with id: " + dbId);
+        } catch (IOException e) {
+            logger.error("unable to get firestore"+ e.getMessage());
+            throw new RuntimeException(e);
+        }
+        String tenantId = (String) authentication.getCredentials();
         propertyCollection = firestore.collection("tenants").document(tenantId).collection("properties");
     }
 
     @Override
     public Property add(Property property) {
-        getPropertyCollection();
+        tenantSpecificConfig();
         try {
             ApiFuture<DocumentReference> future = propertyCollection.add(property);
             DocumentReference document = future.get();
@@ -51,7 +61,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public List<Property> getAll() {
-        getPropertyCollection();
+        tenantSpecificConfig();
         List<Property> properties = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = propertyCollection.get();
@@ -69,7 +79,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public Property getById(String id) {
-        getPropertyCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = propertyCollection.document(id);
             ApiFuture<DocumentSnapshot> future = docRef.get();
@@ -92,7 +102,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public List<Property> filter(String city, String status) {
-        getPropertyCollection();
+        tenantSpecificConfig();
         List<Property> properties = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = propertyCollection.whereEqualTo("city", city)
@@ -111,7 +121,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public Property update(Property property) {
-        getPropertyCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = propertyCollection.document(property.getId());
             ApiFuture<WriteResult> future = docRef.set(property);
@@ -126,7 +136,7 @@ public class FirestorePropertyDatabase implements GMDBService<Property> {
 
     @Override
     public boolean delete(String id) {
-        getPropertyCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = propertyCollection.document(id);
             ApiFuture<WriteResult> future = docRef.delete();

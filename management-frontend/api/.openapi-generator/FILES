@@ -3,12 +3,17 @@ apis/PropertyApi.ts
 apis/UserApi.ts
 apis/index.ts
 index.ts
+models/Customisation.ts
 models/Defect.ts
 models/ErrorResponse.ts
 models/Expense.ts
+models/GmInfo.ts
+models/GmService.ts
+models/GmTenant.ts
 models/PaymentWatcherJob.ts
 models/Pricing.ts
 models/Property.ts
+models/Services.ts
 models/User.ts
 models/index.ts
 runtime.ts

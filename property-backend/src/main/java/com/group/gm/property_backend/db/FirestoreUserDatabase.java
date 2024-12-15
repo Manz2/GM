@@ -2,7 +2,9 @@ package com.group.gm.property_backend.db;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
+import com.group.gm.openapi.model.GmTenant;
 import com.group.gm.openapi.model.User;
+import com.group.gm.property_backend.config.FirestoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
@@ -17,24 +20,31 @@ import java.util.concurrent.ExecutionException;
 @Component
 public class FirestoreUserDatabase implements GMDBService<User> {
 
-    private final Firestore firestore;
     private CollectionReference userCollection;
     private static final Logger logger = LoggerFactory.getLogger(FirestoreUserDatabase.class);
 
-    @Autowired
-    public FirestoreUserDatabase(Firestore firestore) {
-        this.firestore = firestore;
-    }
 
-    private void getUserCollection(){
+    public FirestoreUserDatabase() {}
+
+    private void tenantSpecificConfig(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String tenantId = (String) authentication.getDetails();
+        String dbId = (String) authentication.getDetails();
+
+        Firestore firestore;
+        try {
+            firestore = new FirestoreConfig(dbId).firestore();
+            logger.info("Firestore with id: " + dbId);
+        } catch (IOException e) {
+            logger.error("unable to get firestore"+ e.getMessage());
+            throw new RuntimeException(e);
+        }
+        String tenantId = (String) authentication.getCredentials();
         userCollection = firestore.collection("tenants").document(tenantId).collection("users");
     }
 
     @Override
     public User add(User user) {
-        getUserCollection();
+        tenantSpecificConfig();
         try {
             ApiFuture<DocumentReference> future = userCollection.add(user);
             DocumentReference document = future.get();
@@ -51,7 +61,7 @@ public class FirestoreUserDatabase implements GMDBService<User> {
 
     @Override
     public List<User> getAll() {
-        getUserCollection();
+        tenantSpecificConfig();
         List<User> users = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = userCollection.get();
@@ -69,7 +79,7 @@ public class FirestoreUserDatabase implements GMDBService<User> {
 
     @Override
     public User getById(String id) {
-        getUserCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = userCollection.document(id);
             ApiFuture<DocumentSnapshot> future = docRef.get();
@@ -92,7 +102,7 @@ public class FirestoreUserDatabase implements GMDBService<User> {
 
     @Override
     public List<User> filter(String role, String name) {
-        getUserCollection();
+        tenantSpecificConfig();
         List<User> users = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = userCollection.whereEqualTo("role", role)
@@ -111,7 +121,7 @@ public class FirestoreUserDatabase implements GMDBService<User> {
 
     @Override
     public User update(User user) {
-        getUserCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = userCollection.document(user.getId());
             ApiFuture<WriteResult> future = docRef.set(user);
@@ -126,7 +136,7 @@ public class FirestoreUserDatabase implements GMDBService<User> {
 
     @Override
     public boolean delete(String id) {
-        getUserCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = userCollection.document(id);
             ApiFuture<WriteResult> future = docRef.delete();

@@ -50,7 +50,7 @@ export default function Tenants() {
     adminMail: "",
     services: undefined,
     customisation: undefined,
-    tier: "Entry",
+    tier: "ENTRY",
     preferedRegion: ""
   });
   const [filter, setFilter] = useState({
@@ -145,7 +145,7 @@ export default function Tenants() {
           adminMail: "",
           services: undefined,
           customisation: undefined,
-          tier: "Entry",
+          tier: "ENTRY",
           preferedRegion: ""
         });
         setAcceptedFiles([]);
@@ -285,9 +285,9 @@ export default function Tenants() {
                         onChange={(e) => setNewTenant({ ...newTenant, tier: e.target.value as GmTenantTierEnum })}
                         label="Tier"
                       >
-                        <MenuItem value="Entry">Entry</MenuItem>
-                        <MenuItem value="Enhanced">Enhanced</MenuItem>
-                        <MenuItem value="Premium">Premium</MenuItem>
+                        <MenuItem value="ENTRY">Entry</MenuItem>
+                        <MenuItem value="ENHANCED">Enhanced</MenuItem>
+                        <MenuItem value="PREMIUM">Premium</MenuItem>
                       </Select>
                     </FormControl>
                   </Box>
@@ -321,9 +321,9 @@ export default function Tenants() {
                         onChange={(e) => setFilterForm({ ...filterForm, tier: e.target.value })}
                         label="Tier"
                       >
-                        <MenuItem value="Entry">Entry</MenuItem>
-                        <MenuItem value="Enhanced">Enhanced</MenuItem>
-                        <MenuItem value="Premium">Premium</MenuItem>
+                        <MenuItem value="ENTRY">Entry</MenuItem>
+                        <MenuItem value="ENHANCED">Enhanced</MenuItem>
+                        <MenuItem value="PREMIUM">Premium</MenuItem>
                       </Select>
                     </FormControl>
                   </Box>
@@ -385,9 +385,9 @@ export default function Tenants() {
                             variant="standard"
                             size="small"
                           >
-                            <MenuItem value="Entry">Entry</MenuItem>
-                            <MenuItem value="Enhanced">Enhanced</MenuItem>
-                            <MenuItem value="Premium">Premium</MenuItem>
+                            <MenuItem value="ENTRY">Entry</MenuItem>
+                            <MenuItem value="ENHANCED">Enhanced</MenuItem>
+                            <MenuItem value="PREMIUM">Premium</MenuItem>
                           </Select>
                         </>
                       )}

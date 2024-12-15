@@ -3,13 +3,15 @@ package com.group.gm.property_backend.db;
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.group.gm.openapi.model.Defect;
+import com.group.gm.openapi.model.GmTenant;
+import com.group.gm.property_backend.config.FirestoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 
+import java.io.IOException;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.util.ArrayList;
@@ -20,23 +22,28 @@ import java.util.concurrent.ExecutionException;
 public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     private CollectionReference defectCollection;
-    private final Firestore firestore;
     private static final Logger logger = LoggerFactory.getLogger(FirestoreDefectDatabase.class);
 
-    @Autowired
-    public FirestoreDefectDatabase(Firestore firestore) {
-        this.firestore = firestore;
-    }
+    public FirestoreDefectDatabase() {}
 
-    private void getDefectCollection(){
+    private void tenantSpecificConfig(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String tenantId = (String) authentication.getDetails();
+        String dbId = (String) authentication.getDetails();
+        Firestore firestore;
+        try {
+            firestore = new FirestoreConfig(dbId).firestore();
+            logger.info("Firestore with id: " + dbId);
+        } catch (IOException e) {
+            logger.error("unable to get firestore"+ e.getMessage());
+            throw new RuntimeException(e);
+        }
+        String tenantId = (String) authentication.getCredentials();
         defectCollection = firestore.collection("tenants").document(tenantId).collection("defects");
     }
 
     @Override
     public Defect add(Defect defect) {
-        getDefectCollection();
+        tenantSpecificConfig();
         try {
             ApiFuture<DocumentReference> future = defectCollection.add(defect);
             DocumentReference document = future.get();
@@ -54,7 +61,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public List<Defect> getAll() {
-        getDefectCollection();
+        tenantSpecificConfig();
         List<Defect> defects = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = defectCollection.get();
@@ -72,7 +79,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public Defect getById(String id) {
-        getDefectCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = defectCollection.document(id);
             ApiFuture<DocumentSnapshot> future = docRef.get();
@@ -95,7 +102,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public List<Defect> filter(String property, String status) {
-        getDefectCollection();
+        tenantSpecificConfig();
         List<Defect> defects = new ArrayList<>();
         try {
             ApiFuture<QuerySnapshot> future = defectCollection.whereEqualTo("property", property)
@@ -114,7 +121,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public Defect update(Defect defect) {
-        getDefectCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = defectCollection.document(defect.getId());
             defect.setUpdatedAt(Instant.now().atZone(ZoneId.of("UTC+1")).toEpochSecond());
@@ -130,7 +137,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     @Override
     public boolean delete(String id) {
-        getDefectCollection();
+        tenantSpecificConfig();
         try {
             DocumentReference docRef = defectCollection.document(id);
             ApiFuture<WriteResult> future = docRef.delete();
