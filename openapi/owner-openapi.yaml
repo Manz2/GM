@@ -180,38 +180,38 @@ components:
         customisation:
           description: "Die Personalisierten Komponenten"
           $ref: '#/components/schemas/customisation'
-        prefered-region:
+        preferedRegion:
           description: "bevorzugte Region des Tenant"
           type: string
 
     Services:
       type: object
       properties:
-        finance-backend:
+        financeBackend:
           description: "Das Finanz Backend"
           $ref: '#/components/schemas/GmService'
-        property-backend:
+        propertyBackend:
           description: "Das Property Backend"
           $ref: '#/components/schemas/GmService'
-        parking-backend:
+        parkingBackend:
           description: "Das Parking Backend"
           $ref: '#/components/schemas/GmService'
-        payment-watcher:
+        paymentWatcher:
           description: "der PaymentWatcher Service"
           $ref: '#/components/schemas/GmService'
-        report-generation-worker:
+        reportGenerationWorker:
           description: "Report generation Worker "
           $ref: '#/components/schemas/GmService'
-        management-frontend:
+        managementFrontend:
           description: "das Management Frontend"
           $ref: '#/components/schemas/GmService'
-        parking-frontend:
+        parkingFrontend:
           description: "das Parking Frontend"
           $ref: '#/components/schemas/GmService'
-        property-db:
+        propertyDb:
           description: "Die Property DB"
           $ref: '#/components/schemas/GmService'
-        parking-db:
+        parkingDb:
           description: "Die Parking DB"
           $ref: '#/components/schemas/GmService'
         storage:

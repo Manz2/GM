@@ -1,17 +1,16 @@
 package com.group.gm.property_backend.service;
 
 
-import org.springframework.web.client.RestTemplate;import com.fasterxml.jackson.databind.ObjectMapper;
+import com.group.gm.openapi.model.GmTenant;
+import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
-import com.fasterxml.jackson.databind.JsonNode;
-
 
 public class TenantService {
 
 
     private static final String CLOUD_FUNCTION_URL = "https://europe-west1-ca-test2-438111.cloudfunctions.net/getTenantDetails";
 
-    public String fetchTenantDetails(String tenantId, String authToken) {
+    public GmTenant fetchTenantDetails(String tenantId, String authToken) {
         try {
             RestTemplate restTemplate = new RestTemplate();
 
@@ -27,24 +26,17 @@ public class TenantService {
             HttpEntity<String> requestEntity = new HttpEntity<>(requestBody, headers);
 
             // Make POST Request
-            ResponseEntity<String> responseEntity = restTemplate.exchange(
+            ResponseEntity<GmTenant> responseEntity = restTemplate.exchange(
                     CLOUD_FUNCTION_URL,
                     HttpMethod.POST,
                     requestEntity,
-                    String.class
+                    GmTenant.class
             );
 
             if (responseEntity.getStatusCode() != HttpStatus.OK) {
                 throw new RuntimeException("Failed to fetch tenant details: " + responseEntity.getStatusCode());
             }
-
-            // Parse Response JSON into GmTenant object
-            ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode rootNode = objectMapper.readTree(responseEntity.getBody());
-            JsonNode propertyDb = rootNode.path("services").path("propertyDb").path("url");
-
-            return propertyDb.asText();
-
+            return responseEntity.getBody();
         } catch (Exception e) {
             throw new RuntimeException("Error occurred while fetching tenant details", e);
         }
