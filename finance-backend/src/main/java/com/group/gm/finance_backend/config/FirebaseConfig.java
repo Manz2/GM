@@ -1,4 +1,4 @@
-package com.group.gm.property_backend.config;
+package com.group.gm.finance_backend.config;
 
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;

@@ -1,4 +1,4 @@
-package com.group.gm.property_backend.db;
+package com.group.gm.finance_backend.db;
 
 import com.group.gm.openapi.model.Defect;
 

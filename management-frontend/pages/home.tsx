@@ -85,7 +85,26 @@ export default function Home() {
               </Link>
             </CardActions>
           </Card>
-        </Box>
+
+        <Card sx={{ maxWidth: 345, flex: 1 }}>
+          <CardContent>
+            <GroupIcon color="success" sx={{ fontSize: 50, marginBottom: 2 }} />
+            <Typography variant="h5" component="div">
+              Finanzen
+            </Typography>
+            <Typography variant="body2" color="textSecondary">
+              Erstellen und exportieren Sie verschiedene Reports.
+            </Typography>
+          </CardContent>
+          <CardActions>
+            <Link href="/finance" passHref>
+              <Button variant="contained" color="success" fullWidth>
+                Gehe zu Finanzen
+              </Button>
+            </Link>
+          </CardActions>
+        </Card>
+      </Box>
 
         <footer style={{ textAlign: "center", margin: "20px 0" }}>
           <Typography variant="body2" color="textSecondary">

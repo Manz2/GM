@@ -1,4 +1,4 @@
-package com.group.gm.property_backend.security;
+package com.group.gm.finance_backend.security;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;

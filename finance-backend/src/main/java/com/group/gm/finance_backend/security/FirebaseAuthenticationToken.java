@@ -1,4 +1,4 @@
-package com.group.gm.property_backend.security;
+package com.group.gm.finance_backend.security;
 
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;

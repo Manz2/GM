@@ -1,4 +1,4 @@
-package com.group.gm.property_backend;
+package com.group.gm.finance_backend;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

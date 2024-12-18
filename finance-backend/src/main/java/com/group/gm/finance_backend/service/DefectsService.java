@@ -1,6 +1,6 @@
-package com.group.gm.property_backend.service;
+package com.group.gm.finance_backend.service;
 
-import com.group.gm.property_backend.db.GMDBService;
+import com.group.gm.finance_backend.db.GMDBService;
 import com.group.gm.openapi.api.DefectsApiDelegate;
 import com.group.gm.openapi.model.Defect;
 import org.slf4j.Logger;
@@ -23,15 +23,15 @@ import java.util.stream.Collectors;
 @Service
 public class DefectsService implements DefectsApiDelegate {
 
-    private final GMDBService gmdbService;
-    private final GoogleCloudStorageService storageService;
+    private final GMDBService<Defect> gmdbService;
+    private final com.group.gm.property_backend.service.GoogleCloudStorageService storageService;
     private final String projectId;
     private final String bucket;
 
     Logger logger = LoggerFactory.getLogger(DefectsService.class);
 
-    public DefectsService(GMDBService gmdbService,
-                          GoogleCloudStorageService storageService,
+    public DefectsService(GMDBService<Defect> gmdbService,
+                          com.group.gm.property_backend.service.GoogleCloudStorageService storageService,
                           @Value("${google.cloud.projectId}") String projectId,
                           @Value("${google.cloud.bucket}") String bucket) {
         this.gmdbService = gmdbService;
@@ -42,9 +42,9 @@ public class DefectsService implements DefectsApiDelegate {
 
     @Override
     public ResponseEntity<Defect> getDefectById(String id) {
-        Defect defect = gmdbService.getDefectById(id);
+        Defect defect = gmdbService.getById(id);
         if (defect != null) {
-            return ResponseEntity.ok(gmdbService.getDefectById(id));
+            return ResponseEntity.ok(gmdbService.getById(id));
         } else {
             return ResponseEntity.notFound().build();
         }
@@ -75,15 +75,14 @@ public class DefectsService implements DefectsApiDelegate {
         } else {
             defect.setImage("");
         }
-        gmdbService.addDefect(defect);
+        gmdbService.add(defect);
         return ResponseEntity.status(HttpStatus.CREATED).body(defect); // 201 Created
     }
 
     @Override
     public ResponseEntity<List<Defect>> listDefects(String property, String status) {
-        List<Defect> defects = gmdbService.getAllDefects();
-        logger.warn("test");
-
+        List<Defect> defects;
+        defects = gmdbService.getAll();
         if (property != null && !property.isEmpty() && status != null && !status.isEmpty()) {
             defects = defects.stream()
                     .filter(defect -> property.equals(defect.getProperty()) &&
@@ -105,12 +104,12 @@ public class DefectsService implements DefectsApiDelegate {
     @Override
     public ResponseEntity<Void> deleteDefect(String id) {
         try {
-            Defect defect = gmdbService.getDefectById(id);
+            Defect defect = gmdbService.getById(id);
             String image = defect.getImage();
             if (!Objects.equals(image, "")) {
                 storageService.deleteObject(projectId, bucket, defect.getImage());
             }
-            boolean deleted = gmdbService.deleteDefect(id);
+            boolean deleted = gmdbService.delete(id);
             if (deleted) {
                 return ResponseEntity.noContent().build();
             } else {
@@ -123,7 +122,7 @@ public class DefectsService implements DefectsApiDelegate {
 
     @Override
     public ResponseEntity<Defect> updateDefect(String id, Defect updatedDefect) {
-        Defect existingDefect = gmdbService.getDefectById(id);
+        Defect existingDefect = gmdbService.getById(id);
 
         if (existingDefect == null) {
             return ResponseEntity.notFound().build();
@@ -136,7 +135,7 @@ public class DefectsService implements DefectsApiDelegate {
         existingDefect.setReportingDate(updatedDefect.getReportingDate());
         existingDefect.setStatus(updatedDefect.getStatus());
 
-        gmdbService.updateDefect(existingDefect);
+        gmdbService.update(existingDefect);
 
         return ResponseEntity.ok(existingDefect);
     }

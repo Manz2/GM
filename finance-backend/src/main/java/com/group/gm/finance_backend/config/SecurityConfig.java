@@ -1,7 +1,7 @@
-package com.group.gm.property_backend.config;
+package com.group.gm.finance_backend.config;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.group.gm.property_backend.security.TokenVerificationFilter;
+import com.group.gm.finance_backend.security.TokenVerificationFilter;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

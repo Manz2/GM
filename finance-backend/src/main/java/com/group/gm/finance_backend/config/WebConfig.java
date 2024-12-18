@@ -1,4 +1,4 @@
-package com.group.gm.property_backend.config;
+package com.group.gm.finance_backend.config;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
