@@ -60,22 +60,24 @@ jobs:
           echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.OWNER_STAGING_APPLICATION_NAME }}" >> owner-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> owner-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> owner-frontend/.env.production
+      - name: Set version variable
+        run: echo "VERSION=v1.0.0" >> $GITHUB_ENV
       - name: Build Property Backend
         run: |
-          docker build -t com/group/property-backend-staging ./property-backend
-          docker tag com/group/property-backend-staging europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging
+          docker build -t com/group/property-backend-staging:${{ env.VERSION }} ./property-backend
+          docker tag com/group/property-backend-staging:${{ env.VERSION }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging:${{ env.VERSION }}
       - name: Build Owner Backend
         run: |
-          docker build -t com/group/owner-backend-staging ./owner-backend
-          docker tag com/group/owner-backend-staging europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-staging
+          docker build -t com/group/owner-backend-staging:${{ env.VERSION }} ./owner-backend
+          docker tag com/group/owner-backend-staging:${{ env.VERSION }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-staging:${{ env.VERSION }}
       - name: Build management-frontend
         run: |
-          docker build -t com/group/management-frontend-staging ./management-frontend
-          docker tag com/group/management-frontend-staging europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-staging
+          docker build -t com/group/management-frontend-staging:${{ env.VERSION }} ./management-frontend
+          docker tag com/group/management-frontend-staging:${{ env.VERSION }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-staging:${{ env.VERSION }}
       - name: Build owner-frontend
         run: |
-          docker build -t com/group/owner-frontend-staging ./owner-frontend
-          docker tag com/group/owner-frontend-staging europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-staging
+          docker build -t com/group/owner-frontend-staging:${{ env.VERSION }} ./owner-frontend
+          docker tag com/group/owner-frontend-staging:${{ env.VERSION }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-staging:${{ env.VERSION }}
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
         with:
@@ -87,12 +89,12 @@ jobs:
           gcloud config set project ca-test2-438111
       - name: Push backend images to GCR
         run: |
-          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging
-          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-staging
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging:${{ env.VERSION }}
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-staging:${{ env.VERSION }}
       - name: Push frontend images to GCR
         run: |
-          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-staging
-          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-staging
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-staging:${{ env.VERSION }}
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-staging:${{ env.VERSION }}
 
   deploy:
     needs: docker
@@ -110,11 +112,10 @@ jobs:
           gcloud config set project ca-test2-438111
      - name: Deploy Backends to Cloud Run
        run: |
-          gcloud run deploy property-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
-          gcloud run deploy owner-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy property-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging:${{ env.VERSION }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy owner-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-staging:${{ env.VERSION }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
     
      - name: Deploy frontends to Cloud Run
        run: |
-          gcloud run deploy management-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
-          gcloud run deploy owner-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-staging --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
-
+          gcloud run deploy management-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-staging:${{ env.VERSION }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
+          gcloud run deploy owner-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-staging:${{ env.VERSION }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
