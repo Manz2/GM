@@ -1,0 +1,29 @@
+microservices:
+  - name: property-backend-staging
+    artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
+    image: com/group/property-backend-staging
+    version: "v1.0.0"
+    replicaCount: 1
+    containerPort: 8081
+    ingressPath: /property-backend-staging
+    probePath: /property-backend-staging
+    pathType: Prefix
+  - name: management-frontend-staging
+    artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
+    image: com/group/management-frontend-staging
+    version: "v1.0.5"
+    replicaCount: 1
+    containerPort: 3000
+    ingressPath: /management-frontend-staging(/|$)(.*)
+    probePath: /
+    pathType: ImplementationSpecific
+
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+
+

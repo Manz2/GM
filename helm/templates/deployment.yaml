@@ -1,0 +1,36 @@
+{{- range .Values.microservices }}
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .name }}
+  labels:
+    app: {{ .name }}
+spec:
+  replicas: {{ .replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .name }}
+    spec:
+      serviceAccountName: default  # GKE nutzt den Standard-Service-Account
+      containers:
+        - name: {{ .name }}
+          image: "{{ .artifactRegistryPath }}/{{ .image }}:{{ .version }}"
+          ports:
+            - containerPort: {{ .containerPort }}
+          readinessProbe:
+            httpGet:
+              path: {{ .probePath }}
+              port: {{ .containerPort }}
+            initialDelaySeconds: 5
+            periodSeconds: 10
+          livenessProbe:
+            httpGet:
+              path: {{ .probePath }}
+              port: {{ .containerPort }}
+            initialDelaySeconds: 10
+            periodSeconds: 15
+{{- end }}
