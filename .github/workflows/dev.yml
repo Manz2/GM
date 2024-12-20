@@ -101,6 +101,8 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - uses: actions/checkout@v4
+     - name: Set version variable
+       run: echo "VERSION=v1.0.0" >> $GITHUB_ENV
      - name: Authenticate to Google Cloud
        uses: google-github-actions/auth@v2
        with:
