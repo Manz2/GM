@@ -11,7 +11,7 @@ microservices:
   - name: management-frontend-staging
     artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
     image: com/group/management-frontend-staging
-    version: "v1.0.5"
+    version: "v1.0.6"
     replicaCount: 1
     containerPort: 3000
     ingressPath: /management-frontend-staging(/|$)(.*)

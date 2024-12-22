@@ -1,7 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  reactStrictMode: true,
-  output: 'standalone', // Standalone-Modus aktivieren
+  assetPrefix: '/management-frontend-staging', // Präfix für statische Assets
+  output: 'standalone',
 };
 
 export default nextConfig;
