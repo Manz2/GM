@@ -6,6 +6,8 @@ metadata:
     app: {{ .Values.managementFrontendStaging.name }}
 spec:
   replicas: {{ .Values.managementFrontendStaging.replicaCount }}
+  strategy:
+    type: RollingUpdate
   selector:
     matchLabels:
       app: {{ .Values.managementFrontendStaging.name }}
@@ -14,6 +16,7 @@ spec:
       labels:
         app: {{ .Values.managementFrontendStaging.name }}
     spec:
+      serviceAccountName: staging
       containers:
         - name: {{ .Values.managementFrontendStaging.name }}
           image: "{{ .Values.managementFrontendStaging.artifactRegistryPath }}/{{ .Values.managementFrontendStaging.image }}:{{ .Values.managementFrontendStaging.version }}"

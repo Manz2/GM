@@ -28,7 +28,7 @@ managementFrontendStaging:
   servicePort: 80
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/management-frontend-staging
-  version: "v1.0.6"
+  version: "v1.0.7"
   readinessProbePath: /
 
 
