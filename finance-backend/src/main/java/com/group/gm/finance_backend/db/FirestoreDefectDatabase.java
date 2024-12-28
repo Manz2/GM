@@ -4,11 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.group.gm.openapi.model.Defect;
 import com.group.gm.finance_backend.config.FirestoreConfig;
-import com.group.gm.finance_backend.db.GMDBService;
-import org.apache.pdfbox.pdmodel.PDDocument;
-import org.apache.pdfbox.pdmodel.PDPage;
-import org.apache.pdfbox.pdmodel.PDPageContentStream;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import com.itextpdf.layout.properties.TextAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockMultipartFile;
@@ -16,7 +12,13 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.multipart.MultipartFile;
-
+import com.itextpdf.io.font.constants.StandardFonts;
+import com.itextpdf.kernel.font.PdfFont;
+import com.itextpdf.kernel.font.PdfFontFactory;
+import com.itextpdf.kernel.pdf.PdfDocument;
+import com.itextpdf.kernel.pdf.PdfWriter;
+import com.itextpdf.layout.Document;
+import com.itextpdf.layout.element.Paragraph;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -84,6 +86,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Error generating defect report: {}", e.getMessage());
         }
+        System.out.println(report);
         return report;
     }
 
@@ -91,31 +94,42 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
     public MultipartFile generatePdfFromReport(Map<String, Object> report) {
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
-        // Generate PDF
-        try (PDDocument document = new PDDocument()) {
-            PDPage page = new PDPage();
-            document.addPage(page);
+        try {
+            // Initialize the PdfWriter with the ByteArrayOutputStream
+            PdfWriter writer = new PdfWriter(outputStream);
 
-            try (PDPageContentStream contentStream = new PDPageContentStream(document, page)) {
-                contentStream.setFont(PDType1Font.HELVETICA, 12);
-                contentStream.beginText();
-                contentStream.setLeading(14.5f);
-                contentStream.newLineAtOffset(50, 750);
+            // Create a new PdfDocument
+            PdfDocument pdfDocument = new PdfDocument(writer);
 
-                contentStream.showText("Defect Report");
-                contentStream.newLine();
-                contentStream.showText("Generated at: " + report.get("generated_at"));
-                contentStream.newLine();
-                contentStream.showText("Property: " + report.get("property"));
-                contentStream.newLine();
-                contentStream.showText("Total Defects: " + report.get("total_defects"));
-                contentStream.newLine();
+            // Initialize the Document (layout and content container)
+            Document document = new Document(pdfDocument);
 
-                contentStream.endText();
-            }
+            // Set up a standard font (Helvetica)
+            PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
 
-            // Save PDF to the ByteArrayOutputStream
-            document.save(outputStream);
+            // Add content to the document
+            document.add(new Paragraph("Defect Report")
+                    .setFont(font)
+                    .setFontSize(16)
+                    .setTextAlignment(TextAlignment.CENTER));
+
+            document.add(new Paragraph("Generated at: " + report.get("generated_at"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("Property: " + report.get("property"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("Total Defects: " + report.get("total_defects"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            // Close the document
+            document.close();
         } catch (Exception e) {
             throw new RuntimeException("Error generating PDF: " + e.getMessage(), e);
         }

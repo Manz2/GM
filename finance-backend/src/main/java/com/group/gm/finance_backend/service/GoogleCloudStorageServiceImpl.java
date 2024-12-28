@@ -47,8 +47,6 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
     public String uploadObject(MultipartFile file) {
 
         String extension = GoogleCloudStorageService.getExtension(file);
-
-
         String objectName = UUID.randomUUID() + extension;
         BlobInfo blobInfo = BlobInfo.newBuilder(bucket, objectName)
                 .setContentType(file.getContentType())

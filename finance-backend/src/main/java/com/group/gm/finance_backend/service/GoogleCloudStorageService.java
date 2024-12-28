@@ -25,6 +25,7 @@ public interface GoogleCloudStorageService {
             case "image/bmp" -> ".bmp";
             case "image/heic" -> ".heic";
             case "image/heif" -> ".heif";
+            case "application/pdf" -> ".pdf";
             default ->
                     throw new IllegalArgumentException("Unsupported file format. Only common image and video formats are allowed.");
         };
@@ -34,7 +35,7 @@ public interface GoogleCloudStorageService {
 
     String uploadObject(MultipartFile file);
 
-    String uploadObject(MultipartFile file, String directory, String bucketName);
+    String uploadObject(MultipartFile file, String directoryPath, String bucketName);
 
     void downloadObject(String objectName, Path destFilePath) throws IOException;
 }

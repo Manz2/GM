@@ -41,11 +41,14 @@ public class FinanceService implements FinanceApiDelegate {
         }
         try {
             Map<String, Object> report = gmdbService.generateDefectReport(property);
+            System.out.println("Report content: " + report);
             if (report.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
             MultipartFile pdfFile = gmdbService.generatePdfFromReport(report);
+            System.out.println("Pdf generated");
             String pdfPath = storageService.uploadObject(pdfFile);
+            System.out.println("Pdf uploaded to: " + pdfPath);
             return ResponseEntity.ok(pdfPath);
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error generating defect report: " + e.getMessage());
