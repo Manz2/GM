@@ -93,7 +93,7 @@ export default function Defects() {
   }
 
   const configParameters: Api.ConfigurationParameters = {
-    basePath: propertyBackendUrl, // Setzt die URL des Backends
+    basePath: '/property-backend-staging', //propertyBackendUrl, // Setzt die URL des Backends
     headers: {
       Authorization: "Bearer " + getToken(),
     },
