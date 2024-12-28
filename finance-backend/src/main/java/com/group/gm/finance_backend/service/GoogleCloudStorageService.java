@@ -34,5 +34,7 @@ public interface GoogleCloudStorageService {
 
     String uploadObject(MultipartFile file);
 
+    String uploadObject(MultipartFile file, String directory, String bucketName);
+
     void downloadObject(String objectName, Path destFilePath) throws IOException;
 }

@@ -74,6 +74,26 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
     }
 
     @Override
+    public String uploadObject(MultipartFile file, String directoryPath, String bucketName) {
+        if (file == null || file.isEmpty()) {
+            throw new IllegalArgumentException("File must not be null or empty");
+        }
+
+        try {
+            // Combine the directory path with the file name
+            String objectName = directoryPath + "/" + file.getOriginalFilename();
+
+            // Upload the file to the bucket
+            Blob blob = storage.create(BlobInfo.newBuilder(bucketName, objectName).build(), file.getBytes());
+
+            // Return the public URL or storage path of the uploaded object
+            return blob.getMediaLink();
+        } catch (IOException e) {
+            throw new RuntimeException("Error uploading file to bucket: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
     public void downloadObject(String objectName, Path destFilePath) throws IOException {
         Blob blob = storage.get(BlobId.of(bucket, objectName));
         blob.downloadTo(destFilePath);

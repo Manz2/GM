@@ -13,7 +13,7 @@
  */
 
 
-export const BASE_PATH = process.env.NEXT_PUBLIC_BASE_PATH || "http://localhost:8081".replace(/\/+$/, "");
+export const BASE_PATH = "http://localhost".replace(/\/+$/, "");
 
 export interface ConfigurationParameters {
     basePath?: string; // override base path

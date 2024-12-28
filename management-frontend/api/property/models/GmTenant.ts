@@ -113,7 +113,7 @@ export function GmTenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'adminMail': json['adminMail'] == null ? undefined : json['adminMail'],
         'services': json['services'] == null ? undefined : ServicesFromJSON(json['services']),
         'customisation': json['customisation'] == null ? undefined : CustomisationFromJSON(json['customisation']),
-        'preferedRegion': json['prefered-region'] == null ? undefined : json['prefered-region'],
+        'preferedRegion': json['preferedRegion'] == null ? undefined : json['preferedRegion'],
     };
 }
 
@@ -134,7 +134,7 @@ export function GmTenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'adminMail': value['adminMail'],
         'services': ServicesToJSON(value['services']),
         'customisation': CustomisationToJSON(value['customisation']),
-        'prefered-region': value['preferedRegion'],
+        'preferedRegion': value['preferedRegion'],
     };
 }
 

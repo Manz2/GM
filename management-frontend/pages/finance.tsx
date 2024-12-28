@@ -2,8 +2,9 @@ import Head from "next/head";
 import Grid from '@mui/material/Grid';
 import Image from "next/image";
 import localFont from "next/font/local";
-import { PropertyApi } from "@/api/apis/PropertyApi";
-import { Property, PropertyStatusEnum } from "@/api/models/Property";
+import { PropertyApi } from "@/api/property/apis/PropertyApi";
+import { FinanceApi } from '@/api/finance/apis/FinanceApi';
+import { Property, PropertyStatusEnum } from "@/api/property/models/Property";
 import { Pricing } from "@/api/models/Pricing";
 import { useEffect, useState, createRef } from "react";
 import styles from "@/styles/Defects.module.css";
@@ -12,7 +13,8 @@ import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import { getServiceUrl } from "../config/tenantConfig";
-import * as Api from '../api';
+import * as PApi  from "@/api/property";
+import * as FApi  from "@/api/finance";
 import {
   Accordion,
   AccordionSummary,
@@ -72,7 +74,9 @@ export default function Properties() {
     city: "",
     capacity: 0,
   });
-
+  const [selectedProperty, setSelectedProperty] = useState<any | null>(null); // Add state for selected property
+  const [startDate, setStartDate] = useState('');
+  const [endDate, setEndDate] = useState('');
   const [expanded, setExpanded] = useState<string | null>(null);
   const [expandedCard, setExpandedCard] = useState<number | null>(null);
   const [open, setOpen] = useState(false);
@@ -98,32 +102,46 @@ export default function Properties() {
     return sessionStorage.getItem("authToken");
   };
 
-  const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
-  if (!propertyBackendUrl) {
-    console.error("Property Backend URL nicht gefunden");
-  }
-  const configParameters: Api.ConfigurationParameters = {
-    basePath: propertyBackendUrl, // Setzt die URL des Backends
+  // const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
+  // if (!propertyBackendUrl) {
+  //   console.error("Property Backend URL nicht gefunden");
+  // }
+  // console.info(propertyBackendUrl)
+  // const configParameters: PApi.ConfigurationParameters = {
+  //   basePath: propertyBackendUrl, // Setzt die URL des Backends
+  //   headers: {
+  //     Authorization: "Bearer " + getToken(),
+  //   },
+  // };
+  const getBasePath = (serviceName: string): string => {
+    switch (serviceName) {
+      case "propertyBackend":
+        return process.env.NEXT_PUBLIC_PROPERTY_BACKEND || "http://localhost:8081";
+      case "financeBackend":
+        return process.env.NEXT_PUBLIC_FINANCE_BACKEND || "http://localhost:8083";
+      default:
+        throw new Error(`Unknown service: ${serviceName}`);
+    }
+  };
+
+  const financeBackendUrl = getBasePath("financeBackend");
+
+  const financeConfigParameters: FApi.ConfigurationParameters = {
+    basePath: financeBackendUrl, // Set dynamically based on service
     headers: {
-      Authorization: "Bearer " + getToken(),
+      Authorization: `Bearer ${getToken()}`,
     },
   };
-  const config = new Api.Configuration(configParameters);
 
-  const handleDeleteProperty = (propertyId: string) => {
-    const propertyApi = new PropertyApi(config);
-    const requestParameters = { id: propertyId };
-
-    propertyApi
-        .deleteProperty(requestParameters)
-        .then(() => {
-          console.log("Property erfolgreich gelöscht");
-          fetchProperties();
-        })
-        .catch((error) => {
-          console.error("Fehler beim Löschen der Property:", error);
-        });
+  const propertyBackendUrl = getBasePath("propertyBackend");
+  const configParameters: PApi.ConfigurationParameters = {
+    basePath: propertyBackendUrl, // Set dynamically based on service
+    headers: {
+      Authorization: `Bearer ${getToken()}`,
+    },
   };
+
+  const config = new PApi.Configuration(configParameters);
 
   const fetchProperties = async () => {
     console.log("env:", process.env.NEXT_PUBLIC_BASE_PATH);
@@ -148,62 +166,6 @@ export default function Properties() {
   const handleFilterSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     setFilter(filterForm);
-  };
-
-  const getMimeType = (fileName: string) => {
-    const extension = fileName.split('.').pop()?.toLowerCase() || '';
-    switch (extension) {
-      case 'png':
-        return 'image/png';
-      case 'jpg':
-      case 'jpeg':
-        return 'image/jpeg';
-      case 'gif':
-        return 'image/gif';
-      case 'bmp':
-        return 'image/bmp';
-      case 'heic':
-        return 'image/heic';
-      case 'heif':
-        return 'image/heif';
-      default:
-        return 'application/octet-stream'; // Fallback für unbekannte Formate
-    }
-  };
-
-
-  const handleAddProperty = (e: { preventDefault: () => void }) => {
-    e.preventDefault();
-    var fileBlob = undefined;
-    if (acceptedFiles.length != 0) {
-      const file = acceptedFiles[0];
-      const mimeType = getMimeType(file.name);
-      fileBlob = new Blob([file], { type: mimeType });
-    }
-
-    const propertyApi = new PropertyApi(config);
-    propertyApi
-        .addProperty({ property: newProperty, file: fileBlob })
-        .then((response) => {
-          console.log("Defekt erfolgreich hinzugefügt:", response);
-          fetchProperties();
-          setNewProperty({
-            name: "",
-            city: "",
-            address: "",
-            capacity: 0,
-            constructionDate: new Date().getTime(),
-            image: "Offen",
-            floors: [],
-            status: "Offen",
-            pricing: {},
-            expenses: [],
-          });
-          setAcceptedFiles([]);
-        })
-        .catch((error) => {
-          console.error("Fehler beim Hinzufügen des Defekts:", error);
-        });
   };
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -231,27 +193,6 @@ export default function Properties() {
     }
   };
 
-  const handleUpdateStatus = (e: React.ChangeEvent<{ value: unknown }>, property: Property, status: PropertyStatusEnum) => {
-    e.preventDefault();
-    const propertyApi = new PropertyApi(config);
-    property.status = status;
-    if (!property.id) {
-      console.error("Property ID fehlt");
-      return;
-    }
-    const requestParameters = { id: property.id, property: property };
-
-    propertyApi
-        .updateProperty(requestParameters)
-        .then(() => {
-          console.log("Property erfolgreich aktualisiert");
-          fetchProperties();
-        })
-        .catch((error) => {
-          console.error("Fehler beim Aktualisieren der Property:", error);
-        });
-  };
-
   const handleOpen = () => {
     console.log('Dialog geöffnet');
     setOpen(true);
@@ -272,27 +213,6 @@ export default function Properties() {
     });
   };
 
-  const handleEditProperty = (property: Property) => {
-    setEditProperty(property);
-    setOpen(true);  // Dialog öffnen
-  };
-
-  const handleUpdateProperty = () => {
-    if (!editProperty) return;
-
-    const propertyApi = new PropertyApi(config);
-    propertyApi.updateProperty({ id: editProperty.id!, property: editProperty })
-        .then(() => {
-          console.log("Property erfolgreich aktualisiert");
-          fetchProperties();
-          setOpen(false);
-          setEditProperty(null); // Dialog schließen und das bearbeitete Property zurücksetzen
-        })
-        .catch((error) => {
-          console.error("Fehler beim Aktualisieren der Property:", error);
-        });
-  };
-
   const dropzoneRef = createRef<DropzoneRef>();
   const openDialog = () => {
     // Note that the ref is set async,
@@ -302,6 +222,58 @@ export default function Properties() {
     }
   };
 
+
+  // const financeBackendUrl = getServiceUrl("financeBackend") || undefined;
+  // if (!financeBackendUrl) {
+  //   console.error("Property Backend URL nicht gefunden");
+  // }
+  // console.info(financeBackendUrl)
+  // const financeConfigParameters: FApi.ConfigurationParameters = {
+  //   basePath: financeBackendUrl, // Setzt die URL des Backends
+  //   headers: {
+  //     Authorization: "Bearer " + getToken(),
+  //   },
+  // };
+
+  const financeConfig = new FApi.Configuration(financeConfigParameters);
+
+  const DefectReportButton = ({ property }: { property: string }) => {
+    const [loading, setLoading] = useState(false);
+    const [report, setReport] = useState<any>(null);
+
+    const financeApi = new FinanceApi(financeConfig);
+
+    //ICHZ GLAUBE DAS DING HINTER DEM ENDPOINT MUSS WEG ALSO http://localhost:8083/api/finance/defectreport?property=Parkhaus Post das property hier
+
+    const generateDefectReport = async (property: string) => {
+      const requestParameters = {
+        property: property,
+        status: "Offen",
+        startDate: "2024-01-01", // Example start date
+        endDate: "2024-12-31" // Example end date
+      };
+      try {
+        setLoading(true);
+        const data = await financeApi.generateDefectReport( requestParameters );
+        console.log("Defect Report Data:", data);
+        setReport(data);
+      } catch (error) {
+        console.error("Error generating defect report:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+        <Button variant="contained" color="primary" onClick={() => generateDefectReport(property)}>
+          {loading ? "Generating Report..." : "Generate Defect Report"}
+        </Button>
+    );
+  };
+
+  const handlePropertySelect = (property: { name: string }) => {
+    setSelectedProperty(property);
+  };
 
   return (
       <>
@@ -314,50 +286,72 @@ export default function Properties() {
         <Container className={`${geistSans.variable} ${geistMono.variable}`} maxWidth="lg">
           <main>
             <div style={{ textAlign: "center", margin: "20px 0" }}>
-              <Image
-                  src="/parkhaus.png"
-                  alt="Parkhaus"
-                  width={75}
-                  height={70
-
-                  }
-              />
+              <Image src="/parkhaus.png" alt="Parkhaus" width={75} height={70} />
               <Typography variant="h3" gutterBottom>
                 {appName}
               </Typography>
-
             </div>
 
             <Typography variant="h4" gutterBottom>
               Property Management
             </Typography>
 
-            <Accordion expanded={expanded === 'panel1'} onChange={handleChange('panel1')}>
+            <Accordion expanded={expanded === "panel1"} onChange={handleChange("panel1")}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                 <Typography variant="h5">Neuen Report erstellen</Typography>
               </AccordionSummary>
               <AccordionDetails>
                 <Grid container spacing={2}>
-                  {/* Finance Report */}
                   <Grid item xs={12} sm={6}>
                     <Accordion>
                       <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">Finance Report</Typography>
+                        <Typography variant="h6">Defect Report</Typography>
                       </AccordionSummary>
                       <AccordionDetails>
                         <Box display="flex" flexDirection="column" gap={2}>
-                          <TextField
-                              label="Startdatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
-                          <TextField
-                              label="Enddatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
+                          <List>
+                            {properties.map((property, index) => (
+                                <ListItem
+                                    button
+                                    key={index}
+                                    onClick={() => handlePropertySelect(property)}
+                                    sx={{
+                                      backgroundColor:
+                                          selectedProperty?.name === property.name ? "orange" : "transparent",
+                                      "&:hover": {
+                                        backgroundColor:
+                                            selectedProperty?.name === property.name ? "orange" : "transparent",
+                                      },
+                                    }}
+                                >
+                                  <ListItemText primary={property.name} />
+                                </ListItem>
+                            ))}
+                          </List>
+
+                          {(
+                              <Box display="flex" flexDirection="column" gap={2}>
+                                <TextField
+                                    label="Startdatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                                <TextField
+                                    label="Enddatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                                {/* Render DefectReportButton only if a property is selected */}
+                                {(selectedProperty &&
+                                <DefectReportButton property={selectedProperty.name} />)}
+                              </Box>
+                          )}
                         </Box>
                       </AccordionDetails>
                     </Accordion>
@@ -371,18 +365,40 @@ export default function Properties() {
                       </AccordionSummary>
                       <AccordionDetails>
                         <Box display="flex" flexDirection="column" gap={2}>
-                          <TextField
-                              label="Startdatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
-                          <TextField
-                              label="Enddatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
+                          <List>
+                            {properties.map((property, index) => (
+                                <ListItem button key={index} onClick={() => handlePropertySelect(property)}>
+                                  <ListItemText primary={property.name} />
+                                </ListItem>
+                            ))}
+                          </List>
+                          {selectedProperty && (
+                              <Box display="flex" flexDirection="column" gap={2}>
+                                <TextField
+                                    label="Startdatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                                <TextField
+                                    label="Enddatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+
+                                >
+                                  Revenue Report generieren
+                                </Button>
+                              </Box>
+                          )}
                         </Box>
                       </AccordionDetails>
                     </Accordion>
@@ -396,18 +412,40 @@ export default function Properties() {
                       </AccordionSummary>
                       <AccordionDetails>
                         <Box display="flex" flexDirection="column" gap={2}>
-                          <TextField
-                              label="Startdatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
-                          <TextField
-                              label="Enddatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
+                          <List>
+                            {properties.map((property, index) => (
+                                <ListItem button key={index} onClick={() => handlePropertySelect(property)}>
+                                  <ListItemText primary={property.name} />
+                                </ListItem>
+                            ))}
+                          </List>
+                          {selectedProperty && (
+                              <Box display="flex" flexDirection="column" gap={2}>
+                                <TextField
+                                    label="Startdatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                                <TextField
+                                    label="Enddatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+
+                                >
+                                  Export Raw Data generieren
+                                </Button>
+                              </Box>
+                          )}
                         </Box>
                       </AccordionDetails>
                     </Accordion>
@@ -421,18 +459,40 @@ export default function Properties() {
                       </AccordionSummary>
                       <AccordionDetails>
                         <Box display="flex" flexDirection="column" gap={2}>
-                          <TextField
-                              label="Startdatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
-                          <TextField
-                              label="Enddatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                          />
+                          <List>
+                            {properties.map((property, index) => (
+                                <ListItem button key={index} onClick={() => handlePropertySelect(property)}>
+                                  <ListItemText primary={property.name} />
+                                </ListItem>
+                            ))}
+                          </List>
+                          {selectedProperty && (
+                              <Box display="flex" flexDirection="column" gap={2}>
+                                <TextField
+                                    label="Startdatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={startDate}
+                                    onChange={(e) => setStartDate(e.target.value)}
+                                />
+                                <TextField
+                                    label="Enddatum"
+                                    type="date"
+                                    InputLabelProps={{ shrink: true }}
+                                    fullWidth
+                                    value={endDate}
+                                    onChange={(e) => setEndDate(e.target.value)}
+                                />
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+
+                                >
+                                  Profit Report generieren
+                                </Button>
+                              </Box>
+                          )}
                         </Box>
                       </AccordionDetails>
                     </Accordion>
@@ -441,12 +501,8 @@ export default function Properties() {
               </AccordionDetails>
             </Accordion>
 
-            <div style={{ marginTop: '20px' }}>
-
-            </div>
-
-
-            <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px", }}>
+            <div style={{ marginTop: '20px' }} />
+            <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px" }}>
               <Accordion expanded={expanded === 'filterPanel'} onChange={handleChange('filterPanel')}>
                 <AccordionSummary expandIcon={<ExpandMoreIcon />}>
                   <Typography variant="h5">Filter</Typography>
@@ -472,149 +528,21 @@ export default function Properties() {
                       />
                     </Box>
                     <Box display="flex" flexBasis={{ xs: '100%', sm: '100%' }} alignItems="center">
-                      <Button type="submit" variant="contained" color="primary"
-                              style={{ height: 'fit-content', marginLeft: "20px" }}>
+                      <Button type="submit" variant="contained" color="primary" style={{ height: 'fit-content', marginLeft: "20px" }}>
                         Anwenden
                       </Button>
-                      <IconButton onClick={handleReset} color="primary" aria-label="reset filter"
-                                  style={{ marginLeft: "20px" }}>
+                      <IconButton onClick={handleReset} color="primary" aria-label="reset filter" style={{ marginLeft: "20px" }}>
                         <FilterListOffIcon />
                       </IconButton>
                     </Box>
-
                   </Box>
                 </AccordionDetails>
               </Accordion>
             </form>
 
-
             <Box display="flex" flexWrap="wrap" gap={2}>
-              {properties.map((property, index) => {
-                const isExpanded = expandedCard === index;
-                const imageUrl = blobUrls[index];
-                return (
-                    <Box key={index} flexBasis={{ xs: '100%', sm: '48%', md: '30%' }} mb={2}>
-                      <Card
-                          style={{ height: isExpanded ? 'auto' : '100px' }}> {/* Festgelegte Höhe für eingeklappte Karten */}
-                        <CardContent onClick={() => toggleCard(index, property.image)} style={{ cursor: 'pointer' }}>
-                          <Typography variant="h5">{property.name}</Typography>
-                          <Typography color="textSecondary">
-                            <strong>{property.city}</strong>
-                          </Typography>
-
-                          {isExpanded && (
-                              <>
-                                {imageUrl ? (
-                                    <img
-                                        src={imageUrl}
-                                        alt={`Bild der Property ${property.name}`}
-                                        style={{ maxWidth: '300px', width: '100%', height: 'auto' }}
-                                    />
-                                ) : null}
-                                <Typography variant="h6">Adresse:</Typography>
-                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                  {property.address}
-                                </Typography>
-                                <Typography variant="h6">Anzahl Parkflächen:</Typography>
-                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                  {property.capacity}
-                                </Typography>
-                                <Typography variant="h6">Baujahr:</Typography>
-                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                  {property.constructionDate ? new Date(property.constructionDate).toLocaleDateString('de-DE') : 'Kein Datum'}
-                                </Typography>
-                                <Typography variant="h6">Status:</Typography>
-
-                                {/* Select außerhalb von Typography */}
-                                <Select
-                                    value={property.status}
-                                    onChange={(e) => property.id && handleUpdateStatus(e as React.ChangeEvent<{
-                                      value: unknown
-                                    }>, property, e.target.value as PropertyStatusEnum)}
-                                    onOpen={handleOpen}
-                                    onClose={handleClose}
-                                    className={styles[property.status?.toLowerCase() || "undefined"]}
-                                    variant="standard"
-                                    size="small"
-                                >
-                                  <MenuItem value="Offen" className={styles['offen']}>Offen</MenuItem>
-                                  <MenuItem value="Geschlossen" className={styles['geschlossen']}>Geschlossen</MenuItem>
-                                </Select>
-                              </>
-                          )}
-                        </CardContent>
-
-                        {isExpanded && (
-                            <CardActions>
-                              <Button size="small" color="error"
-                                      onClick={() => property.id && handleDeleteProperty(property.id)}>
-                                Löschen
-                              </Button>
-                              <IconButton onClick={() => handleEditProperty(property)}>
-                                <EditIcon />
-                              </IconButton>
-                            </CardActions>
-                        )}
-                      </Card>
-                    </Box>
-                );
-              })}
-              <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
-                <DialogTitle>Property bearbeiten</DialogTitle>
-                <DialogContent>
-                  {editProperty && (
-                      <Box display="flex" flexDirection="column" gap={2}>
-                        <TextField
-                            label="Name"
-                            value={editProperty.name}
-                            onChange={(e) => setEditProperty({ ...editProperty, name: e.target.value })}
-                            fullWidth
-                        />
-                        <TextField
-                            label="Stadt"
-                            value={editProperty.city}
-                            onChange={(e) => setEditProperty({ ...editProperty, city: e.target.value })}
-                            fullWidth
-                        />
-                        <TextField
-                            label="Adresse"
-                            value={editProperty.address}
-                            onChange={(e) => setEditProperty({ ...editProperty, address: e.target.value })}
-                            fullWidth
-                        />
-                        <TextField
-                            label="Anzahl Parkflächen"
-                            type="number"
-                            value={editProperty.capacity}
-                            onChange={(e) => setEditProperty({ ...editProperty, capacity: Number(e.target.value) })}
-                            fullWidth
-                        />
-                        <FormControl fullWidth required>
-                          <InputLabel>Status</InputLabel>
-                          <Select
-                              value={editProperty.status}
-                              onChange={(e) => setEditProperty({ ...editProperty, status: e.target.value as PropertyStatusEnum })}
-                              label="Status"
-                          >
-                            <MenuItem value="Offen">Offen</MenuItem>
-                            <MenuItem value="Geschlossen">Geschlossen</MenuItem>
-                          </Select>
-                        </FormControl>
-                      </Box>
-                  )}
-                </DialogContent>
-                <DialogActions>
-                  <Button onClick={() => setOpen(false)} color="primary">
-                    Abbrechen
-                  </Button>
-                  <Button onClick={handleUpdateProperty} color="primary">
-                    Speichern
-                  </Button>
-                </DialogActions>
-              </Dialog>
+              {/* Render properties here */}
             </Box>
-
-
 
             <div style={{ marginTop: "40px" }}>
               <Typography variant="h4">Kontakt</Typography>
@@ -635,7 +563,6 @@ export default function Properties() {
           </footer>
         </Container>
       </>
-
   );
 
 }

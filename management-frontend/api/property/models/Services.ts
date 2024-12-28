@@ -106,15 +106,15 @@ export function ServicesFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
     }
     return {
         
-        'financeBackend': json['finance-backend'] == null ? undefined : GmServiceFromJSON(json['finance-backend']),
-        'propertyBackend': json['property-backend'] == null ? undefined : GmServiceFromJSON(json['property-backend']),
-        'parkingBackend': json['parking-backend'] == null ? undefined : GmServiceFromJSON(json['parking-backend']),
-        'paymentWatcher': json['payment-watcher'] == null ? undefined : GmServiceFromJSON(json['payment-watcher']),
-        'reportGenerationWorker': json['report-generation-worker'] == null ? undefined : GmServiceFromJSON(json['report-generation-worker']),
-        'managementFrontend': json['management-frontend'] == null ? undefined : GmServiceFromJSON(json['management-frontend']),
-        'parkingFrontend': json['parking-frontend'] == null ? undefined : GmServiceFromJSON(json['parking-frontend']),
-        'propertyDb': json['property-db'] == null ? undefined : GmServiceFromJSON(json['property-db']),
-        'parkingDb': json['parking-db'] == null ? undefined : GmServiceFromJSON(json['parking-db']),
+        'financeBackend': json['financeBackend'] == null ? undefined : GmServiceFromJSON(json['financeBackend']),
+        'propertyBackend': json['propertyBackend'] == null ? undefined : GmServiceFromJSON(json['propertyBackend']),
+        'parkingBackend': json['parkingBackend'] == null ? undefined : GmServiceFromJSON(json['parkingBackend']),
+        'paymentWatcher': json['paymentWatcher'] == null ? undefined : GmServiceFromJSON(json['paymentWatcher']),
+        'reportGenerationWorker': json['reportGenerationWorker'] == null ? undefined : GmServiceFromJSON(json['reportGenerationWorker']),
+        'managementFrontend': json['managementFrontend'] == null ? undefined : GmServiceFromJSON(json['managementFrontend']),
+        'parkingFrontend': json['parkingFrontend'] == null ? undefined : GmServiceFromJSON(json['parkingFrontend']),
+        'propertyDb': json['propertyDb'] == null ? undefined : GmServiceFromJSON(json['propertyDb']),
+        'parkingDb': json['parkingDb'] == null ? undefined : GmServiceFromJSON(json['parkingDb']),
         'storage': json['storage'] == null ? undefined : GmServiceFromJSON(json['storage']),
     };
 }
@@ -130,15 +130,15 @@ export function ServicesFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
 
     return {
         
-        'finance-backend': GmServiceToJSON(value['financeBackend']),
-        'property-backend': GmServiceToJSON(value['propertyBackend']),
-        'parking-backend': GmServiceToJSON(value['parkingBackend']),
-        'payment-watcher': GmServiceToJSON(value['paymentWatcher']),
-        'report-generation-worker': GmServiceToJSON(value['reportGenerationWorker']),
-        'management-frontend': GmServiceToJSON(value['managementFrontend']),
-        'parking-frontend': GmServiceToJSON(value['parkingFrontend']),
-        'property-db': GmServiceToJSON(value['propertyDb']),
-        'parking-db': GmServiceToJSON(value['parkingDb']),
+        'financeBackend': GmServiceToJSON(value['financeBackend']),
+        'propertyBackend': GmServiceToJSON(value['propertyBackend']),
+        'parkingBackend': GmServiceToJSON(value['parkingBackend']),
+        'paymentWatcher': GmServiceToJSON(value['paymentWatcher']),
+        'reportGenerationWorker': GmServiceToJSON(value['reportGenerationWorker']),
+        'managementFrontend': GmServiceToJSON(value['managementFrontend']),
+        'parkingFrontend': GmServiceToJSON(value['parkingFrontend']),
+        'propertyDb': GmServiceToJSON(value['propertyDb']),
+        'parkingDb': GmServiceToJSON(value['parkingDb']),
         'storage': GmServiceToJSON(value['storage']),
     };
 }

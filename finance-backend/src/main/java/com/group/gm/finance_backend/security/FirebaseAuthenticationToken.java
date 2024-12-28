@@ -1,5 +1,6 @@
 package com.group.gm.finance_backend.security;
 
+
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -8,9 +9,13 @@ import java.util.Collections;
 
 public class FirebaseAuthenticationToken implements Authentication {
     private final String uid;
+    private final String tenantId;
+    private final String dbId;
 
-    public FirebaseAuthenticationToken(String uid) {
+    public FirebaseAuthenticationToken(String uid, String tenantId, String dbId) {
         this.uid = uid;
+        this.tenantId = tenantId;
+        this.dbId = dbId;
     }
 
     @Override
@@ -21,12 +26,12 @@ public class FirebaseAuthenticationToken implements Authentication {
 
     @Override
     public Object getCredentials() {
-        return null; // Keine Passwörter, da nur das Token verwendet wird
+        return tenantId;
     }
 
     @Override
     public Object getDetails() {
-        return null;
+        return dbId;
     }
 
     @Override
@@ -47,6 +52,10 @@ public class FirebaseAuthenticationToken implements Authentication {
     @Override
     public String getName() {
         return uid;
+    }
+
+    public String getTenantId() {
+        return tenantId;
     }
 }
 

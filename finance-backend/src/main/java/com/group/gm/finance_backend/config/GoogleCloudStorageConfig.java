@@ -25,4 +25,3 @@ public class GoogleCloudStorageConfig implements WebMvcConfigurer {
                 .getService();
     }
 }
-

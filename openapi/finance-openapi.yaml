@@ -12,13 +12,13 @@ paths:
       tags:
         - "Finance"
       summary: "Defect-Report generieren und exportieren"
-      description: "Erstellt und exportiert einen Report über Defekte, basierend auf den vorhandenen Daten. Der Report kann nach Properties und Zeiträumen gefiltert werden."
+      description: "Erstellt und exportiert einen Report über Defekte, basierend auf den vorhandenen Daten. Der Report wird in der Cloud gespeichert, und ein Link wird zurückgegeben."
       operationId: "generateDefectReport"
       parameters:
         - name: "property"
           in: query
           description: "Das Parkhaus, zu dem der Defect gehört"
-          required: false
+          required: true
           schema:
             type: string
         - name: "status"
@@ -27,70 +27,30 @@ paths:
           required: false
           schema:
             type: string
-            enum: [ "Offen", "In-Bearbeitung", "Geschlossen", "Abgelehnt" ]
         - name: "start_date"
           in: query
           description: "Startdatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
           required: false
           schema:
             type: string
-            format: date
         - name: "end_date"
           in: query
           description: "Enddatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
           required: false
           schema:
             type: string
-            format: date
       responses:
         '200':
-          description: "Der Report wurde erfolgreich erstellt und zurückgegeben"
+          description: "Der Report wurde erfolgreich erstellt und ein Link zur Verfügung gestellt."
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  defects:
-                    type: array
-                    description: "Liste der Defects im Report"
-                    items:
-                      $ref: '#/components/schemas/Defect'
-                  properties:
-                    type: array
-                    description: "Liste der zugehörigen Properties im Report"
-                    items:
-                      $ref: '#/components/schemas/Property'
-                  report_metadata:
-                    type: object
-                    description: "Zusammenfassung des Reports"
-                    properties:
-                      generated_at:
-                        type: string
-                        format: date-time
-                        description: "Zeitpunkt der Generierung des Reports"
-                      total_defects:
-                        type: integer
-                        description: "Anzahl der Defects im Report"
-                      filtered_by:
-                        type: object
-                        description: "Filterparameter des Reports"
-                        properties:
-                          property:
-                            type: string
-                          status:
-                            type: string
-                          start_date:
-                            type: string
-                            format: date
-                          end_date:
-                            type: string
-                            format: date
+                type: string
+                description: "Die URL des generierten Defect-Reports"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
-
-  ########################
 
   /api/finance/financereport:
     get:
@@ -131,47 +91,18 @@ paths:
             format: date
       responses:
         '200':
-          description: "Der Report wurde erfolgreich erstellt und zurückgegeben"
+          description: "Der Report wurde erfolgreich erstellt und ein Link zur Verfügung gestellt."
           content:
             application/json:
               schema:
                 type: object
                 properties:
-                  report_type:
+                  report_url:
                     type: string
-                    description: "Typ des generierten Berichts"
-                    enum: [ "revenue", "profit" ]
-                  report_data:
-                    type: object
-                    description: "Die spezifischen Daten des Berichts"
-                    additionalProperties: true
-                  report_metadata:
-                    type: object
-                    description: "Metadaten des Berichts"
-                    properties:
-                      generated_at:
-                        type: string
-                        format: date-time
-                        description: "Zeitpunkt der Generierung"
-                      filters:
-                        type: object
-                        description: "Angewendete Filter"
-                        properties:
-                          property:
-                            type: string
-                          start_date:
-                            type: string
-                            format: date
-                          end_date:
-                            type: string
-                            format: date
-            '400':
-              $ref: '#/components/responses/BadRequest'
-            '500':
-              $ref: '#/components/responses/InternalServerError'
-
-
-  ########################
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
   /api/finance/exportdata:
     get:
@@ -227,10 +158,14 @@ components:
     DefectReport:
       type: object
       properties:
+        properties:
+          type: array
+          items:
+            $ref: './property-openapi.yaml#/components/schemas/Property'
         defects:
           type: array
           items:
-            $ref: '#/components/schemas/Defect'
+            $ref: './property-openapi.yaml#/components/schemas/Defect'
         metadata:
           type: object
           properties:
@@ -279,7 +214,12 @@ components:
                   end_date:
                     type: string
                     format: date
-
+    GmInfo:
+      type: object
+      properties:
+        tenant:
+          description: "der Tenant"
+          $ref: './owner-openapi.yaml#/components/schemas/GmTenant'
 
     ErrorResponse:
       description: "Basis Fehler-Response ohne Detailangaben"
@@ -290,8 +230,6 @@ components:
           type: string
       required:
         - "message"
-
-
   responses:
     BadRequest:
       description: Fehlerhafte Anfrage

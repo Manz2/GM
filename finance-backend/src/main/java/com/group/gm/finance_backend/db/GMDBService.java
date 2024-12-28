@@ -1,57 +1,39 @@
 package com.group.gm.finance_backend.db;
 
-import com.group.gm.openapi.model.Defect;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
+import java.util.Map;
 
-public interface GMDBService {
-
-    /**
-     * Fügt einen neuen Defect hinzu.
-     *
-     * @param defect Das hinzuzufügende Defect-Objekt.
-     * @return Das hinzugefügte Defect mit generierter ID.
-     */
-    Defect addDefect(Defect defect);
+public interface GMDBService<T> {
 
     /**
-     * Gibt eine Liste aller Defects zurück.
+     * Gibt eine Liste aller Objekte zurück.
      *
-     * @return Liste aller Defects.
+     * @return Liste aller Objekte.
      */
-    List<Defect> getAllDefects();
+    List<T> getAll();
 
     /**
-     * Ruft einen spezifischen Defect anhand der ID ab.
+     * Ruft ein spezifisches Objekt anhand der ID ab.
      *
-     * @param id Die ID des Defects.
-     * @return Das Defect mit der angegebenen ID, falls vorhanden.
+     * @param id Die ID des Objekts.
+     * @return Das Objekt mit der angegebenen ID, falls vorhanden.
      */
-    Defect getDefectById(String id);
+    T getById(String id);
 
     /**
-     * Filtert die Defects nach Property und Status.
+     * Filtert die Objekte nach einem bestimmten Attribut (z. B. Property) und Status.
      *
-     * @param property Das Parkhaus, nach dem gefiltert werden soll.
-     * @param status Der Status der Defects (z.B. Offen, Geschlossen).
-     * @return Gefilterte Liste der Defects.
+     * @param attribute Ein Filterattribut, wie z. B. Property.
+     * @param status Der Status der Objekte (z. B. Offen, Geschlossen).
+     * @return Gefilterte Liste der Objekte.
      */
-    List<Defect> filterDefects(String property, String status);
+    List<T> filter(String attribute, String status);
 
-    /**
-     * Aktualisiert einen vorhandenen Defect.
-     *
-     * @param defect Das zu aktualisierende Defect-Objekt.
-     * @return Das aktualisierte Defect, oder null, wenn es nicht gefunden wurde.
-     */
-    Defect updateDefect(Defect defect);
+    Map<String, Object> generateDefectReport(String property);
 
-    /**
-     * Löscht einen Defect anhand der ID.
-     *
-     * @param id Die ID des zu löschenden Defects.
-     * @return true, wenn der Defect erfolgreich gelöscht wurde, andernfalls false.
-     */
-    boolean deleteDefect(String id);
+    MultipartFile generatePdfFromReport(Map<String, Object> report);
+
+
 }
-

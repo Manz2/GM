@@ -88,7 +88,7 @@ export default function Home() {
 
         <Card sx={{ maxWidth: 345, flex: 1 }}>
           <CardContent>
-            <GroupIcon color="success" sx={{ fontSize: 50, marginBottom: 2 }} />
+            <GroupIcon color="warning" sx={{ fontSize: 50, marginBottom: 2 }} />
             <Typography variant="h5" component="div">
               Finanzen
             </Typography>
@@ -98,7 +98,7 @@ export default function Home() {
           </CardContent>
           <CardActions>
             <Link href="/finance" passHref>
-              <Button variant="contained" color="success" fullWidth>
+              <Button variant="contained" color="warning" fullWidth>
                 Gehe zu Finanzen
               </Button>
             </Link>

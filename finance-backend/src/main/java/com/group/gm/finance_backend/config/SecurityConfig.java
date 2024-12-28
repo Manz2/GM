@@ -32,7 +32,7 @@ public class SecurityConfig {
 
         http.addFilterBefore(tokenVerificationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .authorizeRequests()
-                .requestMatchers("/api/defects").authenticated()
+                .requestMatchers("/api").authenticated()
                 .anyRequest().permitAll();
 
         return http.build();
