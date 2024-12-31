@@ -10,8 +10,9 @@ terraform {
 }
 
 provider "google" {
-  project = var.project_id
-  region  = var.region
+  project     = var.project_id
+  region      = var.region
+  credentials = file("account.json")
 }
 
 # Variablen
@@ -35,7 +36,7 @@ variable "cluster_name" {
 variable "node_count" {
   description = "Die Anzahl der Knoten im Cluster"
   type        = number
-  default     = 2
+  default     = 1
 }
 
 variable "node_machine_type" {
