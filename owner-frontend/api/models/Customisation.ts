@@ -56,9 +56,9 @@ export function CustomisationFromJSONTyped(json: any, ignoreDiscriminator: boole
     }
     return {
         
-        'applicationName': json['application-name'] == null ? undefined : json['application-name'],
-        'backgroundImage': json['background-image'] == null ? undefined : json['background-image'],
-        'colorScheme': json['color-scheme'] == null ? undefined : json['color-scheme'],
+        'applicationName': json['applicationName'] == null ? undefined : json['applicationName'],
+        'backgroundImage': json['backgroundImage'] == null ? undefined : json['backgroundImage'],
+        'colorScheme': json['colorScheme'] == null ? undefined : json['colorScheme'],
     };
 }
 
@@ -73,9 +73,9 @@ export function CustomisationFromJSONTyped(json: any, ignoreDiscriminator: boole
 
     return {
         
-        'application-name': value['applicationName'],
-        'background-image': value['backgroundImage'],
-        'color-scheme': value['colorScheme'],
+        'applicationName': value['applicationName'],
+        'backgroundImage': value['backgroundImage'],
+        'colorScheme': value['colorScheme'],
     };
 }
 
