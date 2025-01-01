@@ -1,6 +1,6 @@
 echo "Creating new tenant"
 
-cd ../terraform
+cd /app/terraform
 
 terraform init
 
@@ -12,7 +12,7 @@ echo "Creating new tenant"
 
 gcloud container clusters get-credentials basis --region=europe-west1-b
 
-cd ../helm
+cd /app/helm
 
 helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.github.io/ingress-nginx --namespace ingress-nginx --create-namespace
 

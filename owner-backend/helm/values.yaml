@@ -1,0 +1,47 @@
+# for ingress:
+microservices:
+  - name: property-backend-staging
+    containerPort: 8081
+    ingressPath: /property-backend-staging(/|$)(.*)
+    pathType: ImplementationSpecific
+  - name: management-frontend-staging
+    replicaCount: 1
+    containerPort: 3000
+    ingressPath: /management-frontend-staging(/|$)(.*)
+    pathType: ImplementationSpecific
+
+# for deployment
+propertyBackendStaging:
+  name: property-backend-staging
+  replicaCount: 1
+  containerPort: 8081
+  servicePort: 80
+  artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
+  image: com/group/property-backend-staging
+  version: "v1.0.2"
+  readinessProbePath: /health
+
+managementFrontendStaging:
+  name: management-frontend-staging
+  replicaCount: 1
+  containerPort: 3000
+  servicePort: 80
+  artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
+  image: com/group/management-frontend-staging
+  version: "v1.0.11"
+  readinessProbePath: /
+
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    nginx.ingress.kubernetes.io/use-regex: "true"
+    nginx.ingress.kubernetes.io/rewrite-target: /$2
+    nginx.ingress.kubernetes.io/enable-cors: "true"
+    nginx.ingress.kubernetes.io/cors-allow-origin: "*"
+    nginx.ingress.kubernetes.io/cors-allow-methods: "*"
+    nginx.ingress.kubernetes.io/cors-allow-headers: "*"
+
+
+

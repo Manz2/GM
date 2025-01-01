@@ -19,6 +19,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.multitenancy.TenantManager;
+import com.group.gm.owner_backend.service.TerraformService;
+
 
 
 
@@ -29,6 +31,7 @@ import java.util.Locale;
 public class TenantsService implements TenantsApiDelegate {
 
     private final TenantDbService tenantDbService;
+    private final TerraformService terraformService;
 
     @Value("${google.cloud.commonPropertyBackend.url}")
     private String commonPropertyBackendUrl;
@@ -38,8 +41,9 @@ public class TenantsService implements TenantsApiDelegate {
 
     Logger logger = LoggerFactory.getLogger(TenantsService.class);
 
-    public TenantsService(TenantDbService tenantDbService) {
+    public TenantsService(TenantDbService tenantDbService,TerraformService terraformService) {
         this.tenantDbService = tenantDbService;
+        this.terraformService = terraformService;
     }
 
     @Override
@@ -76,6 +80,10 @@ public class TenantsService implements TenantsApiDelegate {
         } catch (FirebaseAuthException e) {
             logger.error("Failed to create admin user.");
             throw new RuntimeException(e);
+        }
+
+        if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
+            terraformService.start();
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
