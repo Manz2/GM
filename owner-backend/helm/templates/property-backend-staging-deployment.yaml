@@ -26,11 +26,11 @@ spec:
             httpGet:
               path: {{ .Values.propertyBackendStaging.readinessProbePath }}
               port: {{ .Values.propertyBackendStaging.containerPort }}
-            initialDelaySeconds: 5
+            initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: {{ .Values.propertyBackendStaging.readinessProbePath }}
               port: {{ .Values.propertyBackendStaging.containerPort }}
-            initialDelaySeconds: 10
+            initialDelaySeconds: 30
             periodSeconds: 15

@@ -59,6 +59,8 @@ RUN mkdir -p /app/.kube && chown -R spring:spring /app/.kube
 # Setze die Umgebungsvariable KUBECONFIG
 ENV KUBECONFIG=/app/.kube/config
 
+# Erstelle das Verzeichnis für den Helm-Cache und setze Berechtigungen
+RUN mkdir -p /tmp/.cache/helm && chown -R spring:spring /tmp/.cache
 
 # Setze die richtigen Berechtigungen für die kopierten Dateien
 RUN chown -R spring:spring /app/terraform /app/helm /app/scripts \

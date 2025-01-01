@@ -83,7 +83,7 @@ public class TenantsService implements TenantsApiDelegate {
         }
 
         if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
-            terraformService.start();
+            terraformService.start(googelTenant.getTenantId(),gmTenant.getPreferedRegion());
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
@@ -135,19 +135,23 @@ public class TenantsService implements TenantsApiDelegate {
     }
 
     @Override
-    public ResponseEntity<GmTenant> updateTenant(String id, GmTenant Tenant) {
+    public ResponseEntity<GmTenant> updateTenant(String id, GmTenant tenant) {
         GmTenant existingTenant = tenantDbService.getTenantById(id);
 
         if (existingTenant == null) {
             return ResponseEntity.notFound().build();
         }
-        existingTenant.setName(Tenant.getName());
-        existingTenant.setServices(Tenant.getServices());
-        existingTenant.setCustomisation(Tenant.getCustomisation());
-        existingTenant.setPreferedRegion(Tenant.getPreferedRegion());
-        existingTenant.setTier(Tenant.getTier());
+        existingTenant.setName(tenant.getName());
+        existingTenant.setServices(tenant.getServices());
+        existingTenant.setCustomisation(tenant.getCustomisation());
+        existingTenant.setPreferedRegion(tenant.getPreferedRegion());
+        existingTenant.setTier(tenant.getTier());
 
         tenantDbService.updateTenant(existingTenant);
+
+        if(tenant.getTier() == GmTenant.TierEnum.PREMIUM) {
+            terraformService.start(tenant.getId(),tenant.getPreferedRegion());
+        }
 
         return ResponseEntity.ok(existingTenant);
     }

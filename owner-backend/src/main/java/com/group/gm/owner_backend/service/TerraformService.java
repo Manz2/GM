@@ -9,16 +9,21 @@ import java.io.InputStreamReader;
 
 @Service
 public class TerraformService {
-    public void start() {
+    public void start(String clusterName, String region) {
         try {
             // Pfad zum Skript
             String scriptPath = "/app/scripts/newTenant.sh";
 
-            // ProcessBuilder initialisieren
-            ProcessBuilder processBuilder = new ProcessBuilder(scriptPath);
+            // ProcessBuilder initialisieren mit Parametern
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    scriptPath,
+                    clusterName,
+                    region
+            );
 
             // Starte den Prozess
             Process process = processBuilder.start();
+
 
             // Standard- und Fehlerausgabe des Prozesses in separaten Threads lesen und direkt auf die Konsole loggen
             Thread stdOutLogger = new Thread(() -> logStream(process.getInputStream(), "STDOUT"));
