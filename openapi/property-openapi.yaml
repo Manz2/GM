@@ -534,6 +534,24 @@ paths:
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
+  /health:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "health"
+      summary: "health test"
+      description: "health test"
+      operationId: "health"
+      responses:
+        '200':
+          description: "alive"
+        '404':
+          description: "not alive"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
 
 components:
   securitySchemes:

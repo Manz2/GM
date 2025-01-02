@@ -234,13 +234,13 @@ components:
     customisation:
       type: object
       properties:
-        application-name:
+        applicationName:
           description: "name der application"
           type: string
-        background-image:
+        backgroundImage:
           description: "Background image"
           type: string
-        color-scheme:
+        colorScheme:
           description: "color Scheme der Anwendung"
           type: string
 
