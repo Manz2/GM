@@ -25,6 +25,7 @@ import {
   Card,
   CardContent,
   CardActions,
+  CircularProgress,
   Box,
   IconButton, List, ListItem, ListItemAvatar, Avatar, ListItemText
 } from "@mui/material";
@@ -68,6 +69,7 @@ export default function Tenants() {
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
   const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
   const router = useRouter();
+  const [loading, setLoading] = useState(false);
 
 
   useEffect(() => {
@@ -133,6 +135,7 @@ export default function Tenants() {
 
   const handleAddTenant = (e: { preventDefault: () => void }) => {
     e.preventDefault();
+    setLoading(true);
     const tenantsApi = new TenantsApi(config);
     tenantsApi
       .addTenant({ gmTenant: newTenant })
@@ -152,7 +155,9 @@ export default function Tenants() {
       })
       .catch((error) => {
         console.error("Fehler beim Hinzufügen des Defekts:", error);
-      });
+      }).finally(() => {
+        setLoading(false); // Ladeanimation stoppen
+      });;
   };
 
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
@@ -293,8 +298,12 @@ export default function Tenants() {
                   </Box>
 
                   <Box flexBasis="100%">
-                    <Button type="submit" variant="contained" color="primary">
-                      Tenant hinzufügen
+                    <Button type="submit" variant="contained" color="primary" disabled={loading}>
+                      {loading ? (
+                        <CircularProgress size={24} style={{ color: "white" }} />
+                      ) : (
+                        "Tenant hinzufügen"
+                      )}
                     </Button>
                   </Box>
                 </Box>
