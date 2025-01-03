@@ -102,7 +102,7 @@ export default function Properties() {
     console.error("Property Backend URL nicht gefunden");
   }
   const configParameters: Api.ConfigurationParameters = {
-    basePath: '/property-backend-staging', //propertyBackendUrl, // Setzt die URL des Backends
+    basePath: process.env.NEXT_PUBLIC_PROPERTY_BACKEND || "http://localhost:8081",
     headers: {
       Authorization: "Bearer " + getToken(),
     },

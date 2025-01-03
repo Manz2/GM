@@ -1,14 +1,16 @@
 #!/bin/sh
 
 # Überprüfen, ob die erforderlichen Parameter übergeben wurden
-if [ "$#" -lt 3 ]; then
-  echo "Usage: $0 <CLUSTER_NAME> <REGION> <VERSION>"
+if [ "$#" -lt 5 ]; then
+  echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION>"
   exit 1
 fi
 
 CLUSTER_NAME=$1
 REGION=$2
-VERSION=$3
+PROPERTYVERSION=$3
+MANAGEMENTVERSION=$4
+FINANCEVERSION=$5
 
 echo "Creating new tenant for cluster: $CLUSTER_NAME in region: $REGION"
 
@@ -40,7 +42,7 @@ gcloud iam service-accounts add-iam-policy-binding dev-serviceaccount@ca-test2-4
 
 # Helm-Charts installieren (mit Retry)
 for i in {1..5}; do
-  helm upgrade --install gm ./ --set propertyBackend.version=$VERSION,managementFrontend.version=$VERSION,financeBackend.version=$VERSION && break || sleep 10
+  helm upgrade --install gm ./ --set propertyBackend.version=$PROPERTYVERSION,managementFrontend.version=$MANAGEMENTVERSION,financeBackend.version=$FINANCEVERSION && break || sleep 10
   if [ "$i" -eq 5 ]; then
     echo "Failed to install Helm charts after 5 attempts"
     exit 1

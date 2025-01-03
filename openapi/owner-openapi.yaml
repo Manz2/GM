@@ -230,6 +230,9 @@ components:
         region:
           description: "region des Service"
           type: string
+        version:
+          description: "version des Service"
+          type: string
 
     customisation:
       type: object

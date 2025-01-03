@@ -49,11 +49,30 @@ export default function Tenants() {
     name: "",
     id: "",
     adminMail: "",
-    services: undefined,
-    customisation: undefined,
+    services: {
+      financeBackend: {
+        name: "Finance Backend",
+        url: "",
+        region: "",
+        version: "",
+      },
+      propertyBackend: {
+        name: "Property Backend",
+        url: "",
+        region: "",
+        version: "",
+      },
+      managementFrontend: {
+        name: "Management Frontend",
+        url: "",
+        region: "",
+        version: "",
+      },
+    },
     tier: "ENTRY",
-    preferedRegion: ""
+    preferedRegion: "",
   });
+
   const [filter, setFilter] = useState({
     tier: "",
   });
@@ -146,10 +165,28 @@ export default function Tenants() {
           name: "",
           id: "",
           adminMail: "",
-          services: undefined,
-          customisation: undefined,
+          services: {
+            financeBackend: {
+              name: "Finance Backend",
+              url: "",
+              region: "",
+              version: "",
+            },
+            propertyBackend: {
+              name: "Property Backend",
+              url: "",
+              region: "",
+              version: "",
+            },
+            managementFrontend: {
+              name: "Management Frontend",
+              url: "",
+              region: "",
+              version: "",
+            },
+          },
           tier: "ENTRY",
-          preferedRegion: ""
+          preferedRegion: "",
         });
         setAcceptedFiles([]);
       })
@@ -283,6 +320,66 @@ export default function Tenants() {
                     />
                   </Box>
                   <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Property Backend Version"
+                      value={newTenant.services?.propertyBackend?.version || ""}
+                      onChange={(e) =>
+                        setNewTenant((prevTenant) => ({
+                          ...prevTenant,
+                          services: {
+                            ...prevTenant.services,
+                            propertyBackend: {
+                              ...prevTenant.services?.propertyBackend,
+                              version: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Management Frontend Version"
+                      value={newTenant.services?.managementFrontend?.version || ""}
+                      onChange={(e) =>
+                        setNewTenant((prevTenant) => ({
+                          ...prevTenant,
+                          services: {
+                            ...prevTenant.services,
+                            managementFrontend: {
+                              ...prevTenant.services?.managementFrontend,
+                              version: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Finance Backend Version"
+                      value={newTenant.services?.financeBackend?.version || ""}
+                      onChange={(e) =>
+                        setNewTenant((prevTenant) => ({
+                          ...prevTenant,
+                          services: {
+                            ...prevTenant.services,
+                            financeBackend: {
+                              ...prevTenant.services?.financeBackend,
+                              version: e.target.value,
+                            },
+                          },
+                        }))
+                      }
+                      required
+                      fullWidth
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                     <FormControl fullWidth required>
                       <InputLabel>Tier</InputLabel>
                       <Select
@@ -380,6 +477,18 @@ export default function Tenants() {
                           <Typography variant="h6">ID:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {tenant.id}
+                          </Typography>
+                          <Typography variant="h6">Management Version:</Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {tenant.services?.managementFrontend?.version}
+                          </Typography>
+                          <Typography variant="h6">Property Version:</Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {tenant.services?.propertyBackend?.version}
+                          </Typography>
+                          <Typography variant="h6">Finance Version:</Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {tenant.services?.financeBackend?.version}
                           </Typography>
                           <Typography variant="h6">Tier:</Typography>
                           {/* Select außerhalb von Typography */}

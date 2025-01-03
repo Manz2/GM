@@ -1,5 +1,6 @@
 package com.group.gm.owner_backend.service;
 
+import com.group.gm.openapi.model.GmTenant;
 import org.springframework.stereotype.Service;
 
 import java.io.BufferedReader;
@@ -9,7 +10,7 @@ import java.io.InputStreamReader;
 
 @Service
 public class TerraformService {
-    public void start(String clusterName, String region) {
+    public void start(String clusterName, GmTenant gmTenant) {
         try {
             // Pfad zum Skript
             String scriptPath = "/app/scripts/newTenant.sh";
@@ -18,7 +19,10 @@ public class TerraformService {
             ProcessBuilder processBuilder = new ProcessBuilder(
                     scriptPath,
                     clusterName,
-                    region
+                    gmTenant.getPreferedRegion(),
+                    gmTenant.getServices().getPropertyBackend().getVersion(),
+                    gmTenant.getServices().getManagementFrontend().getVersion(),
+                    gmTenant.getServices().getFinanceBackend().getVersion()
             );
 
             // Starte den Prozess

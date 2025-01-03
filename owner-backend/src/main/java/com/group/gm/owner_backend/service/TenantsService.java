@@ -1,5 +1,8 @@
 package com.group.gm.owner_backend.service;
 
+import com.google.auth.oauth2.GoogleCredentials;
+import com.google.cloud.firestore.Firestore;
+import com.google.cloud.firestore.FirestoreOptions;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.UserRecord;
@@ -38,6 +41,10 @@ public class TenantsService implements TenantsApiDelegate {
 
     @Value("${google.cloud.commonPropertyDb.id}")
     private String commonPropertyDb;
+
+    @Value("${google.cloud.projectId}")
+    private String projectId;
+
 
     Logger logger = LoggerFactory.getLogger(TenantsService.class);
 
@@ -83,7 +90,7 @@ public class TenantsService implements TenantsApiDelegate {
         }
 
         if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
-            terraformService.start(googelTenant.getTenantId(),gmTenant.getPreferedRegion());
+            terraformService.start(googelTenant.getTenantId(),gmTenant);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
@@ -91,14 +98,11 @@ public class TenantsService implements TenantsApiDelegate {
 
     private Services getServices(GmTenant.TierEnum tier) {
         Services services = new Services();
-        // TODO implement other tiers here
-
         // This case is for Entry Tier
         GmService propertyBackend = new GmService();
         propertyBackend.setName("Common Property Backend");
         propertyBackend.setUrl(commonPropertyBackendUrl);
         services.setPropertyBackend(propertyBackend);
-
         GmService propertyDb = new GmService();
         propertyDb.setName("Common Property DB");
         propertyDb.setUrl(commonPropertyDb);
@@ -106,6 +110,7 @@ public class TenantsService implements TenantsApiDelegate {
 
         return services;
     }
+
 
     @Override
     public ResponseEntity<Void> deleteTenant(String id) {
@@ -150,7 +155,7 @@ public class TenantsService implements TenantsApiDelegate {
         tenantDbService.updateTenant(existingTenant);
 
         if(tenant.getTier() == GmTenant.TierEnum.PREMIUM) {
-            terraformService.start(tenant.getId(),tenant.getPreferedRegion());
+            terraformService.start(tenant.getId(),tenant);
         }
 
         return ResponseEntity.ok(existingTenant);

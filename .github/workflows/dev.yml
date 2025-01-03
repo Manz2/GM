@@ -1,10 +1,10 @@
 name: Deploy Staging
 
-#on:
-#  push:
-#    branches: ["dev"]
-#  pull_request:
-#    branches: ["dev"]
+on:
+  push:
+    branches: ["dev"]
+  pull_request:
+    branches: ["dev"]
 
 jobs:
   build:
@@ -83,6 +83,21 @@ jobs:
         with:
           name: owner-backend-jar
           path: ./owner-backend/target
+      
+      - name: Create Management .env file
+        run: |
+          echo "NEXT_PROPERTY_BASE_PATH=${{ vars.PROPERTY_BASE_PATH }}" > management-frontend/.env.production
+          echo "NEXT_FINANCE_BASE_PATH=${{ vars.FINANCE_BASE_PATH }}" > management-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> management-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> management-frontend/.env.production
+      - name: Create owner .env file
+        run: |
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.OWNER_STAGING_BASE_PATH }}" > owner-frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.OWNER_STAGING_APPLICATION_NAME }}" >> owner-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> owner-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> owner-frontend/.env.production
+      - name: Set version variable
+        run: echo "VERSION=v1.0.0" >> $GITHUB_ENV
 
       - name: Build Property Backend
         run: |
