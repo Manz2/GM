@@ -168,7 +168,7 @@ jobs:
      - name: Read versions from versions.yaml
        id: read_versions
        run: |
-         VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
+         VERSION_OWNER_BACKEND=$(yq eval '.owner-backend' versions.yaml)
          VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' versions.yaml)
          echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
          echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
