@@ -1,5 +1,5 @@
 # build with:
-# docker build com/group/property-backend .
+# docker build com/group/finance-backend .
 
 FROM openjdk:21-jdk-slim
 RUN adduser --system --group spring

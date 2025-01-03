@@ -93,6 +93,12 @@ jobs:
           name: owner-backend-jar
           path: ./owner-backend/target
       
+      - name: Download Finance JAR Artifact
+        uses: actions/download-artifact@v3
+        with:
+          name: finance-backend-jar
+          path: ./finance-backend/target
+      
       - name: Create Management .env file
         run: |
           echo "NEXT_PROPERTY_BASE_PATH=${{ vars.PROPERTY_BASE_PATH }}" > management-frontend/.env.production
