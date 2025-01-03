@@ -39,6 +39,9 @@ jobs:
 
       - name: Build owner with Maven
         run: mvn -B clean package -Pdev --file owner-backend/pom.xml
+        
+      - name: Build finance with Maven
+        run: mvn -B clean package -Pdev --file finance-backend/pom.xml
 
       - name: Upload Property JAR Artifact
         uses: actions/upload-artifact@v3
@@ -51,6 +54,12 @@ jobs:
         with:
           name: owner-backend-jar
           path: owner-backend/target/*.jar
+
+      - name: Upload Owner JAR Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: finance-backend-jar
+          path: finance-backend/target/*.jar
 
   docker:
     needs: build
