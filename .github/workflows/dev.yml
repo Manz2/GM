@@ -151,12 +151,12 @@ jobs:
     steps:
      - uses: actions/checkout@v4
      - name: Read versions from versions.yaml
-      id: read_versions
-      run: |
-        VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
-        VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' versions.yaml)
-        echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
-        echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
+       id: read_versions
+       run: |
+         VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
+         VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' versions.yaml)
+         echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
+         echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
      - name: Authenticate to Google Cloud
        uses: google-github-actions/auth@v2
        with:
