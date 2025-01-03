@@ -1,36 +1,36 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ .Values.managementFrontendStaging.name }}
+  name: {{ .Values.managementFrontend.name }}
   labels:
-    app: {{ .Values.managementFrontendStaging.name }}
+    app: {{ .Values.managementFrontend.name }}
 spec:
-  replicas: {{ .Values.managementFrontendStaging.replicaCount }}
+  replicas: {{ .Values.managementFrontend.replicaCount }}
   strategy:
     type: RollingUpdate
   selector:
     matchLabels:
-      app: {{ .Values.managementFrontendStaging.name }}
+      app: {{ .Values.managementFrontend.name }}
   template:
     metadata:
       labels:
-        app: {{ .Values.managementFrontendStaging.name }}
+        app: {{ .Values.managementFrontend.name }}
     spec:
       serviceAccountName: staging
       containers:
-        - name: {{ .Values.managementFrontendStaging.name }}
-          image: "{{ .Values.managementFrontendStaging.artifactRegistryPath }}/{{ .Values.managementFrontendStaging.image }}:{{ .Values.managementFrontendStaging.version }}"
+        - name: {{ .Values.managementFrontend.name }}
+          image: "{{ .Values.managementFrontend.artifactRegistryPath }}/{{ .Values.managementFrontend.image }}:{{ .Values.managementFrontend.version }}"
           ports:
-            - containerPort: {{ .Values.managementFrontendStaging.containerPort }}
+            - containerPort: {{ .Values.managementFrontend.containerPort }}
           readinessProbe:
             httpGet:
-              path: {{ .Values.managementFrontendStaging.readinessProbePath }}
-              port: {{ .Values.managementFrontendStaging.containerPort }}
+              path: {{ .Values.managementFrontend.readinessProbePath }}
+              port: {{ .Values.managementFrontend.containerPort }}
             initialDelaySeconds: 30
             periodSeconds: 10
           livenessProbe:
             httpGet:
-              path: {{ .Values.managementFrontendStaging.readinessProbePath }}
-              port: {{ .Values.managementFrontendStaging.containerPort }}
+              path: {{ .Values.managementFrontend.readinessProbePath }}
+              port: {{ .Values.managementFrontend.containerPort }}
             initialDelaySeconds: 30
             periodSeconds: 15
