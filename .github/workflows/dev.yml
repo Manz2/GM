@@ -117,27 +117,27 @@ jobs:
       - name: Build Property Backend
         run: |
           docker build -t com/group/property-backend:${{ env.VERSION_PROPERTY }} ./property-backend
-          docker tag com/group/property-backend:${{ env.VERSION_PROPERTY }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend-staging:${{ env.VERSION_PROPERTY }}
+          docker tag com/group/property-backend:${{ env.VERSION_PROPERTY }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/property-backend:${{ env.VERSION_PROPERTY }}
 
       - name: Build Owner Backend
         run: |
           docker build -t com/group/owner-backend:${{ env.VERSION_OWNER }} ./owner-backend
-          docker tag com/group/owner-backend:${{ env.VERSION_OWNER }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend-staging:${{ env.VERSION_OWNER }}
+          docker tag com/group/owner-backend:${{ env.VERSION_OWNER }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend:${{ env.VERSION_OWNER }}
 
       - name: Build Finance Backend
         run: |
           docker build -t com/group/finance-backend:${{ env.VERSION_FINANCE }} ./finance-backend
-          docker tag com/group/finance-backend:${{ env.VERSION_FINANCE }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/finance-backend-staging:${{ env.VERSION_FINANCE }}
+          docker tag com/group/finance-backend:${{ env.VERSION_FINANCE }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/finance-backend:${{ env.VERSION_FINANCE }}
 
       - name: Build Management Frontend
         run: |
           docker build -t com/group/management-frontend:${{ env.VERSION_MANAGEMENT }} ./management-frontend
-          docker tag com/group/management-frontend:${{ env.VERSION_MANAGEMENT }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend-staging:${{ env.VERSION_MANAGEMENT }}
+          docker tag com/group/management-frontend:${{ env.VERSION_MANAGEMENT }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend:${{ env.VERSION_MANAGEMENT }}
 
       - name: Build Owner Frontend
         run: |
           docker build -t com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} ./owner-frontend
-          docker tag com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend-staging:${{ env.VERSION_OWNER_FRONTEND }}
+          docker tag com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }}
 
       - name: Authenticate to Google Cloud
         uses: google-github-actions/auth@v2
