@@ -23,11 +23,11 @@ jobs:
       - name: Read versions from versions.yaml
         id: read_versions
         run: |
-          VERSION_PROPERTY=$(yq eval '.property-backend' .github/workflows/versions.yaml)
-          VERSION_OWNER=$(yq eval '.owner-backend' .github/workflows/versions.yaml)
-          VERSION_FINANCE=$(yq eval '.finance-backend' .github/workflows/versions.yaml)
-          VERSION_MANAGEMENT=$(yq eval '.management-frontend' .github/workflows/versions.yaml)
-          VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' .github/workflows/versions.yaml)
+          VERSION_PROPERTY=$(yq eval '.property-backend' versions.yaml)
+          VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
+          VERSION_FINANCE=$(yq eval '.finance-backend' versions.yaml)
+          VERSION_MANAGEMENT=$(yq eval '.management-frontend' versions.yaml)
+          VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' versions.yaml)
           echo "VERSION_PROPERTY=$VERSION_PROPERTY" >> $GITHUB_ENV
           echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
           echo "VERSION_FINANCE=$VERSION_FINANCE" >> $GITHUB_ENV
@@ -61,11 +61,11 @@ jobs:
       - name: Read versions from versions.yaml
         id: read_versions
         run: |
-          VERSION_PROPERTY=$(yq eval '.property-backend' .github/workflows/versions.yaml)
-          VERSION_OWNER=$(yq eval '.owner-backend' .github/workflows/versions.yaml)
-          VERSION_FINANCE=$(yq eval '.finance-backend' .github/workflows/versions.yaml)
-          VERSION_MANAGEMENT=$(yq eval '.management-frontend' .github/workflows/versions.yaml)
-          VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' .github/workflows/versions.yaml)
+          VERSION_PROPERTY=$(yq eval '.property-backend' versions.yaml)
+          VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
+          VERSION_FINANCE=$(yq eval '.finance-backend' versions.yaml)
+          VERSION_MANAGEMENT=$(yq eval '.management-frontend' versions.yaml)
+          VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' versions.yaml)
           echo "VERSION_PROPERTY=$VERSION_PROPERTY" >> $GITHUB_ENV
           echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
           echo "VERSION_FINANCE=$VERSION_FINANCE" >> $GITHUB_ENV
@@ -145,8 +145,6 @@ jobs:
         run: |
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend:${{ env.VERSION_MANAGEMENT }}
           docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }}
-
-
   deploy:
     needs: docker
     runs-on: ubuntu-latest
@@ -155,8 +153,8 @@ jobs:
      - name: Read versions from versions.yaml
       id: read_versions
       run: |
-        VERSION_OWNER=$(yq eval '.owner-backend' .github/workflows/versions.yaml)
-        VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' .github/workflows/versions.yaml)
+        VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
+        VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' versions.yaml)
         echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
         echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
      - name: Authenticate to Google Cloud
