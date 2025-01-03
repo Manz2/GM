@@ -1,35 +1,49 @@
 # for ingress:
 microservices:
-  - name: property-backend-staging
+  - name: property-backend
     containerPort: 8081
-    ingressPath: /property-backend-staging(/|$)(.*)
+    ingressPath: /property-backend(/|$)(.*)
     pathType: ImplementationSpecific
-  - name: management-frontend-staging
+  - name: finance-backend
+    containerPort: 8083
+    ingressPath: /finance-backend(/|$)(.*)
+    pathType: ImplementationSpecific
+  - name: management-frontend
     replicaCount: 1
     containerPort: 3000
-    ingressPath: /management-frontend-staging(/|$)(.*)
+    ingressPath: /management-frontend(/|$)(.*)
     pathType: ImplementationSpecific
 
 # for deployment
-propertyBackendStaging:
-  name: property-backend-staging
+propertyBackend:
+  name: property-backend
   replicaCount: 1
   containerPort: 8081
   servicePort: 80
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/property-backend-staging
-  version: "v1.0.2"
+  version: "v1.1.0"
   readinessProbePath: /health
 
-managementFrontendStaging:
-  name: management-frontend-staging
+managementFrontend:
+  name: management-frontend
   replicaCount: 1
   containerPort: 3000
   servicePort: 80
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/management-frontend-staging
-  version: "v1.0.11"
+  version: "v1.1.0"
   readinessProbePath: /
+
+financeBackend:
+  name: finance-backend
+  replicaCount: 1
+  containerPort: 8083
+  servicePort: 80
+  artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
+  image: com/group/finance-backend-staging
+  version: "v1.1.0"
+  readinessProbePath: /health
 
 
 ingress:

@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  assetPrefix: '/management-frontend-staging', // Präfix für statische Assets
+  assetPrefix: '/management-frontend', // Präfix für statische Assets
   output: 'standalone',
 };
 
