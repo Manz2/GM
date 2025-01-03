@@ -22,7 +22,7 @@ propertyBackend:
   servicePort: 80
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/property-backend
-  version: "v1.1.0"
+  version: ""
   readinessProbePath: /health
 
 managementFrontend:
@@ -32,7 +32,7 @@ managementFrontend:
   servicePort: 80
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/management-frontend
-  version: "v1.1.0"
+  version: ""
   readinessProbePath: /
 
 financeBackend:
@@ -42,7 +42,7 @@ financeBackend:
   servicePort: 80
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/finance-backend
-  version: "v1.1.0"
+  version: ""
   readinessProbePath: /health
 
 

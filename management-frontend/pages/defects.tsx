@@ -1,15 +1,15 @@
 import Head from "next/head";
 import Image from "next/image";
 import localFont from "next/font/local";
-import { DefectsApi } from "@/api/apis/DefectsApi";
-import { Defect } from "@/api/models/Defect";
-import { DefectStatusEnum } from "@/api/models/Defect";
+import { DefectsApi } from "@/api/property/apis/DefectsApi";
+import { Defect } from "@/api/property/models/Defect";
+import { DefectStatusEnum } from "@/api/property/models/Defect";
 import { useEffect, useState, createRef } from "react";
 import styles from "@/styles/Defects.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
-import * as Api from '../api';
+import * as Api from '../api/property/';
 import {
   Accordion,
   AccordionSummary,

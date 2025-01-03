@@ -5,7 +5,6 @@ import localFont from "next/font/local";
 import { PropertyApi } from "@/api/property/apis/PropertyApi";
 import { FinanceApi } from '@/api/finance/apis/FinanceApi';
 import { Property, PropertyStatusEnum } from "@/api/property/models/Property";
-import { Pricing } from "@/api/models/Pricing";
 import { useEffect, useState, createRef } from "react";
 import styles from "@/styles/Defects.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
@@ -13,8 +12,8 @@ import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import { getServiceUrl } from "../config/tenantConfig";
-import * as PApi  from "@/api/property";
-import * as FApi  from "@/api/finance";
+import * as PApi from "@/api/property";
+import * as FApi from "@/api/finance";
 import {
   Accordion,
   AccordionSummary,
@@ -254,7 +253,7 @@ export default function Properties() {
       };
       try {
         setLoading(true);
-        const data = await financeApi.generateDefectReport( requestParameters );
+        const data = await financeApi.generateDefectReport(requestParameters);
         console.log("Defect Report Data:", data);
         setReport(data);
       } catch (error) {
@@ -265,304 +264,334 @@ export default function Properties() {
     };
 
     return (
-        <Button variant="contained" color="primary" onClick={() => generateDefectReport(property)}>
-          {loading ? "Generating Report..." : "Generate Defect Report"}
-        </Button>
+      <Button variant="contained" color="primary" onClick={() => generateDefectReport(property)}>
+        {loading ? "Generating Report..." : "Generate Defect Report"}
+      </Button>
     );
   };
 
-  const handlePropertySelect = (property: { name: string }) => {
+  const handlePropertySelect = (property: Property) => {
     setSelectedProperty(property);
   };
 
   return (
-      <>
-        <Head>
-          <title>Finance</title>
-          <meta name="description" content="Anwendung zur Verwaltung von Mängeln" />
-          <meta name="viewport" content="width=device-width, initial-scale=1" />
-          <link rel="icon" href="/favicon.ico" />
-        </Head>
-        <Container className={`${geistSans.variable} ${geistMono.variable}`} maxWidth="lg">
-          <main>
-            <div style={{ textAlign: "center", margin: "20px 0" }}>
-              <Image src="/parkhaus.png" alt="Parkhaus" width={75} height={70} />
-              <Typography variant="h3" gutterBottom>
-                {appName}
-              </Typography>
-            </div>
-
-            <Typography variant="h4" gutterBottom>
-              Property Management
+    <>
+      <Head>
+        <title>Finance</title>
+        <meta name="description" content="Anwendung zur Verwaltung von Mängeln" />
+        <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/favicon.ico" />
+      </Head>
+      <Container className={`${geistSans.variable} ${geistMono.variable}`} maxWidth="lg">
+        <main>
+          <div style={{ textAlign: "center", margin: "20px 0" }}>
+            <Image src="/parkhaus.png" alt="Parkhaus" width={75} height={70} />
+            <Typography variant="h3" gutterBottom>
+              {appName}
             </Typography>
+          </div>
 
-            <Accordion expanded={expanded === "panel1"} onChange={handleChange("panel1")}>
+          <Typography variant="h4" gutterBottom>
+            Property Management
+          </Typography>
+
+          <Accordion expanded={expanded === "panel1"} onChange={handleChange("panel1")}>
+            <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+              <Typography variant="h5">Neuen Report erstellen</Typography>
+            </AccordionSummary>
+            <AccordionDetails>
+              <Grid container spacing={2}>
+                <Grid item xs={12} sm={6}>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography variant="h6">Defect Report</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box display="flex" flexDirection="column" gap={2}>
+                        <List>
+                          {properties.map((property, index) => (
+                            <ListItem
+                              component="button" // Erlaubt die Verwendung als Button
+                              key={index}
+                              onClick={() => handlePropertySelect(property)}
+                              sx={{
+                                backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                "&:hover": {
+                                  backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                },
+                              }}
+                            >
+                              <ListItemText primary={property.name} />
+                            </ListItem>
+
+                          ))}
+                        </List>
+
+                        {(
+                          <Box display="flex" flexDirection="column" gap={2}>
+                            <TextField
+                              label="Startdatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            <TextField
+                              label="Enddatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={endDate}
+                              onChange={(e) => setEndDate(e.target.value)}
+                            />
+                            {/* Render DefectReportButton only if a property is selected */}
+                            {(selectedProperty &&
+                              <DefectReportButton property={selectedProperty.name} />)}
+                          </Box>
+                        )}
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                </Grid>
+
+                {/* Revenue Report */}
+                <Grid item xs={12} sm={6}>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography variant="h6">Revenue Report</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box display="flex" flexDirection="column" gap={2}>
+                        <List>
+                          {properties.map((property, index) => (
+                            <ListItem
+                              component="button" // Definiert das Element als Button
+                              key={index}
+                              onClick={() => handlePropertySelect(property)}
+                              sx={{
+                                textAlign: "left", // Optional: Stellt sicher, dass der Text links ausgerichtet ist
+                              }}
+                            >
+                              <ListItemText primary={property.name} />
+                            </ListItem>
+                          ))}
+                        </List>
+
+                        {selectedProperty && (
+                          <Box display="flex" flexDirection="column" gap={2}>
+                            <TextField
+                              label="Startdatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            <TextField
+                              label="Enddatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={endDate}
+                              onChange={(e) => setEndDate(e.target.value)}
+                            />
+                            <Button
+                              variant="contained"
+                              color="primary"
+
+                            >
+                              Revenue Report generieren
+                            </Button>
+                          </Box>
+                        )}
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                </Grid>
+
+                {/* Export Raw Data */}
+                <Grid item xs={12} sm={6}>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography variant="h6">Export Raw Data</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box display="flex" flexDirection="column" gap={2}>
+                        <List>
+                          {properties.map((property, index) => (
+                            <ListItem
+                              key={index}
+                              component="button" // Render als HTML-Button
+                              onClick={() => handlePropertySelect(property)}
+                              sx={{
+                                textAlign: "left", // Optional: Stellt sicher, dass der Text links ausgerichtet ist
+                                backgroundColor: "transparent", // Standardhintergrund
+                                "&:hover": {
+                                  backgroundColor: "lightgray", // Hover-Effekt
+                                },
+                              }}
+                            >
+                              <ListItemText primary={property.name} />
+                            </ListItem>
+                          ))}
+                        </List>
+                        {selectedProperty && (
+                          <Box display="flex" flexDirection="column" gap={2}>
+                            <TextField
+                              label="Startdatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            <TextField
+                              label="Enddatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={endDate}
+                              onChange={(e) => setEndDate(e.target.value)}
+                            />
+                            <Button
+                              variant="contained"
+                              color="primary"
+
+                            >
+                              Export Raw Data generieren
+                            </Button>
+                          </Box>
+                        )}
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                </Grid>
+
+                {/* Profit Report */}
+                <Grid item xs={12} sm={6}>
+                  <Accordion>
+                    <AccordionSummary expandIcon={<ExpandMoreIcon />}>
+                      <Typography variant="h6">Profit Report</Typography>
+                    </AccordionSummary>
+                    <AccordionDetails>
+                      <Box display="flex" flexDirection="column" gap={2}>
+                        <List>
+                          {properties.map((property, index) => (
+                            <ListItem
+                              key={index}
+                              component="button" // Rendert das ListItem als HTML-Button
+                              onClick={() => handlePropertySelect(property)}
+                              sx={{
+                                textAlign: "left", // Optional: Stellt sicher, dass der Text links ausgerichtet ist
+                                backgroundColor: "transparent", // Standardhintergrund
+                                "&:hover": {
+                                  backgroundColor: "lightgray", // Hover-Effekt
+                                },
+                              }}
+                            >
+                              <ListItemText primary={property.name} />
+                            </ListItem>
+                          ))}
+                        </List>
+
+                        {selectedProperty && (
+                          <Box display="flex" flexDirection="column" gap={2}>
+                            <TextField
+                              label="Startdatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            <TextField
+                              label="Enddatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={endDate}
+                              onChange={(e) => setEndDate(e.target.value)}
+                            />
+                            <Button
+                              variant="contained"
+                              color="primary"
+
+                            >
+                              Profit Report generieren
+                            </Button>
+                          </Box>
+                        )}
+                      </Box>
+                    </AccordionDetails>
+                  </Accordion>
+                </Grid>
+              </Grid>
+            </AccordionDetails>
+          </Accordion>
+
+          <div style={{ marginTop: '20px' }} />
+          <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px" }}>
+            <Accordion expanded={expanded === 'filterPanel'} onChange={handleChange('filterPanel')}>
               <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                <Typography variant="h5">Neuen Report erstellen</Typography>
+                <Typography variant="h5">Filter</Typography>
               </AccordionSummary>
               <AccordionDetails>
-                <Grid container spacing={2}>
-                  <Grid item xs={12} sm={6}>
-                    <Accordion>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">Defect Report</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Box display="flex" flexDirection="column" gap={2}>
-                          <List>
-                            {properties.map((property, index) => (
-                                <ListItem
-                                    button
-                                    key={index}
-                                    onClick={() => handlePropertySelect(property)}
-                                    sx={{
-                                      backgroundColor:
-                                          selectedProperty?.name === property.name ? "orange" : "transparent",
-                                      "&:hover": {
-                                        backgroundColor:
-                                            selectedProperty?.name === property.name ? "orange" : "transparent",
-                                      },
-                                    }}
-                                >
-                                  <ListItemText primary={property.name} />
-                                </ListItem>
-                            ))}
-                          </List>
-
-                          {(
-                              <Box display="flex" flexDirection="column" gap={2}>
-                                <TextField
-                                    label="Startdatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                />
-                                <TextField
-                                    label="Enddatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />
-                                {/* Render DefectReportButton only if a property is selected */}
-                                {(selectedProperty &&
-                                <DefectReportButton property={selectedProperty.name} />)}
-                              </Box>
-                          )}
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
-                  </Grid>
-
-                  {/* Revenue Report */}
-                  <Grid item xs={12} sm={6}>
-                    <Accordion>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">Revenue Report</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Box display="flex" flexDirection="column" gap={2}>
-                          <List>
-                            {properties.map((property, index) => (
-                                <ListItem button key={index} onClick={() => handlePropertySelect(property)}>
-                                  <ListItemText primary={property.name} />
-                                </ListItem>
-                            ))}
-                          </List>
-                          {selectedProperty && (
-                              <Box display="flex" flexDirection="column" gap={2}>
-                                <TextField
-                                    label="Startdatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                />
-                                <TextField
-                                    label="Enddatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-
-                                >
-                                  Revenue Report generieren
-                                </Button>
-                              </Box>
-                          )}
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
-                  </Grid>
-
-                  {/* Export Raw Data */}
-                  <Grid item xs={12} sm={6}>
-                    <Accordion>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">Export Raw Data</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Box display="flex" flexDirection="column" gap={2}>
-                          <List>
-                            {properties.map((property, index) => (
-                                <ListItem button key={index} onClick={() => handlePropertySelect(property)}>
-                                  <ListItemText primary={property.name} />
-                                </ListItem>
-                            ))}
-                          </List>
-                          {selectedProperty && (
-                              <Box display="flex" flexDirection="column" gap={2}>
-                                <TextField
-                                    label="Startdatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                />
-                                <TextField
-                                    label="Enddatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-
-                                >
-                                  Export Raw Data generieren
-                                </Button>
-                              </Box>
-                          )}
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
-                  </Grid>
-
-                  {/* Profit Report */}
-                  <Grid item xs={12} sm={6}>
-                    <Accordion>
-                      <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                        <Typography variant="h6">Profit Report</Typography>
-                      </AccordionSummary>
-                      <AccordionDetails>
-                        <Box display="flex" flexDirection="column" gap={2}>
-                          <List>
-                            {properties.map((property, index) => (
-                                <ListItem button key={index} onClick={() => handlePropertySelect(property)}>
-                                  <ListItemText primary={property.name} />
-                                </ListItem>
-                            ))}
-                          </List>
-                          {selectedProperty && (
-                              <Box display="flex" flexDirection="column" gap={2}>
-                                <TextField
-                                    label="Startdatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={startDate}
-                                    onChange={(e) => setStartDate(e.target.value)}
-                                />
-                                <TextField
-                                    label="Enddatum"
-                                    type="date"
-                                    InputLabelProps={{ shrink: true }}
-                                    fullWidth
-                                    value={endDate}
-                                    onChange={(e) => setEndDate(e.target.value)}
-                                />
-                                <Button
-                                    variant="contained"
-                                    color="primary"
-
-                                >
-                                  Profit Report generieren
-                                </Button>
-                              </Box>
-                          )}
-                        </Box>
-                      </AccordionDetails>
-                    </Accordion>
-                  </Grid>
-                </Grid>
+                <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={1}>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Name"
+                      variant="outlined"
+                      fullWidth
+                      value={filterForm.city}
+                      onChange={(e) => setFilterForm({ ...filterForm, city: e.target.value })}
+                    />
+                  </Box>
+                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                    <TextField
+                      label="Anzahl Parkflächen"
+                      type="number"
+                      value={newProperty.capacity}
+                      onChange={(e) => setFilterForm({ ...filterForm, capacity: Number(e.target.value) })}
+                      fullWidth
+                    />
+                  </Box>
+                  <Box display="flex" flexBasis={{ xs: '100%', sm: '100%' }} alignItems="center">
+                    <Button type="submit" variant="contained" color="primary" style={{ height: 'fit-content', marginLeft: "20px" }}>
+                      Anwenden
+                    </Button>
+                    <IconButton onClick={handleReset} color="primary" aria-label="reset filter" style={{ marginLeft: "20px" }}>
+                      <FilterListOffIcon />
+                    </IconButton>
+                  </Box>
+                </Box>
               </AccordionDetails>
             </Accordion>
+          </form>
 
-            <div style={{ marginTop: '20px' }} />
-            <form onSubmit={handleFilterSubmit} style={{ marginBottom: "20px" }}>
-              <Accordion expanded={expanded === 'filterPanel'} onChange={handleChange('filterPanel')}>
-                <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                  <Typography variant="h5">Filter</Typography>
-                </AccordionSummary>
-                <AccordionDetails>
-                  <Box display="flex" flexDirection={{ xs: 'column', sm: 'row' }} gap={1}>
-                    <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                      <TextField
-                          label="Name"
-                          variant="outlined"
-                          fullWidth
-                          value={filterForm.city}
-                          onChange={(e) => setFilterForm({ ...filterForm, city: e.target.value })}
-                      />
-                    </Box>
-                    <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                      <TextField
-                          label="Anzahl Parkflächen"
-                          type="number"
-                          value={newProperty.capacity}
-                          onChange={(e) => setFilterForm({ ...filterForm, capacity: Number(e.target.value) })}
-                          fullWidth
-                      />
-                    </Box>
-                    <Box display="flex" flexBasis={{ xs: '100%', sm: '100%' }} alignItems="center">
-                      <Button type="submit" variant="contained" color="primary" style={{ height: 'fit-content', marginLeft: "20px" }}>
-                        Anwenden
-                      </Button>
-                      <IconButton onClick={handleReset} color="primary" aria-label="reset filter" style={{ marginLeft: "20px" }}>
-                        <FilterListOffIcon />
-                      </IconButton>
-                    </Box>
-                  </Box>
-                </AccordionDetails>
-              </Accordion>
-            </form>
+          <Box display="flex" flexWrap="wrap" gap={2}>
+            {/* Render properties here */}
+          </Box>
 
-            <Box display="flex" flexWrap="wrap" gap={2}>
-              {/* Render properties here */}
-            </Box>
-
-            <div style={{ marginTop: "40px" }}>
-              <Typography variant="h4">Kontakt</Typography>
-              <Typography>Mitglieder: Jannis Liebscher, Erik Manz</Typography>
-            </div>
-          </main>
-          <footer style={{ textAlign: "center", margin: "20px 0" }}>
-            <a href="https://github.com/Manz2/GM" target="_blank" rel="noopener noreferrer">
-              <Image
-                  aria-hidden
-                  src="https://nextjs.org/icons/file.svg"
-                  alt="File icon"
-                  width={16}
-                  height={16}
-              />
-              Git Repo
-            </a>
-          </footer>
-        </Container>
-      </>
+          <div style={{ marginTop: "40px" }}>
+            <Typography variant="h4">Kontakt</Typography>
+            <Typography>Mitglieder: Jannis Liebscher, Erik Manz</Typography>
+          </div>
+        </main>
+        <footer style={{ textAlign: "center", margin: "20px 0" }}>
+          <a href="https://github.com/Manz2/GM" target="_blank" rel="noopener noreferrer">
+            <Image
+              aria-hidden
+              src="https://nextjs.org/icons/file.svg"
+              alt="File icon"
+              width={16}
+              height={16}
+            />
+            Git Repo
+          </a>
+        </footer>
+      </Container>
+    </>
   );
 
 }
