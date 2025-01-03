@@ -59,8 +59,8 @@ public class TenantsService implements TenantsApiDelegate {
             logger.error("Invalid tenant data provided.");
             return ResponseEntity.badRequest().build();
         }
-        Services services = getServices(gmTenant.getTier());
-        gmTenant.setServices(services);
+
+        getServices(gmTenant);
 
         Tenant googelTenant;
         try {
@@ -96,19 +96,11 @@ public class TenantsService implements TenantsApiDelegate {
         return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
     }
 
-    private Services getServices(GmTenant.TierEnum tier) {
-        Services services = new Services();
-        // This case is for Entry Tier
-        GmService propertyBackend = new GmService();
-        propertyBackend.setName("Common Property Backend");
-        propertyBackend.setUrl(commonPropertyBackendUrl);
-        services.setPropertyBackend(propertyBackend);
+    private void getServices(GmTenant gmTenant) {
         GmService propertyDb = new GmService();
         propertyDb.setName("Common Property DB");
         propertyDb.setUrl(commonPropertyDb);
-        services.setPropertyDb(propertyDb);
-
-        return services;
+        gmTenant.getServices().setPropertyDb(propertyDb);
     }
 
 
