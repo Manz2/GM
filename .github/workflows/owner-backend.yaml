@@ -66,9 +66,6 @@ jobs:
         run: jq . owner-backend/terraform/account.json
         shell: bash
 
-      - name: Set version variable
-        run: echo "VERSION=v1.0.0" >> $GITHUB_ENV
-
       - name: Build Owner Backend
         run: |
           docker build -t com/group/owner-backend:${{ env.VERSION_OWNER }} ./owner-backend
