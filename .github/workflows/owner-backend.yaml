@@ -56,16 +56,6 @@ jobs:
         with:
           name: owner-backend-jar
           path: ./owner-backend/target
-      
-      - name: Create account.json file
-        run: |
-          echo "${{ secrets.DEV_SERVICEACCOUNT }}" | sed 's/\\n/\n/g' > owner-backend/terraform/account.json
-        shell: bash
-
-
-      - name: Validate account.json
-        run: jq . owner-backend/terraform/account.json
-        shell: bash
 
       - name: Build Owner Backend
         run: |
