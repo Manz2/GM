@@ -3,12 +3,12 @@ name: Deploy Owner-Backend
 on:
   push:
     branches: ["dev"]
-    #paths:
-    #  - "owner-backend/**"
+    paths:
+      - "owner-backend/**"
   pull_request:
     branches: ["dev"]
-    #paths:
-    #  - "owner-backend/**"
+    paths:
+      - "owner-backend/**"
 
 jobs:
   build:
@@ -24,7 +24,7 @@ jobs:
           distribution: 'temurin'
           cache: maven
 
-      - name: Read versions from versions.yaml
+      - name: Read versions from version.yaml
         id: read_versions
         run: |
           VERSION_OWNER=$(yq eval '.owner-backend' owner-backend/version.yaml)  
@@ -45,7 +45,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Read versions from versions.yaml
+      - name: Read versions from version.yaml
         id: read_versions
         run: |
           VERSION_OWNER=$(yq eval '.owner-backend' owner-backend/version.yaml)
@@ -81,7 +81,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
      - uses: actions/checkout@v4
-     - name: Read versions from versions.yaml
+     - name: Read versions from version.yaml
        id: read_versions
        run: |
          VERSION_OWNER=$(yq eval '.owner-backend' owner-backend/version.yaml)
