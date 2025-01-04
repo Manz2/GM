@@ -3,12 +3,12 @@ name: Deploy Owner-Backend
 on:
   push:
     branches: ["dev"]
-    paths:
-      - "owner-backend/**"
+    #paths:
+    #  - "owner-backend/**"
   pull_request:
     branches: ["dev"]
-    paths:
-      - "owner-backend/**"
+    #paths:
+    #  - "owner-backend/**"
 
 jobs:
   build:
@@ -59,8 +59,9 @@ jobs:
       
       - name: Create account.json file
         run: |
-          echo "${{ secrets.DEV_SERVICEACCOUNT }}" | tr -d '\r' > owner-backend/terraform/account.json
+          echo "${{ secrets.DEV_SERVICEACCOUNT }}" | sed 's/\\n/\n/g' > owner-backend/terraform/account.json
         shell: bash
+
 
       - name: Validate account.json
         run: jq . owner-backend/terraform/account.json
