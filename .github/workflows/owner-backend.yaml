@@ -1,4 +1,4 @@
-name: Deploy Staging
+name: Deploy Owner-Backend
 
 on:
   push:
@@ -27,7 +27,7 @@ jobs:
       - name: Read versions from versions.yaml
         id: read_versions
         run: |
-          VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)  
+          VERSION_OWNER=$(yq eval '.owner-backend' owner-backend/version.yaml)  
           echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
 
       - name: Build owner with Maven
@@ -48,8 +48,8 @@ jobs:
       - name: Read versions from versions.yaml
         id: read_versions
         run: |
-          VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
-          VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' versions.yaml)
+          VERSION_OWNER=$(yq eval '.owner-backend' owner-backend/version.yaml)
+          echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
 
       - name: Download Owner JAR Artifact
         uses: actions/download-artifact@v3
@@ -60,6 +60,10 @@ jobs:
       - name: Create account.json file
         run: |
           echo "${{ secrets.DEV_SERVICEACCOUNT }}" | tr -d '\r' > owner-backend/terraform/account.json
+        shell: bash
+
+      - name: Validate account.json
+        run: jq . owner-backend/terraform/account.json
         shell: bash
 
       - name: Set version variable
@@ -92,7 +96,7 @@ jobs:
      - name: Read versions from versions.yaml
        id: read_versions
        run: |
-         VERSION_OWNER=$(yq eval '.owner-backend' versions.yaml)
+         VERSION_OWNER=$(yq eval '.owner-backend' owner-backend/version.yaml)
          echo "VERSION_OWNER=$VERSION_OWNER" >> $GITHUB_ENV
      - name: Authenticate to Google Cloud
        uses: google-github-actions/auth@v2
