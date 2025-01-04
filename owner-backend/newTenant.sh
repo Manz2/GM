@@ -21,7 +21,7 @@ terraform init
 # Terraform anwenden mit übergebenen Variablen
 terraform apply -auto-approve -var="cluster_name=$CLUSTER_NAME" -var="region=$REGION" -state="./states/$CLUSTER_NAME.tfstate"
 
-echo "Starting Helm installation for gm with version: $VERSION"
+echo "Starting Helm installation for gm with versions: Property:$PROPERTYVERSION Management:$MANAGEMENTVERSION Finance:$FINANCEVERSION"
 
 # Anmeldedaten für den Cluster abrufen
 gcloud container clusters get-credentials "$CLUSTER_NAME" --region="$REGION"
