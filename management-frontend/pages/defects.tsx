@@ -276,7 +276,7 @@ export default function Defects() {
         <main>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             <Image
-              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/parkhaus.png`}
+              src={`/management-frontend/parkhaus.png`}
               alt="Parkhaus"
               width={75}
               height={70
