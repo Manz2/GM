@@ -259,7 +259,7 @@ export default function Properties() {
       <Container className={`${geistSans.variable} ${geistMono.variable}`} maxWidth="lg">
         <main>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
-            <Image src="/parkhaus.png" alt="Parkhaus" width={75} height={70} />
+            <Image src="https://fo9.de/flutter/parkhaus.png" alt="Parkhaus" width={75} height={70} />
             <Typography variant="h3" gutterBottom>
               {appName}
             </Typography>

@@ -276,7 +276,7 @@ export default function Defects() {
         <main>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             <Image
-              src={`/management-frontend/parkhaus.png`}
+              src="https://fo9.de/flutter/parkhaus.png"
               alt="Parkhaus"
               width={75}
               height={70

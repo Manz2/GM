@@ -20,7 +20,7 @@ export default function Home() {
       </Head>
       <Container maxWidth="lg">
         <Box textAlign="center" my={4}>
-          <Image src="/parkhaus.png" alt="Logo" width={75} height={70} />
+          <Image src="https://fo9.de/flutter/parkhaus.png" alt="Logo" width={75} height={70} />
           <Typography variant="h3" gutterBottom>
             Willkommen in der Verwaltung
           </Typography>
