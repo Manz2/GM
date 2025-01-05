@@ -52,6 +52,7 @@ COPY ${JAR_FILE} /app/app.jar
 COPY ./terraform/ /app/terraform/
 COPY ./helm/ /app/helm/
 COPY ./newTenant.sh /app/scripts/newTenant.sh
+COPY ./updateTenant.sh /app/scripts/updateTenant.sh
 
 # Setze Berechtigungen für .kube-Verzeichnis
 RUN mkdir -p /app/.kube && chown -R spring:spring /app/.kube

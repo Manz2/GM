@@ -8,6 +8,7 @@ import { useEffect, useState, createRef } from "react";
 import styles from "@/styles/owner.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
+import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import * as Api from '../api';
 import {
@@ -27,7 +28,11 @@ import {
   CardActions,
   CircularProgress,
   Box,
-  IconButton, List, ListItem, ListItemAvatar, Avatar, ListItemText
+  IconButton, List, ListItem, ListItemAvatar, Avatar, ListItemText,
+  Dialog,
+  DialogTitle,
+  DialogContent,
+  DialogActions
 } from "@mui/material";
 import { firebase } from "@/config/firebaseConfig";
 import { useRouter } from "next/router";
@@ -89,6 +94,7 @@ export default function Tenants() {
   const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
   const router = useRouter();
   const [loading, setLoading] = useState(false);
+  const [editTenant, setEditTenant] = useState<GmTenant | null>(null);
 
 
   useEffect(() => {
@@ -255,6 +261,28 @@ export default function Tenants() {
     }
   };
 
+  const handleEditTenant = (tenant: GmTenant) => {
+    setEditTenant(tenant);
+    setOpen(true);  // Dialog öffnen
+  };
+
+  const handleUpdateTenant = () => {
+    const tenantsApi = new TenantsApi(config);
+    if (editTenant && editTenant.id) {
+      tenantsApi.updateTenant({ id: editTenant.id, gmTenant: editTenant })
+      .then(() => {
+        console.log("Tenant erfolgreich aktualisiert");
+        fetchTenants();
+        setOpen(false);
+        setEditTenant(null);
+      })
+      .catch((error) => {
+        console.error("Fehler beim Aktualisieren des Tenant:", error);
+      });
+    }
+      
+  };
+
 
   return (
     <>
@@ -327,7 +355,7 @@ export default function Tenants() {
                         setNewTenant((prevTenant) => ({
                           ...prevTenant,
                           services: {
-                            ...prevTenant.services,
+                            ...prevTenant?.services,
                             propertyBackend: {
                               ...prevTenant.services?.propertyBackend,
                               version: e.target.value,
@@ -517,12 +545,107 @@ export default function Tenants() {
                           onClick={() => tenant.id && handleDeleteTenant(tenant.id)}>
                           Löschen
                         </Button>
+                        <IconButton onClick={() => handleEditTenant(tenant)}>
+                          <EditIcon />
+                        </IconButton>
                       </CardActions>
                     )}
                   </Card>
                 </Box>
               );
             })}
+            <Dialog open={open} onClose={() => setOpen(false)} maxWidth="sm" fullWidth>
+              <DialogTitle>Property bearbeiten</DialogTitle>
+              <DialogContent>
+                {editTenant && (
+                  <Box display="flex" flexDirection="column" gap={2}>
+                    <TextField
+                      label="Name"
+                      value={editTenant.name}
+                      fullWidth
+                      contentEditable= {false}
+                    />
+                    <TextField
+                      label="Region"
+                      value={editTenant.preferedRegion}
+                      fullWidth
+                      contentEditable= {false}
+                    />
+                    <TextField
+                      label="Admin Mail"
+                      value={editTenant.adminMail}
+                      fullWidth
+                      contentEditable= {false}
+                    />
+                    <TextField
+                      label="Property Backend Version"
+                      value={editTenant.services?.propertyBackend?.version || ""}
+                      onChange={(e) => setEditTenant((prevTenant) => ({
+                        ...prevTenant,
+                        services: {
+                          ...prevTenant?.services,
+                          propertyBackend: {
+                            ...prevTenant?.services?.propertyBackend,
+                            version: e.target.value,
+                          },
+                        },
+                      }))}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Management Frontend Version"
+                      value={editTenant.services?.managementFrontend?.version || ""}
+                      onChange={(e) => setEditTenant((prevTenant) => ({
+                        ...prevTenant,
+                        services: {
+                          ...prevTenant?.services,
+                          managementFrontend: {
+                            ...prevTenant?.services?.managementFrontend,
+                            version: e.target.value,
+                          },
+                        },
+                      }))}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Finance Backend Version"
+                      value={editTenant.services?.financeBackend?.version || ""}
+                      onChange={(e) => setEditTenant((prevTenant) => ({
+                        ...prevTenant,
+                        services: {
+                          ...prevTenant?.services,
+                          financeBackend: {
+                            ...prevTenant?.services?.financeBackend,
+                            version: e.target.value,
+                          },
+                        },
+                      }))}
+                      fullWidth
+                    />
+                    <FormControl fullWidth required>
+                      <InputLabel>Tier</InputLabel>
+                      <Select
+                            value={editTenant.tier}
+                            onChange={(e) => setEditTenant({ ...editTenant, tier: e.target.value as GmTenantTierEnum })}
+                            label="Tier"
+                          >
+                            <MenuItem value="ENTRY">Entry</MenuItem>
+                            <MenuItem value="ENHANCED">Enhanced</MenuItem>
+                            <MenuItem value="PREMIUM">Premium</MenuItem>
+                          </Select>
+                    </FormControl>
+                  </Box>
+                )}
+              </DialogContent>
+              <DialogActions>
+                <Button onClick={() => setOpen(false)} color="primary">
+                  Abbrechen
+                </Button>
+                <Button onClick={handleUpdateTenant} color="primary">
+                  Speichern
+                </Button>
+              </DialogActions>
+            </Dialog>
           </Box>
 
 

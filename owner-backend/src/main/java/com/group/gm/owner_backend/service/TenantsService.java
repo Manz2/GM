@@ -138,6 +138,7 @@ public class TenantsService implements TenantsApiDelegate {
         if (existingTenant == null) {
             return ResponseEntity.notFound().build();
         }
+        GmTenant.TierEnum oldTier = existingTenant.getTier();
         existingTenant.setName(tenant.getName());
         existingTenant.setServices(tenant.getServices());
         existingTenant.setCustomisation(tenant.getCustomisation());
@@ -146,8 +147,8 @@ public class TenantsService implements TenantsApiDelegate {
 
         tenantDbService.updateTenant(existingTenant);
 
-        if(tenant.getTier() == GmTenant.TierEnum.PREMIUM) {
-            terraformService.start(tenant.getId(),tenant);
+        if(tenant.getTier() == GmTenant.TierEnum.PREMIUM && oldTier == GmTenant.TierEnum.PREMIUM) {
+            terraformService.startUpdate(tenant.getId(),tenant);
         }
 
         return ResponseEntity.ok(existingTenant);
