@@ -16,7 +16,7 @@ export default function Home() {
         <title>Home</title>
         <meta name="description" content="Startseite der Anwendung" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="https://fo9.de/flutter/favicon.ico" />
       </Head>
       <Container maxWidth="lg">
         <Box textAlign="center" my={4}>

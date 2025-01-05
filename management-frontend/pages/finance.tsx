@@ -254,7 +254,7 @@ export default function Properties() {
         <title>Finance</title>
         <meta name="description" content="Anwendung zur Verwaltung von Mängeln" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="https://fo9.de/flutter/favicon.ico" />
       </Head>
       <Container className={`${geistSans.variable} ${geistMono.variable}`} maxWidth="lg">
         <main>
