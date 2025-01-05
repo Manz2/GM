@@ -33,7 +33,7 @@ managementFrontend:
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/management-frontend
   version: ""
-  readinessProbePath: /management-frontend
+  readinessProbePath: /
 
 financeBackend:
   name: finance-backend
