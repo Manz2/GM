@@ -6,6 +6,7 @@ import HomeIcon from "@mui/icons-material/Home";
 import BuildIcon from "@mui/icons-material/Build";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import GroupIcon from "@mui/icons-material/Group";
+import AccountBalance from "@mui/icons-material/AccountBalance";
 
 
 export default function Home() {
@@ -86,25 +87,25 @@ export default function Home() {
             </CardActions>
           </Card>
 
-        <Card sx={{ maxWidth: 345, flex: 1 }}>
-          <CardContent>
-            <GroupIcon color="warning" sx={{ fontSize: 50, marginBottom: 2 }} />
-            <Typography variant="h5" component="div">
-              Finanzen
-            </Typography>
-            <Typography variant="body2" color="textSecondary">
-              Erstellen und exportieren Sie verschiedene Reports.
-            </Typography>
-          </CardContent>
-          <CardActions>
-            <Link href="/finance" passHref>
-              <Button variant="contained" color="warning" fullWidth>
-                Gehe zu Finanzen
-              </Button>
-            </Link>
-          </CardActions>
-        </Card>
-      </Box>
+          <Card sx={{ maxWidth: 345, flex: 1 }}>
+            <CardContent>
+              <AccountBalance color="warning" sx={{ fontSize: 50, marginBottom: 2 }} />
+              <Typography variant="h5" component="div">
+                Finanzen
+              </Typography>
+              <Typography variant="body2" color="textSecondary">
+                Erstellen und exportieren Sie verschiedene Reports.
+              </Typography>
+            </CardContent>
+            <CardActions>
+              <Link href="/finance" passHref>
+                <Button variant="contained" color="warning" fullWidth>
+                  Gehe zu Finanzen
+                </Button>
+              </Link>
+            </CardActions>
+          </Card>
+        </Box>
 
         <footer style={{ textAlign: "center", margin: "20px 0" }}>
           <Typography variant="body2" color="textSecondary">

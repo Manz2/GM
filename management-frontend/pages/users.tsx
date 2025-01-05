@@ -92,11 +92,6 @@ export default function Users() {
         return sessionStorage.getItem("authToken");
     };
 
-    const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
-    if (!propertyBackendUrl) {
-        console.error("Property Backend URL nicht gefunden");
-    }
-
     const configParameters: Api.ConfigurationParameters = {
         basePath: process.env.NEXT_PUBLIC_PROPERTY_BACKEND || "http://localhost:8081",
         headers: {
@@ -121,7 +116,7 @@ export default function Users() {
     };
 
     const fetchUsers = async () => {
-        console.log("env:", process.env.NEXT_PUBLIC_BASE_PATH);
+        console.log("env:", process.env.NEXT_PUBLIC_PROPERTY_BACKEND);
         const userApi = new UserApi(config);
         try {
             const requestParameters = {

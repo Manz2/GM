@@ -96,10 +96,6 @@ export default function Properties() {
     return sessionStorage.getItem("authToken");
   };
 
-  const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
-  if (!propertyBackendUrl) {
-    console.error("Property Backend URL nicht gefunden");
-  }
   const configParameters: Api.ConfigurationParameters = {
     basePath: process.env.NEXT_PUBLIC_PROPERTY_BACKEND || "http://localhost:8081",
     headers: {

@@ -101,17 +101,6 @@ export default function Properties() {
     return sessionStorage.getItem("authToken");
   };
 
-  // const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
-  // if (!propertyBackendUrl) {
-  //   console.error("Property Backend URL nicht gefunden");
-  // }
-  // console.info(propertyBackendUrl)
-  // const configParameters: PApi.ConfigurationParameters = {
-  //   basePath: propertyBackendUrl, // Setzt die URL des Backends
-  //   headers: {
-  //     Authorization: "Bearer " + getToken(),
-  //   },
-  // };
   const getBasePath = (serviceName: string): string => {
     switch (serviceName) {
       case "propertyBackend":
@@ -143,7 +132,7 @@ export default function Properties() {
   const config = new PApi.Configuration(configParameters);
 
   const fetchProperties = async () => {
-    console.log("env:", process.env.NEXT_PUBLIC_BASE_PATH);
+    console.log("env:", process.env.NEXT_PUBLIC_PROPERTY_BACKEND);
     const propertyApi = new PropertyApi(config);
     try {
       const requestParameters = {
@@ -221,19 +210,6 @@ export default function Properties() {
     }
   };
 
-
-  // const financeBackendUrl = getServiceUrl("financeBackend") || undefined;
-  // if (!financeBackendUrl) {
-  //   console.error("Property Backend URL nicht gefunden");
-  // }
-  // console.info(financeBackendUrl)
-  // const financeConfigParameters: FApi.ConfigurationParameters = {
-  //   basePath: financeBackendUrl, // Setzt die URL des Backends
-  //   headers: {
-  //     Authorization: "Bearer " + getToken(),
-  //   },
-  // };
-
   const financeConfig = new FApi.Configuration(financeConfigParameters);
 
   const DefectReportButton = ({ property }: { property: string }) => {
@@ -241,8 +217,6 @@ export default function Properties() {
     const [report, setReport] = useState<any>(null);
 
     const financeApi = new FinanceApi(financeConfig);
-
-    //ICHZ GLAUBE DAS DING HINTER DEM ENDPOINT MUSS WEG ALSO http://localhost:8083/api/finance/defectreport?property=Parkhaus Post das property hier
 
     const generateDefectReport = async (property: string) => {
       const requestParameters = {

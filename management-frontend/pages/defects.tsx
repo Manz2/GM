@@ -87,11 +87,6 @@ export default function Defects() {
     return sessionStorage.getItem("authToken");
   };
 
-  const propertyBackendUrl = getServiceUrl("propertyBackend") || undefined;
-  if (!propertyBackendUrl) {
-    console.error("Property Backend URL nicht gefunden");
-  }
-
   const configParameters: Api.ConfigurationParameters = {
     basePath: process.env.NEXT_PUBLIC_PROPERTY_BACKEND || "http://localhost:8081",
     headers: {
@@ -116,7 +111,7 @@ export default function Defects() {
   };
 
   const fetchDefects = async () => {
-    console.log("env:", process.env.NEXT_PUBLIC_BASE_PATH);
+    console.log("env:", process.env.NEXT_PUBLIC_PROPERTY_BACKEND);
     const defectsApi = new DefectsApi(config);
     try {
       const requestParameters = {
@@ -281,7 +276,7 @@ export default function Defects() {
         <main>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             <Image
-              src="/parkhaus.png"
+              src={`${process.env.NEXT_PUBLIC_BASE_PATH || ''}/parkhaus.png`}
               alt="Parkhaus"
               width={75}
               height={70
