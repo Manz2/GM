@@ -23,7 +23,7 @@ jobs:
           echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
       - name: Create owner .env file
         run: |
-          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.OWNER_STAGING_BASE_PATH }}" > owner-frontend/.env.production
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.OWNER_STAGING_BASE_PATH }}" >> owner-frontend/.env.production
           echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.OWNER_STAGING_APPLICATION_NAME }}" >> owner-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> owner-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> owner-frontend/.env.production

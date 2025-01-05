@@ -24,8 +24,8 @@ jobs:
       
       - name: Create Management .env file
         run: |
-          echo "NEXT_PUBLIC_PROPERTY_BACKEND=${{ vars.PROPERTY_BASE_PATH }}" > management-frontend/.env.production
-          echo "NEXT_PUBLIC_FINANCE_BACKEND=${{ vars.FINANCE_BASE_PATH }}" > management-frontend/.env.production
+          echo "NEXT_PUBLIC_PROPERTY_BACKEND=${{ vars.PROPERTY_BASE_PATH }}" >> management-frontend/.env.production
+          echo "NEXT_PUBLIC_FINANCE_BACKEND=${{ vars.FINANCE_BASE_PATH }}" >> management-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> management-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> management-frontend/.env.production
 
