@@ -72,9 +72,17 @@ export default function Users() {
     const [open, setOpen] = useState(false);
     const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
     const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
-    const appName = getApplicationName() || "GM-GarageManager"
     const router = useRouter();
     const [editUser, setEditUser] = useState<User | null>(null);
+
+    const [appName, setAppName] = useState("");
+    const [imageUrl, setImageUrl] = useState("");
+
+    useEffect(() => {
+        // Dynamisch initialisieren
+        setAppName(getApplicationName() || "GM-GarageManager");
+        setImageUrl(getImage() || "");
+    }, []);
 
 
 
@@ -218,14 +226,11 @@ export default function Users() {
             <Container className={`${geistSans.variable} ${geistMono.variable}`} maxWidth="lg">
                 <main>
                     <div style={{ textAlign: "center", margin: "20px 0" }}>
-                        <Image
-                            src={getImage() || ""}
-                            alt="Parkhaus"
-                            width={75}
-                            height={70
-
-                            }
-                        />
+                        {imageUrl ? (
+                            <Image src={imageUrl} alt="Logo" width={75} height={70} />
+                        ) : (
+                            <Image src="https://fo9.de/flutter/parkhaus.png" alt="Logo" width={75} height={70} />
+                        )}
                         <Typography variant="h3" gutterBottom>
                             {appName}
                         </Typography>

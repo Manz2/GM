@@ -1,16 +1,35 @@
 import Head from "next/head";
 import Link from "next/link";
 import Image from "next/image";
-import { Container, Typography, Box, Button, Card, CardContent, CardActions } from "@mui/material";
+import { useState, useEffect } from "react";
+import {
+  Container,
+  Typography,
+  Box,
+  Button,
+  Card,
+  CardContent,
+  CardActions,
+  IconButton,
+} from "@mui/material";
 import HomeIcon from "@mui/icons-material/Home";
 import BuildIcon from "@mui/icons-material/Build";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import GroupIcon from "@mui/icons-material/Group";
 import AccountBalance from "@mui/icons-material/AccountBalance";
+import SettingsIcon from "@mui/icons-material/Settings";
 import { getApplicationName, getImage } from "@/config/tenantConfig";
 
-
 export default function Home() {
+  const [appName, setAppName] = useState("");
+  const [imageUrl, setImageUrl] = useState("");
+
+  useEffect(() => {
+    // Dynamisch initialisieren
+    setAppName(getApplicationName() || "GM-GarageManager");
+    setImageUrl(getImage() || "");
+  }, []);
+
   return (
     <>
       <Head>
@@ -21,16 +40,25 @@ export default function Home() {
       </Head>
       <Container maxWidth="lg">
         <Box textAlign="center" my={4}>
-          <Image src={getImage() || ""} alt="Logo" width={75} height={70} />
-          <Typography variant="h3" gutterBottom>
-              {getApplicationName() || "GM-GarageManager"}
-          </Typography>
-          <Typography variant="h5" color="textSecondary" gutterBottom>
-            Wählen Sie eine der folgenden Optionen:
-          </Typography>
+          <Box textAlign="center">
+            {imageUrl ? (
+              <Image src={imageUrl} alt="Logo" width={75} height={70} />
+            ) : (
+              <Image src="https://fo9.de/flutter/parkhaus.png" alt="Logo" width={75} height={70} />
+            )}
+            <Typography variant="h3" gutterBottom>
+              {appName}
+            </Typography>
+          </Box>
         </Box>
 
-        <Box display="flex" flexDirection={{ xs: "column", sm: "row" }} justifyContent="center" gap={4} my={4}>
+        <Box
+          display="flex"
+          flexDirection={{ xs: "column", sm: "row" }}
+          justifyContent="center"
+          gap={4}
+          my={4}
+        >
           <Card sx={{ maxWidth: 345, flex: 1 }}>
             <CardContent>
               <ApartmentIcon color="primary" sx={{ fontSize: 50, marginBottom: 2 }} />
@@ -112,7 +140,13 @@ export default function Home() {
           <Typography variant="body2" color="textSecondary">
             © 2024 GM Parking-Solutions
           </Typography>
+          <Link href="/settings" passHref>
+            <IconButton color="primary" aria-label="Einstellungen">
+              <SettingsIcon fontSize="large" />
+            </IconButton>
+          </Link>
         </footer>
+
       </Container>
     </>
   );
