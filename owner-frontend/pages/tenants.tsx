@@ -267,20 +267,23 @@ export default function Tenants() {
   };
 
   const handleUpdateTenant = () => {
+    setLoading(true); // Ladeanimation starten
     const tenantsApi = new TenantsApi(config);
     if (editTenant && editTenant.id) {
       tenantsApi.updateTenant({ id: editTenant.id, gmTenant: editTenant })
-      .then(() => {
-        console.log("Tenant erfolgreich aktualisiert");
-        fetchTenants();
-        setOpen(false);
-        setEditTenant(null);
-      })
-      .catch((error) => {
-        console.error("Fehler beim Aktualisieren des Tenant:", error);
-      });
+        .then(() => {
+          console.log("Tenant erfolgreich aktualisiert");
+          fetchTenants();
+          setOpen(false);
+          setEditTenant(null);
+        })
+        .catch((error) => {
+          console.error("Fehler beim Aktualisieren des Tenant:", error);
+        }).finally(() => {
+          setLoading(false); // Ladeanimation stoppen
+        });;;
     }
-      
+
   };
 
 
@@ -563,19 +566,19 @@ export default function Tenants() {
                       label="Name"
                       value={editTenant.name}
                       fullWidth
-                      contentEditable= {false}
+                      contentEditable={false}
                     />
                     <TextField
                       label="Region"
                       value={editTenant.preferedRegion}
                       fullWidth
-                      contentEditable= {false}
+                      contentEditable={false}
                     />
                     <TextField
                       label="Admin Mail"
                       value={editTenant.adminMail}
                       fullWidth
-                      contentEditable= {false}
+                      contentEditable={false}
                     />
                     <TextField
                       label="Property Backend Version"
@@ -625,14 +628,14 @@ export default function Tenants() {
                     <FormControl fullWidth required>
                       <InputLabel>Tier</InputLabel>
                       <Select
-                            value={editTenant.tier}
-                            onChange={(e) => setEditTenant({ ...editTenant, tier: e.target.value as GmTenantTierEnum })}
-                            label="Tier"
-                          >
-                            <MenuItem value="ENTRY">Entry</MenuItem>
-                            <MenuItem value="ENHANCED">Enhanced</MenuItem>
-                            <MenuItem value="PREMIUM">Premium</MenuItem>
-                          </Select>
+                        value={editTenant.tier}
+                        onChange={(e) => setEditTenant({ ...editTenant, tier: e.target.value as GmTenantTierEnum })}
+                        label="Tier"
+                      >
+                        <MenuItem value="ENTRY">Entry</MenuItem>
+                        <MenuItem value="ENHANCED">Enhanced</MenuItem>
+                        <MenuItem value="PREMIUM">Premium</MenuItem>
+                      </Select>
                     </FormControl>
                   </Box>
                 )}
@@ -641,8 +644,13 @@ export default function Tenants() {
                 <Button onClick={() => setOpen(false)} color="primary">
                   Abbrechen
                 </Button>
-                <Button onClick={handleUpdateTenant} color="primary">
-                  Speichern
+                <Button onClick={handleUpdateTenant} color="primary" disabled={loading}>
+                  {loading ? (
+                    <CircularProgress size={24} style={{ color: "white" }} />
+                  ) : (
+                    "Speichern"
+                  )}
+
                 </Button>
               </DialogActions>
             </Dialog>
