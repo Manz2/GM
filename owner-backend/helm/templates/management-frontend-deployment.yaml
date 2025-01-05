@@ -26,11 +26,11 @@ spec:
             httpGet:
               path: {{ .Values.managementFrontend.readinessProbePath }}
               port: {{ .Values.managementFrontend.containerPort }}
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 10
           livenessProbe:
             httpGet:
               path: {{ .Values.managementFrontend.readinessProbePath }}
               port: {{ .Values.managementFrontend.containerPort }}
-            initialDelaySeconds: 30
+            initialDelaySeconds: 90
             periodSeconds: 15
