@@ -125,7 +125,6 @@ export default function Properties() {
 
   const fetchProperties = async () => {
     console.log("env:", process.env.NEXT_PUBLIC_PROPERTY_BACKEND);
-    console.log("env:", process.env.NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN);
     const propertyApi = new PropertyApi(config);
     try {
       const requestParameters = {
