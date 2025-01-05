@@ -1,4 +1,6 @@
-export async function fetchAndStoreServiceUrls() {
+import { GmTenant } from "@/api/finance";
+
+export async function fetchAndStoreTenantInfo() {
 
     //set to true to use local backends
     const debug = false;
@@ -33,22 +35,22 @@ export async function fetchAndStoreServiceUrls() {
         throw new Error(`Fehler beim Aufrufen der Cloud Function: ${response.statusText}`);
     }
 
-    const tenantInfo: TenantInfo = await response.json();
+    const tenantInfo: GmTenant = await response.json();
+    console.log(tenantInfo);
 
-    const services = tenantInfo.services;
-    if (!services) {
-        throw new Error("Services konnten nicht gefunden werden.");
+    const imageUrl = tenantInfo.customisation?.backgroundImage;
+    if (!imageUrl) {
+        console.log("Kein Bild gefunden");
     }
+    console.log(`iamge hat die URL ${imageUrl}`);
+    sessionStorage.setItem(`imageUrl`, imageUrl || "https://fo9.de/flutter/parkhaus.png");
 
-    // Alle URLs aus den Services in sessionStorage speichern
-    for (const [key, service] of Object.entries(services)) {
-        if (service?.url) {
-            console.log(`Service ${key} hat die URL ${service.url}`);
-            sessionStorage.setItem(`${key}Url`, service.url);
-        }
+    const applicationName = tenantInfo.customisation?.applicationName;
+    if (!applicationName) {
+        console.log("Kein Application Name gefunden");
     }
-
-    return services;
+    console.log(`Application name: ${applicationName}`);
+    sessionStorage.setItem(`applicationName`, applicationName || "GM-GarageManager");
 }
 
 
@@ -59,6 +61,22 @@ export function getServiceUrl(serviceName: string): string | null {
         return null;
     }
     return sessionStorage.getItem(`${serviceName}Url`);
+}
+
+export function getImage(): string | null {
+    if (typeof window === "undefined") {
+        console.log("Window was null")
+        return null;
+    }
+    return sessionStorage.getItem(`imageUrl`);
+}
+
+export function getApplicationName(): string | null {
+    if (typeof window === "undefined") {
+        console.log("Window was null")
+        return null;
+    }
+    return sessionStorage.getItem(`applicationName`);
 }
 
 interface Service {

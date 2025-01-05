@@ -9,7 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
-import { getServiceUrl } from "../config/tenantConfig";
+import { getApplicationName, getImage, getServiceUrl } from "../config/tenantConfig";
 import * as Api from '../api/property';
 import {
   Accordion,
@@ -76,7 +76,7 @@ export default function Properties() {
   const [open, setOpen] = useState(false);
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
-  const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
+  const appName = getApplicationName() || "GM-GarageManager"
   const router = useRouter();
   const [editProperty, setEditProperty] = useState<Property | null>(null);
 
@@ -301,7 +301,7 @@ export default function Properties() {
     <>
       <Head>
         <title>Properties</title>
-        <meta name="description" content="Anwendung zur Verwaltung von Mängeln" />
+        <meta name="description" content="Anwendung zur Verwaltung von Properties" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="https://fo9.de/flutter/favicon.ico" />
       </Head>
@@ -309,7 +309,7 @@ export default function Properties() {
         <main>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             <Image
-              src="https://fo9.de/flutter/parkhaus.png"
+              src={getImage() || ""}
               alt="Parkhaus"
               width={75}
               height={70

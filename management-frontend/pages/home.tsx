@@ -7,6 +7,7 @@ import BuildIcon from "@mui/icons-material/Build";
 import ApartmentIcon from "@mui/icons-material/Apartment";
 import GroupIcon from "@mui/icons-material/Group";
 import AccountBalance from "@mui/icons-material/AccountBalance";
+import { getApplicationName, getImage } from "@/config/tenantConfig";
 
 
 export default function Home() {
@@ -20,9 +21,9 @@ export default function Home() {
       </Head>
       <Container maxWidth="lg">
         <Box textAlign="center" my={4}>
-          <Image src="https://fo9.de/flutter/parkhaus.png" alt="Logo" width={75} height={70} />
+          <Image src={getImage() || ""} alt="Logo" width={75} height={70} />
           <Typography variant="h3" gutterBottom>
-            Willkommen in der Verwaltung
+              {getApplicationName() || "GM-GarageManager"}
           </Typography>
           <Typography variant="h5" color="textSecondary" gutterBottom>
             Wählen Sie eine der folgenden Optionen:

@@ -30,7 +30,7 @@ import {
 } from "@mui/material";
 import { firebase } from "@/config/firebaseConfig";
 import { useRouter } from "next/router";
-import { getServiceUrl } from "@/config/tenantConfig";
+import { getApplicationName, getImage, getServiceUrl } from "@/config/tenantConfig";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -69,7 +69,7 @@ export default function Defects() {
   const [open, setOpen] = useState(false);
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
-  const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
+  const appName = getApplicationName() || "GM-GarageManager"
   const router = useRouter();
 
 
@@ -276,11 +276,10 @@ export default function Defects() {
         <main>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
             <Image
-              src="https://fo9.de/flutter/parkhaus.png"
+              src={getImage() || ""}
               alt="Parkhaus"
               width={75}
               height={70
-
               }
             />
             <Typography variant="h3" gutterBottom>

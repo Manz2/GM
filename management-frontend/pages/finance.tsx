@@ -11,7 +11,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
-import { getServiceUrl } from "../config/tenantConfig";
+import { getApplicationName, getImage, getServiceUrl } from "../config/tenantConfig";
 import * as PApi from "@/api/property";
 import * as FApi from "@/api/finance";
 import {
@@ -81,7 +81,7 @@ export default function Properties() {
   const [open, setOpen] = useState(false);
   const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
-  const appName = process.env.NEXT_PUBLIC_APPLICATION_NAME || "GM-Parking Solutions-local";
+  const appName = getApplicationName() || "GM-GarageManager"
   const router = useRouter();
   const [editProperty, setEditProperty] = useState<Property | null>(null);
 
@@ -259,7 +259,7 @@ export default function Properties() {
       <Container className={`${geistSans.variable} ${geistMono.variable}`} maxWidth="lg">
         <main>
           <div style={{ textAlign: "center", margin: "20px 0" }}>
-            <Image src="https://fo9.de/flutter/parkhaus.png" alt="Parkhaus" width={75} height={70} />
+            <Image src={getImage() || ""} alt="Parkhaus" width={75} height={70} />
             <Typography variant="h3" gutterBottom>
               {appName}
             </Typography>

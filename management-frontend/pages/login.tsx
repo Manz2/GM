@@ -4,7 +4,7 @@ import { getAuth } from "firebase/auth";
 import { TextField, Button, Container, Typography, Box, CircularProgress } from '@mui/material';
 import { firebase } from '../config/firebaseConfig';
 import { useRouter } from 'next/router';
-import { fetchAndStoreServiceUrls } from "../config/tenantConfig";
+import { fetchAndStoreTenantInfo } from "../config/tenantConfig";
 
 function SignInScreen() {
     const [email, setEmail] = useState('');
@@ -54,7 +54,7 @@ function SignInScreen() {
             return;
         }
         sessionStorage.setItem("authToken", token);
-        await fetchAndStoreServiceUrls();
+        await fetchAndStoreTenantInfo();
     };
 
     // Token des angemeldeten Benutzers generieren

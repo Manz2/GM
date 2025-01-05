@@ -74,6 +74,11 @@ export default function Tenants() {
         version: "",
       },
     },
+    customisation: {
+      applicationName: "",
+      backgroundImage: "",
+      colorScheme: "",
+    },
     tier: "ENTRY",
     preferedRegion: "",
   });
@@ -161,6 +166,10 @@ export default function Tenants() {
   const handleAddTenant = (e: { preventDefault: () => void }) => {
     e.preventDefault();
     setLoading(true);
+    newTenant.customisation = {
+      applicationName: newTenant.name,
+      backgroundImage: "https://fo9.de/flutter/parkhaus.png",
+    };
     const tenantsApi = new TenantsApi(config);
     tenantsApi
       .addTenant({ gmTenant: newTenant })
@@ -190,6 +199,11 @@ export default function Tenants() {
               region: "",
               version: "",
             },
+          },
+          customisation: {
+            applicationName: "",
+            backgroundImage: "",
+            colorScheme: "",
           },
           tier: "ENTRY",
           preferedRegion: "",
