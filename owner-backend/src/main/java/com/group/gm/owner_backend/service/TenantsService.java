@@ -63,8 +63,6 @@ public class TenantsService implements TenantsApiDelegate {
             return ResponseEntity.badRequest().build();
         }
 
-        getServices(gmTenant);
-
         Tenant googelTenant;
         try {
             Tenant.CreateRequest request = new Tenant.CreateRequest()
@@ -78,6 +76,7 @@ public class TenantsService implements TenantsApiDelegate {
             throw new RuntimeException(e);
         }
         gmTenant.setId(googelTenant.getTenantId());
+        getServices(gmTenant);
         tenantDbService.addTenant(gmTenant);
         logger.info("Added tenant with ID: {}", gmTenant.getId());
 
