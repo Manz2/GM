@@ -317,7 +317,6 @@ export default function Tenants() {
               alt="Parkhaus"
               width={75}
               height={70
-
               }
             />
             <Typography variant="h3" gutterBottom>
@@ -348,78 +347,9 @@ export default function Tenants() {
                   </Box>
                   <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                     <TextField
-                      label="Region"
-                      value={newTenant.preferedRegion}
-                      onChange={(e) => setNewTenant({ ...newTenant, preferedRegion: e.target.value })}
-                      required
-                      fullWidth
-                    />
-                  </Box>
-                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                    <TextField
                       label="Admin Mail"
                       value={newTenant.adminMail}
                       onChange={(e) => setNewTenant({ ...newTenant, adminMail: e.target.value })}
-                      required
-                      fullWidth
-                    />
-                  </Box>
-                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                    <TextField
-                      label="Property Backend Version"
-                      value={newTenant.services?.propertyBackend?.version || ""}
-                      onChange={(e) =>
-                        setNewTenant((prevTenant) => ({
-                          ...prevTenant,
-                          services: {
-                            ...prevTenant?.services,
-                            propertyBackend: {
-                              ...prevTenant.services?.propertyBackend,
-                              version: e.target.value,
-                            },
-                          },
-                        }))
-                      }
-                      required
-                      fullWidth
-                    />
-                  </Box>
-                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                    <TextField
-                      label="Management Frontend Version"
-                      value={newTenant.services?.managementFrontend?.version || ""}
-                      onChange={(e) =>
-                        setNewTenant((prevTenant) => ({
-                          ...prevTenant,
-                          services: {
-                            ...prevTenant.services,
-                            managementFrontend: {
-                              ...prevTenant.services?.managementFrontend,
-                              version: e.target.value,
-                            },
-                          },
-                        }))
-                      }
-                      required
-                      fullWidth
-                    />
-                  </Box>
-                  <Box flexBasis={{ xs: '100%', sm: '48%' }}>
-                    <TextField
-                      label="Finance Backend Version"
-                      value={newTenant.services?.financeBackend?.version || ""}
-                      onChange={(e) =>
-                        setNewTenant((prevTenant) => ({
-                          ...prevTenant,
-                          services: {
-                            ...prevTenant.services,
-                            financeBackend: {
-                              ...prevTenant.services?.financeBackend,
-                              version: e.target.value,
-                            },
-                          },
-                        }))
-                      }
                       required
                       fullWidth
                     />
@@ -438,7 +368,81 @@ export default function Tenants() {
                       </Select>
                     </FormControl>
                   </Box>
-
+                  {(newTenant.tier === 'PREMIUM' || newTenant.tier === 'ENHANCED') && (
+                    <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                      <TextField
+                        label="Region"
+                        value={newTenant.preferedRegion}
+                        onChange={(e) => setNewTenant({ ...newTenant, preferedRegion: e.target.value })}
+                        required
+                        fullWidth
+                      />
+                    </Box>
+                  )}
+                  {newTenant.tier === 'PREMIUM' && (
+                    <>
+                      <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                        <TextField
+                          label="Property Backend Version"
+                          value={newTenant.services?.propertyBackend?.version || ""}
+                          onChange={(e) =>
+                            setNewTenant((prevTenant) => ({
+                              ...prevTenant,
+                              services: {
+                                ...prevTenant?.services,
+                                propertyBackend: {
+                                  ...prevTenant.services?.propertyBackend,
+                                  version: e.target.value,
+                                },
+                              },
+                            }))
+                          }
+                          required
+                          fullWidth
+                        />
+                      </Box>
+                      <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                        <TextField
+                          label="Management Frontend Version"
+                          value={newTenant.services?.managementFrontend?.version || ""}
+                          onChange={(e) =>
+                            setNewTenant((prevTenant) => ({
+                              ...prevTenant,
+                              services: {
+                                ...prevTenant.services,
+                                managementFrontend: {
+                                  ...prevTenant.services?.managementFrontend,
+                                  version: e.target.value,
+                                },
+                              },
+                            }))
+                          }
+                          required
+                          fullWidth
+                        />
+                      </Box>
+                      <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                        <TextField
+                          label="Finance Backend Version"
+                          value={newTenant.services?.financeBackend?.version || ""}
+                          onChange={(e) =>
+                            setNewTenant((prevTenant) => ({
+                              ...prevTenant,
+                              services: {
+                                ...prevTenant.services,
+                                financeBackend: {
+                                  ...prevTenant.services?.financeBackend,
+                                  version: e.target.value,
+                                },
+                              },
+                            }))
+                          }
+                          required
+                          fullWidth
+                        />
+                      </Box>
+                    </>
+                  )}
                   <Box flexBasis="100%">
                     <Button type="submit" variant="contained" color="primary" disabled={loading}>
                       {loading ? (
@@ -506,15 +510,18 @@ export default function Tenants() {
                     <CardContent onClick={() => toggleCard(index, tenant.id)} style={{ cursor: 'pointer' }}>
                       <Typography variant="h5">{tenant.name}</Typography>
                       <Typography color="textSecondary">
-                        <strong>{tenant.preferedRegion}</strong>
+                        <strong>{tenant.id}</strong>
                       </Typography>
 
                       {isExpanded && (
                         <>
-                          <Typography variant="h6">Standort:</Typography>
-                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                            {tenant.preferedRegion}
-                          </Typography>
+                          {(tenant.tier === 'PREMIUM' || tenant.tier === 'ENHANCED') && (
+                            <>
+                              <Typography variant="h6">Standort:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.preferedRegion}
+                              </Typography>
+                            </>)}
                           <Typography variant="h6">Admin Mail:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {tenant.adminMail}
@@ -523,35 +530,25 @@ export default function Tenants() {
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {tenant.id}
                           </Typography>
-                          <Typography variant="h6">Management Version:</Typography>
-                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                            {tenant.services?.managementFrontend?.version}
-                          </Typography>
-                          <Typography variant="h6">Property Version:</Typography>
-                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                            {tenant.services?.propertyBackend?.version}
-                          </Typography>
-                          <Typography variant="h6">Finance Version:</Typography>
-                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                            {tenant.services?.financeBackend?.version}
-                          </Typography>
+                          {(tenant.tier === 'PREMIUM' || tenant.tier === 'ENHANCED') && (
+                            <>
+                              <Typography variant="h6">Management Version:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.managementFrontend?.version}
+                              </Typography>
+                              <Typography variant="h6">Property Version:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.propertyBackend?.version}
+                              </Typography>
+                              <Typography variant="h6">Finance Version:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.financeBackend?.version}
+                              </Typography>
+                            </>)}
                           <Typography variant="h6">Tier:</Typography>
-                          {/* Select außerhalb von Typography */}
-                          <Select
-                            value={tenant.tier}
-                            onChange={(e) => tenant.id && handleUpdateTier(e as React.ChangeEvent<{
-                              value: unknown
-                            }>, tenant, e.target.value as GmTenantTierEnum)}
-                            onOpen={handleOpen}
-                            onClose={handleClose}
-                            className={styles[tenant.tier?.toLowerCase() || "undefined"]}
-                            variant="standard"
-                            size="small"
-                          >
-                            <MenuItem value="ENTRY">Entry</MenuItem>
-                            <MenuItem value="ENHANCED">Enhanced</MenuItem>
-                            <MenuItem value="PREMIUM">Premium</MenuItem>
-                          </Select>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {tenant.tier}
+                          </Typography>
                         </>
                       )}
                     </CardContent>
