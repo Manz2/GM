@@ -93,13 +93,15 @@ public class TenantsService implements TenantsApiDelegate {
 
         if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
             terraformService.start(googelTenant.getTenantId(),gmTenant);
+        } else if (gmTenant.getTier() == GmTenant.TierEnum.ENHANCED) {
+            terraformService.startMid(gmTenant);
         }
 
         return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
     }
 
     private void getServices(GmTenant gmTenant) {
-        if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
+        if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM || gmTenant.getTier() == GmTenant.TierEnum.ENHANCED) {
             GmService propertyDb = new GmService();
             propertyDb.setName(gmTenant.getId() + " Property DB");
             propertyDb.setUrl(gmTenant.getId());
