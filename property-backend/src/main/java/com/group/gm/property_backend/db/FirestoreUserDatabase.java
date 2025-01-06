@@ -40,7 +40,11 @@ public class FirestoreUserDatabase implements GMDBService<User> {
             throw new RuntimeException(e);
         }
         String tenantId = (String) authentication.getCredentials();
-        userCollection = firestore.collection("tenants").document(tenantId).collection("users");
+        if(gmTenant.getTier()== GmTenant.TierEnum.ENTRY){
+            userCollection = firestore.collection("tenants").document(tenantId).collection("users");
+        } else {
+            userCollection = firestore.collection("users");
+        };
     }
 
     @Override

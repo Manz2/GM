@@ -39,7 +39,12 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
             throw new RuntimeException(e);
         }
         String tenantId = (String) authentication.getCredentials();
-        defectCollection = firestore.collection("tenants").document(tenantId).collection("defects");
+        if(gmTenant.getTier()== GmTenant.TierEnum.ENTRY){
+            defectCollection = firestore.collection("tenants").document(tenantId).collection("defects");
+        } else {
+            defectCollection = firestore.collection("defects");
+        }
+
     }
 
     @Override
