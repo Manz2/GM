@@ -26,11 +26,11 @@ spec:
             httpGet:
               path: {{ .Values.financeBackend.readinessProbePath }}
               port: {{ .Values.financeBackend.containerPort }}
-            initialDelaySeconds: 120
+            initialDelaySeconds: 30
             periodSeconds: 30
           livenessProbe:
             httpGet:
               path: {{ .Values.financeBackend.livenessProbePath }}
               port: {{ .Values.financeBackend.containerPort }}
-            initialDelaySeconds: 180
+            initialDelaySeconds: 40
             periodSeconds: 30

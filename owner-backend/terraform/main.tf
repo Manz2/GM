@@ -1,4 +1,3 @@
-# Terraform Version und Provider
 terraform {
   required_providers {
     google = {
@@ -14,7 +13,6 @@ provider "google" {
   region  = var.region
 }
 
-# Variablen
 variable "project_id" {
   description = "Die Google Cloud Projekt-ID"
   type        = string
@@ -50,19 +48,17 @@ variable "node_machine_type" {
   default     = "e2-medium"
 }
 
-# Firestore Datenbank
 resource "google_firestore_database" "firestore" {
   name        = var.cluster_name
   project     = var.project_id
-  location_id = var.regionStorage  # Gleiche Region wie das Cluster
-  type        = "FIRESTORE_NATIVE" # Firestore im nativen Modus
+  location_id = var.regionStorage
+  type        = "FIRESTORE_NATIVE"
 }
 
-# Storage Bucket
 resource "google_storage_bucket" "bucket" {
-  name          = var.cluster_name  # Gleicher Name wie das Cluster
-  location      = var.regionStorage # Gleiche Region wie das Cluster
-  storage_class = "STANDARD"        # Standard-Speicherklasse
+  name          = var.cluster_name
+  location      = var.regionStorage
+  storage_class = "STANDARD"
 
   lifecycle_rule {
     action {
@@ -74,22 +70,13 @@ resource "google_storage_bucket" "bucket" {
   }
 }
 
-# GKE Cluster
 resource "google_container_cluster" "primary" {
-  name     = var.cluster_name
-  location = var.region
+  name                  = var.cluster_name
+  location              = var.region
+  networking_mode       = "VPC_NATIVE"
+  ip_allocation_policy  {}
 
-  networking_mode = "VPC_NATIVE"
-  ip_allocation_policy {}
-  remove_default_node_pool = true  # Deaktiviert den Standard-Node-Pooln
-  initial_node_count       = 1     # Muss gesetzt sein, auch wenn der Node-Pool entfernt wird
-
-}
-
-resource "google_container_node_pool" "primary_nodes" {
-  name     = "primary-node-pool"
-  cluster  = google_container_cluster.primary.name
-  location = google_container_cluster.primary.location
+  initial_node_count    = var.node_count
 
   node_config {
     machine_type = var.node_machine_type
@@ -99,16 +86,8 @@ resource "google_container_node_pool" "primary_nodes" {
       "https://www.googleapis.com/auth/cloud-platform",
     ]
   }
-
-  autoscaling {
-    min_node_count = 1
-    max_node_count = 4
-  }
-
-  initial_node_count = var.node_count
 }
 
-# Ausgabe
 output "cluster_name" {
   description = "Der Name des Clusters"
   value       = google_container_cluster.primary.name
