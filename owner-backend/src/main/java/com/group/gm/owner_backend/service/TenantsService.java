@@ -42,6 +42,9 @@ public class TenantsService implements TenantsApiDelegate {
     @Value("${google.cloud.commonPropertyDb.id}")
     private String commonPropertyDb;
 
+    @Value("${google.cloud.commonStorage.id}")
+    private String commonStorage;
+
     @Value("${google.cloud.projectId}")
     private String projectId;
 
@@ -111,6 +114,10 @@ public class TenantsService implements TenantsApiDelegate {
             propertyDb.setName("Common Property DB");
             propertyDb.setUrl(commonPropertyDb);
             gmTenant.getServices().setPropertyDb(propertyDb);
+            GmService storage = new GmService();
+            storage.setName("common storage");
+            storage.setUrl(commonStorage);
+            gmTenant.getServices().setStorage(storage);
         }
 
     }
