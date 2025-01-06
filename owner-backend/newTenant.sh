@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Überprüfen, ob die erforderlichen Parameter übergeben wurden
-if [ "$#" -lt 5 ]; then
-  echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION>"
+if [ "$#" -lt 6 ]; then
+  echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION> <REGIONSTORAGE>"
   exit 1
 fi
 
@@ -11,6 +11,7 @@ REGION=$2
 PROPERTYVERSION=$3
 MANAGEMENTVERSION=$4
 FINANCEVERSION=$5
+REGIONSTORAGE=$6
 
 echo "Creating new tenant for cluster: $CLUSTER_NAME in region: $REGION"
 
@@ -19,7 +20,7 @@ cd /app/terraform
 terraform init
 
 # Terraform anwenden mit übergebenen Variablen
-terraform apply -auto-approve -var="cluster_name=$CLUSTER_NAME" -var="region=$REGION" -state="./states/$CLUSTER_NAME.tfstate"
+terraform apply -auto-approve -var="cluster_name=$CLUSTER_NAME" -var="region=$REGION" -var="regionStorage=$REGIONSTORAGE" -state="./states/$CLUSTER_NAME.tfstate"
 
 echo "Starting Helm installation for gm with versions: Property:$PROPERTYVERSION Management:$MANAGEMENTVERSION Finance:$FINANCEVERSION"
 

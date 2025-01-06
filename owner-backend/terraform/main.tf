@@ -23,6 +23,12 @@ variable "project_id" {
 variable "region" {
   description = "Die Region, in der das Cluster erstellt wird"
   type        = string
+  default     = "europe-west1-b"
+}
+
+variable "regionStorage" {
+  description = "Die Region, in der das Cluster erstellt wird"
+  type        = string
   default     = "europe-west1"
 }
 
@@ -42,6 +48,30 @@ variable "node_machine_type" {
   description = "Der Maschinentyp der Knoten"
   type        = string
   default     = "e2-small"
+}
+
+# Firestore Datenbank
+resource "google_firestore_database" "firestore" {
+  name       = "(default)"  # Standard Firestore-Datenbank
+  project    = var.project_id
+  location_id = var.regionStorage  # Gleiche Region wie das Cluster
+  type       = "NATIVE"    # Firestore im nativen Modus
+}
+
+# Storage Bucket
+resource "google_storage_bucket" "bucket" {
+  name          = var.cluster_name  # Gleicher Name wie das Cluster
+  location      = var.regionStorage        # Gleiche Region wie das Cluster
+  storage_class = "STANDARD"       # Standard-Speicherklasse
+
+  lifecycle_rule {
+    action {
+      type = "Delete"
+    }
+    condition {
+      age = 365
+    }
+  }
 }
 
 # GKE Cluster
@@ -65,12 +95,17 @@ resource "google_container_cluster" "primary" {
 }
 
 # Ausgabe
-output "kubeconfig" {
-  description = "Der Inhalt der kubeconfig-Datei für Zugriff auf das Cluster"
-  value       = google_container_cluster.primary.endpoint
-}
-
 output "cluster_name" {
   description = "Der Name des Clusters"
   value       = google_container_cluster.primary.name
+}
+
+output "firestore_region" {
+  description = "Region der Firestore-Datenbank"
+  value       = google_firestore_database.firestore.location_id
+}
+
+output "storage_bucket_name" {
+  description = "Name des Storage-Buckets"
+  value       = google_storage_bucket.bucket.name
 }

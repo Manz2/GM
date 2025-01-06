@@ -55,6 +55,8 @@ public class TerraformService {
             // Pfad zum Skript
             String scriptPath = "/app/scripts/updateTenant.sh";
 
+            String regionStorage = gmTenant.getPreferedRegion().split("-[a-z]$")[0];
+
             // ProcessBuilder initialisieren mit Parametern
             ProcessBuilder processBuilder = new ProcessBuilder(
                     scriptPath,
@@ -62,7 +64,8 @@ public class TerraformService {
                     gmTenant.getPreferedRegion(),
                     gmTenant.getServices().getPropertyBackend().getVersion(),
                     gmTenant.getServices().getManagementFrontend().getVersion(),
-                    gmTenant.getServices().getFinanceBackend().getVersion()
+                    gmTenant.getServices().getFinanceBackend().getVersion(),
+                    regionStorage
             );
 
             // Starte den Prozess

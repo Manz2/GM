@@ -97,10 +97,22 @@ public class TenantsService implements TenantsApiDelegate {
     }
 
     private void getServices(GmTenant gmTenant) {
-        GmService propertyDb = new GmService();
-        propertyDb.setName("Common Property DB");
-        propertyDb.setUrl(commonPropertyDb);
-        gmTenant.getServices().setPropertyDb(propertyDb);
+        if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
+            GmService propertyDb = new GmService();
+            propertyDb.setName(gmTenant.getId() + " Property DB");
+            propertyDb.setUrl(gmTenant.getId());
+            gmTenant.getServices().setPropertyDb(propertyDb);
+            GmService storage = new GmService();
+            storage.setName(gmTenant.getId() + " storage");
+            storage.setUrl(gmTenant.getId());
+            gmTenant.getServices().setStorage(storage);
+        } else {
+            GmService propertyDb = new GmService();
+            propertyDb.setName("Common Property DB");
+            propertyDb.setUrl(commonPropertyDb);
+            gmTenant.getServices().setPropertyDb(propertyDb);
+        }
+
     }
 
 
