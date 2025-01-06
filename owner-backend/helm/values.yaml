@@ -23,7 +23,8 @@ propertyBackend:
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/property-backend
   version: ""
-  readinessProbePath: /health
+  readinessProbePath: /actuator/health/readiness
+  livenessProbePath: /actuator/health/liveness
 
 managementFrontend:
   name: management-frontend
@@ -43,7 +44,8 @@ financeBackend:
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/finance-backend
   version: ""
-  readinessProbePath: /health
+  readinessProbePath: /actuator/health/readiness
+  livenessProbePath: /actuator/health/liveness
 
 
 ingress:

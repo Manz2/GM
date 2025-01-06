@@ -30,7 +30,7 @@ spec:
             periodSeconds: 30
           livenessProbe:
             httpGet:
-              path: {{ .Values.financeBackend.readinessProbePath }}
+              path: {{ .Values.financeBackend.livenessProbePath }}
               port: {{ .Values.financeBackend.containerPort }}
-            initialDelaySeconds: 120
+            initialDelaySeconds: 180
             periodSeconds: 30

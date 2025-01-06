@@ -41,13 +41,13 @@ variable "cluster_name" {
 variable "node_count" {
   description = "Die Anzahl der Knoten im Cluster"
   type        = number
-  default     = 1
+  default     = 2
 }
 
 variable "node_machine_type" {
   description = "Der Maschinentyp der Knoten"
   type        = string
-  default     = "e2-small"
+  default     = "e2-medium"
 }
 
 # Firestore Datenbank
@@ -79,7 +79,14 @@ resource "google_container_cluster" "primary" {
   name     = var.cluster_name
   location = var.region
 
-  initial_node_count = var.node_count
+  networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {}
+}
+
+resource "google_container_node_pool" "primary_nodes" {
+  name       = "primary-node-pool"
+  cluster    = google_container_cluster.primary.name
+  location   = google_container_cluster.primary.location
 
   node_config {
     machine_type = var.node_machine_type
@@ -90,8 +97,12 @@ resource "google_container_cluster" "primary" {
     ]
   }
 
-  networking_mode = "VPC_NATIVE"
-  ip_allocation_policy {}
+  autoscaling {
+    min_node_count = 1
+    max_node_count = 4
+  }
+
+  initial_node_count = var.node_count
 }
 
 # Ausgabe
