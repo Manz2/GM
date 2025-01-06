@@ -530,25 +530,50 @@ export default function Tenants() {
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {tenant.id}
                           </Typography>
-                          {(tenant.tier === 'PREMIUM' || tenant.tier === 'ENHANCED') && (
-                            <>
-                              <Typography variant="h6">Management Version:</Typography>
-                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                {tenant.services?.managementFrontend?.version}
-                              </Typography>
-                              <Typography variant="h6">Property Version:</Typography>
-                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                {tenant.services?.propertyBackend?.version}
-                              </Typography>
-                              <Typography variant="h6">Finance Version:</Typography>
-                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                {tenant.services?.financeBackend?.version}
-                              </Typography>
-                            </>)}
                           <Typography variant="h6">Tier:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {tenant.tier}
                           </Typography>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography variant="h6">Anzahl Defects:</Typography>
+                            <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                              {tenant.numberOfDefects}
+                            </Typography>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography variant="h6">Anzahl Properties:</Typography>
+                            <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                              {tenant.numberOfProperties}
+                            </Typography>
+                          </div>
+                          <div style={{ display: 'flex', alignItems: 'center' }}>
+                            <Typography variant="h6">Anzahl Users:</Typography>
+                            <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                              {tenant.numberOfUsers}
+                            </Typography>
+                          </div>
+
+                          {(tenant.tier === 'PREMIUM' || tenant.tier === 'ENHANCED') && (
+                            <>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="h6">Management Version:</Typography>
+                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                  {tenant.services?.managementFrontend?.version}
+                                </Typography>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="h6">Property Version:</Typography>
+                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                  {tenant.services?.propertyBackend?.version}
+                                </Typography>
+                              </div>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Typography variant="h6">Finance Version:</Typography>
+                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                  {tenant.services?.financeBackend?.version}
+                                </Typography>
+                              </div>
+                            </>)}
                         </>
                       )}
                     </CardContent>

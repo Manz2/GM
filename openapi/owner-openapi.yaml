@@ -183,6 +183,15 @@ components:
         preferedRegion:
           description: "bevorzugte Region des Tenant"
           type: string
+        numberOfProperties:
+          description: "Anzahl der Properties"
+          type: integer
+        numberOfDefects:
+          description: "Anzahl der Defekte"
+          type: integer
+        numberOfUsers:
+          description: "Anzahl der User"
+          type: integer
 
     Services:
       type: object

@@ -76,6 +76,24 @@ export interface GmTenant {
      * @memberof GmTenant
      */
     preferedRegion?: string;
+    /**
+     * Anzahl der Properties
+     * @type {number}
+     * @memberof GmTenant
+     */
+    numberOfProperties?: number;
+    /**
+     * Anzahl der Defekte
+     * @type {number}
+     * @memberof GmTenant
+     */
+    numberOfDefects?: number;
+    /**
+     * Anzahl der User
+     * @type {number}
+     * @memberof GmTenant
+     */
+    numberOfUsers?: number;
 }
 
 
@@ -114,6 +132,9 @@ export function GmTenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'services': json['services'] == null ? undefined : ServicesFromJSON(json['services']),
         'customisation': json['customisation'] == null ? undefined : CustomisationFromJSON(json['customisation']),
         'preferedRegion': json['preferedRegion'] == null ? undefined : json['preferedRegion'],
+        'numberOfProperties': json['numberOfProperties'] == null ? undefined : json['numberOfProperties'],
+        'numberOfDefects': json['numberOfDefects'] == null ? undefined : json['numberOfDefects'],
+        'numberOfUsers': json['numberOfUsers'] == null ? undefined : json['numberOfUsers'],
     };
 }
 
@@ -135,6 +156,9 @@ export function GmTenantFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'services': ServicesToJSON(value['services']),
         'customisation': CustomisationToJSON(value['customisation']),
         'preferedRegion': value['preferedRegion'],
+        'numberOfProperties': value['numberOfProperties'],
+        'numberOfDefects': value['numberOfDefects'],
+        'numberOfUsers': value['numberOfUsers'],
     };
 }
 

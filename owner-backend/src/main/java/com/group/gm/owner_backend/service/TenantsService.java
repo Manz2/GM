@@ -164,6 +164,9 @@ public class TenantsService implements TenantsApiDelegate {
         existingTenant.setCustomisation(tenant.getCustomisation());
         existingTenant.setPreferedRegion(tenant.getPreferedRegion());
         existingTenant.setTier(tenant.getTier());
+        existingTenant.setNumberOfDefects(tenant.getNumberOfDefects());
+        existingTenant.setNumberOfProperties(tenant.getNumberOfProperties());
+        existingTenant.setNumberOfUsers(tenant.getNumberOfUsers());
 
         tenantDbService.updateTenant(existingTenant);
 
