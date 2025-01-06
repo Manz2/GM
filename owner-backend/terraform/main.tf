@@ -81,6 +81,7 @@ resource "google_container_cluster" "primary" {
 
   networking_mode = "VPC_NATIVE"
   ip_allocation_policy {}
+  remove_default_node_pool = true  # Deaktiviert den Standard-Node-Pool
 }
 
 resource "google_container_node_pool" "primary_nodes" {
