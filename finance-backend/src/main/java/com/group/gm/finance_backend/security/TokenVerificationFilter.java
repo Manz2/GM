@@ -3,7 +3,7 @@ package com.group.gm.finance_backend.security;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseAuthException;
 import com.google.firebase.auth.FirebaseToken;
-import com.group.gm.finance_backend.security.FirebaseAuthenticationToken;
+import com.group.gm.openapi.model.GmTenant;
 import com.group.gm.finance_backend.service.TenantService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
@@ -33,10 +33,9 @@ public class TokenVerificationFilter extends OncePerRequestFilter {
                 FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
                 String uid = decodedToken.getUid();
                 String tenantId = decodedToken.getTenantId();
-                System.out.println(tenantId);
                 TenantService tenantService = new TenantService();
-                String dbId = tenantService.fetchTenantDetails(tenantId,token).getServices().getPropertyDb().getUrl();
-                Authentication authentication = new FirebaseAuthenticationToken(uid,tenantId,dbId);
+                GmTenant tenantInfo = tenantService.fetchTenantDetails(tenantId,token);
+                Authentication authentication = new FirebaseAuthenticationToken(uid,tenantInfo);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
             } catch (FirebaseAuthException e) {
                 response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);

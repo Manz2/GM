@@ -4,6 +4,7 @@ import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.group.gm.openapi.model.Defect;
 import com.group.gm.finance_backend.config.FirestoreConfig;
+import com.group.gm.openapi.model.GmTenant;
 import com.itextpdf.layout.properties.TextAlignment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,7 +38,8 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     private void tenantSpecificConfig(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String dbId = (String) authentication.getDetails();
+        GmTenant gmTenant = (GmTenant) authentication.getDetails();
+        String dbId = gmTenant.getServices().getPropertyDb().getUrl();
         Firestore firestore;
         try {
             firestore = new FirestoreConfig(dbId).firestore();

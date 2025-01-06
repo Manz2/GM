@@ -107,7 +107,7 @@ public class DefectsService implements DefectsApiDelegate {
             Defect defect = gmdbService.getById(id);
             String image = defect.getImage();
             if (!Objects.equals(image, "")) {
-                storageService.deleteObject(projectId, bucket, defect.getImage());
+                storageService.deleteObject(projectId, defect.getImage());
             }
             boolean deleted = gmdbService.delete(id);
             if (deleted) {

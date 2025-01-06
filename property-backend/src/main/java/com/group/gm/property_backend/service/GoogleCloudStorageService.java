@@ -30,7 +30,7 @@ public interface GoogleCloudStorageService {
         };
     }
 
-    void deleteObject(String projectId, String bucketName, String objectName);
+    void deleteObject(String projectId, String objectName);
 
     String uploadObject(MultipartFile file);
 

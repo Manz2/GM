@@ -1,6 +1,8 @@
 package com.group.gm.finance_backend.security;
 
 
+
+import com.group.gm.openapi.model.GmTenant;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 
@@ -9,13 +11,11 @@ import java.util.Collections;
 
 public class FirebaseAuthenticationToken implements Authentication {
     private final String uid;
-    private final String tenantId;
-    private final String dbId;
+    private final GmTenant gmTenant;
 
-    public FirebaseAuthenticationToken(String uid, String tenantId, String dbId) {
+    public FirebaseAuthenticationToken(String uid, GmTenant gmTenant) {
         this.uid = uid;
-        this.tenantId = tenantId;
-        this.dbId = dbId;
+        this.gmTenant = gmTenant;
     }
 
     @Override
@@ -26,12 +26,12 @@ public class FirebaseAuthenticationToken implements Authentication {
 
     @Override
     public Object getCredentials() {
-        return tenantId;
+        return gmTenant.getId();
     }
 
     @Override
     public Object getDetails() {
-        return dbId;
+        return gmTenant;
     }
 
     @Override
@@ -53,9 +53,7 @@ public class FirebaseAuthenticationToken implements Authentication {
     public String getName() {
         return uid;
     }
-
-    public String getTenantId() {
-        return tenantId;
-    }
 }
+
+
 

@@ -28,7 +28,8 @@ public class FirestoreUserDatabase implements GMDBService<User> {
 
     private void tenantSpecificConfig(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String dbId = (String) authentication.getDetails();
+        GmTenant gmTenant = (GmTenant) authentication.getDetails();
+        String dbId = gmTenant.getServices().getPropertyDb().getUrl();
 
         Firestore firestore;
         try {

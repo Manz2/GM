@@ -2,9 +2,14 @@
 package com.group.gm.property_backend.service;
 
 
+import com.google.cloud.firestore.Firestore;
 import com.google.cloud.storage.*;
+import com.group.gm.openapi.model.GmTenant;
+import com.group.gm.property_backend.config.FirestoreConfig;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -21,7 +26,6 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
 
     private final Storage storage;
 
-    @Value("${google.cloud.bucket}")
     private String bucket;
 
     @Autowired
@@ -30,21 +34,29 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
         this.storage = storage;
     }
 
+    private void tenantSpecificConfig(){
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        GmTenant gmTenant = (GmTenant) authentication.getDetails();
+        bucket = gmTenant.getServices().getStorage().getUrl();
+    }
+
     @Override
-    public void deleteObject(String projectId, String bucketName, String objectName) {
+    public void deleteObject(String projectId, String objectName) {
+        tenantSpecificConfig();
         Storage storage = StorageOptions.newBuilder().setProjectId(projectId).build().getService();
-        Blob blob = storage.get(bucketName, objectName);
+        Blob blob = storage.get(bucket, objectName);
         if (blob == null) {
-            logger.info("The object {} wasn't found in {}", objectName, bucketName);
+            logger.info("The object {} wasn't found in {}", objectName, bucket);
             return;
         }
         BlobId idWithGeneration = blob.getBlobId();
         storage.delete(idWithGeneration);
 
-        logger.info("Deleted object {} from {}", objectName, bucketName);
+        logger.info("Deleted object {} from {}", objectName, bucket);
     }
     @Override
     public String uploadObject(MultipartFile file) {
+        tenantSpecificConfig();
 
         String extension = GoogleCloudStorageService.getExtension(file);
 
@@ -75,6 +87,7 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
 
     @Override
     public void downloadObject(String objectName, Path destFilePath) throws IOException {
+        tenantSpecificConfig();
         Blob blob = storage.get(BlobId.of(bucket, objectName));
         blob.downloadTo(destFilePath);
 

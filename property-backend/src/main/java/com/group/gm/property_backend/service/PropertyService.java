@@ -108,7 +108,7 @@ public class PropertyService implements PropertyApiDelegate {
             Property property = gmdbService.getById(id);
             String image = property.getImage();
             if (!Objects.equals(image, "")) {
-                storageService.deleteObject(projectId, bucket, property.getImage());
+                storageService.deleteObject(projectId, property.getImage());
             }
             boolean deleted = gmdbService.delete(id);
             if (deleted) {
