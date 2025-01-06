@@ -10,8 +10,8 @@ terraform {
 }
 
 provider "google" {
-  project     = var.project_id
-  region      = var.region
+  project = var.project_id
+  region  = var.region
 }
 
 # Variablen
@@ -52,17 +52,17 @@ variable "node_machine_type" {
 
 # Firestore Datenbank
 resource "google_firestore_database" "firestore" {
-  name       = "(default)"  # Standard Firestore-Datenbank
-  project    = var.project_id
+  name        = var.cluster_name
+  project     = var.project_id
   location_id = var.regionStorage  # Gleiche Region wie das Cluster
-  type       = "NATIVE"    # Firestore im nativen Modus
+  type        = "FIRESTORE_NATIVE" # Firestore im nativen Modus
 }
 
 # Storage Bucket
 resource "google_storage_bucket" "bucket" {
   name          = var.cluster_name  # Gleicher Name wie das Cluster
-  location      = var.regionStorage        # Gleiche Region wie das Cluster
-  storage_class = "STANDARD"       # Standard-Speicherklasse
+  location      = var.regionStorage # Gleiche Region wie das Cluster
+  storage_class = "STANDARD"        # Standard-Speicherklasse
 
   lifecycle_rule {
     action {
@@ -84,9 +84,9 @@ resource "google_container_cluster" "primary" {
 }
 
 resource "google_container_node_pool" "primary_nodes" {
-  name       = "primary-node-pool"
-  cluster    = google_container_cluster.primary.name
-  location   = google_container_cluster.primary.location
+  name     = "primary-node-pool"
+  cluster  = google_container_cluster.primary.name
+  location = google_container_cluster.primary.location
 
   node_config {
     machine_type = var.node_machine_type
