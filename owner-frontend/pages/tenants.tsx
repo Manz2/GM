@@ -32,7 +32,7 @@ import {
   Dialog,
   DialogTitle,
   DialogContent,
-  DialogActions
+  DialogActions,
 } from "@mui/material";
 import { firebase } from "@/config/firebaseConfig";
 import { useRouter } from "next/router";
@@ -266,6 +266,11 @@ export default function Tenants() {
     });
   };
 
+  const getOverallStatus = (services: Api.Services) =>
+    services.managementFrontend?.up && services.propertyBackend?.up && services.financeBackend?.up;
+
+  const getStatusColor = (status: boolean) => (status ? "green" : "red");
+
   const dropzoneRef = createRef<DropzoneRef>();
   const openDialog = () => {
     // Note that the ref is set async,
@@ -498,20 +503,34 @@ export default function Tenants() {
             </Accordion>
           </form>
 
-
           <Box display="flex" flexWrap="wrap" gap={2}>
             {tenants.map((tenant, index) => {
               const isExpanded = expandedCard === index;
               const imageUrl = blobUrls[index];
+              const overallStatus = tenant.services ? !!getOverallStatus(tenant.services) : false;
               return (
                 <Box key={index} flexBasis={{ xs: '100%', sm: '48%', md: '30%' }} mb={2}>
                   <Card
                     style={{ height: isExpanded ? 'auto' : '100px' }}> {/* Festgelegte Höhe für eingeklappte Karten */}
                     <CardContent onClick={() => toggleCard(index, tenant.id)} style={{ cursor: 'pointer' }}>
-                      <Typography variant="h5">{tenant.name}</Typography>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <Typography variant="h5">{tenant.name}</Typography>
+                        {(tenant.tier === 'PREMIUM') && (
+                          <Avatar
+                            style={{
+                              backgroundColor: getStatusColor(!!overallStatus),
+                              width: 24,
+                              height: 24,
+                              marginLeft: 'auto',
+                            }}
+                          >
+                            {" "}
+                          </Avatar>)}
+                      </div>
                       <Typography color="textSecondary">
                         <strong>{tenant.id}</strong>
                       </Typography>
+
 
                       {isExpanded && (
                         <>
@@ -521,6 +540,15 @@ export default function Tenants() {
                               <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                                 {tenant.preferedRegion}
                               </Typography>
+                            </>)}
+                          {(tenant.tier === 'PREMIUM') && (
+                            <>
+                              <Typography variant="h6">url:</Typography>
+                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                <a href={`http://${tenant.services?.propertyBackend?.url}/management-frontend`} target="_blank" rel="noopener noreferrer">
+                                  http://{tenant.services?.propertyBackend?.url}/management-frontend
+                                </a>
+                                </Typography>
                             </>)}
                           <Typography variant="h6">Admin Mail:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
@@ -553,24 +581,71 @@ export default function Tenants() {
                             </Typography>
                           </div>
 
-                          {(tenant.tier === 'PREMIUM' || tenant.tier === 'ENHANCED') && (
+                          {(tenant.tier === 'PREMIUM') && (
                             <>
+                              <Typography variant="h6">Management-Frontend:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.managementFrontend?.version}
+                              </Typography>
                               <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="h6">Management Version:</Typography>
+                                <Avatar
+                                  style={{
+                                    backgroundColor: getStatusColor(!!tenant.services?.managementFrontend?.up),
+                                    width: 15,
+                                    height: 15,
+                                    marginLeft: '10px',
+                                  }}
+                                >
+                                  {" "}
+                                </Avatar>
                                 <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                  {tenant.services?.managementFrontend?.version}
+                                  {tenant.services?.managementFrontend?.lastUp
+                                    ? `Zuletzt: ${new Date(tenant.services?.managementFrontend?.lastUp).toLocaleString()}`
+                                    : "Nie"}
                                 </Typography>
                               </div>
+
+                              <Typography variant="h6">Property Backend:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.propertyBackend?.version}
+                              </Typography>
                               <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="h6">Property Version:</Typography>
+                                <Avatar
+                                  style={{
+                                    backgroundColor: getStatusColor(!!tenant.services?.propertyBackend?.up),
+                                    width: 15,
+                                    height: 15,
+                                    marginLeft: '10px',
+                                  }}
+                                >
+                                  {" "}
+                                </Avatar>
                                 <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                  {tenant.services?.propertyBackend?.version}
+                                  {tenant.services?.propertyBackend?.lastUp
+                                    ? `Zuletzt: ${new Date(tenant.services?.propertyBackend?.lastUp).toLocaleString()}`
+                                    : "Nie"}
                                 </Typography>
                               </div>
+
+                              <Typography variant="h6">Finance Backend:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.financeBackend?.version}
+                              </Typography>
                               <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Typography variant="h6">Finance Version:</Typography>
+                                <Avatar
+                                  style={{
+                                    backgroundColor: getStatusColor(!!tenant.services?.financeBackend?.up),
+                                    width: 15,
+                                    height: 15,
+                                    marginLeft: '10px',
+                                  }}
+                                >
+                                  {" "}
+                                </Avatar>
                                 <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
-                                  {tenant.services?.financeBackend?.version}
+                                  {tenant.services?.financeBackend?.lastUp
+                                    ? `Zuletzt: ${new Date(tenant.services?.financeBackend?.lastUp).toLocaleString()}`
+                                    : "Nie"}
                                 </Typography>
                               </div>
                             </>)}

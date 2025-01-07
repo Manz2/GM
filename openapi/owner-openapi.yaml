@@ -242,6 +242,12 @@ components:
         version:
           description: "version des Service"
           type: string
+        up:
+          description: "status des service"
+          type: boolean
+        lastUp:
+          description: "letzter positiver status check"
+          type: number
 
     customisation:
       type: object
