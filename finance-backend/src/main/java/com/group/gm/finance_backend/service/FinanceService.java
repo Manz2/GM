@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
 import java.util.Date;
 import java.util.Map;
 
@@ -35,21 +36,26 @@ public class FinanceService implements FinanceApiDelegate {
     }
 
     @Override
-    public ResponseEntity<String> generateDefectReport(String property, String status, String startDatum, String endDatum) {
-        if (property == null || property.isEmpty()) {
+    public ResponseEntity<String> generateDefectReport(String location, String status, String startDatum, String endDatum) {
+        if (location == null || location.isEmpty()) {
             return ResponseEntity.badRequest().body("Error: Property parameter is required.");
         }
         try {
-            Map<String, Object> report = gmdbService.generateDefectReport(property);
+            Map<String, Object> report = gmdbService.generateDefectReport(location, status, startDatum, endDatum);
             System.out.println("Report content: " + report);
+
             if (report.isEmpty()) {
                 return ResponseEntity.noContent().build();
             }
+
             MultipartFile pdfFile = gmdbService.generatePdfFromReport(report);
             System.out.println("Pdf generated");
             String pdfPath = storageService.uploadObject(pdfFile);
             System.out.println("Pdf uploaded to: " + pdfPath);
+
             return ResponseEntity.ok(pdfPath);
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().body("Error: Invalid date format. Use YYYY-MM-DD.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error generating defect report: " + e.getMessage());
         }

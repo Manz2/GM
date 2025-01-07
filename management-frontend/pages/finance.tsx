@@ -38,6 +38,7 @@ import {
 } from "@mui/material";
 import { firebase } from "@/config/firebaseConfig";
 import { useRouter } from "next/router";
+import {DefectStatusEnum} from "@/api/property";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -83,7 +84,7 @@ export default function Properties() {
   const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
   const router = useRouter();
   const [editProperty, setEditProperty] = useState<Property | null>(null);
-
+  const [status, setStatus] = useState<string>('');
   const [appName, setAppName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
 
@@ -229,9 +230,9 @@ export default function Properties() {
     const generateDefectReport = async (property: string) => {
       const requestParameters = {
         property: property,
-        status: "Offen",
-        startDate: "2024-01-01", // Example start date
-        endDate: "2024-12-31" // Example end date
+        status: status,
+        startDate: startDate,
+        endDate: endDate
       };
       try {
         setLoading(true);
@@ -297,7 +298,7 @@ export default function Properties() {
                         <List>
                           {properties.map((property, index) => (
                             <ListItem
-                              component="button" // Erlaubt die Verwendung als Button
+                              component="button"
                               key={index}
                               onClick={() => handlePropertySelect(property)}
                               sx={{
@@ -331,6 +332,21 @@ export default function Properties() {
                               value={endDate}
                               onChange={(e) => setEndDate(e.target.value)}
                             />
+                            <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                              <FormControl fullWidth required>
+                                <InputLabel>Status</InputLabel>
+                                <Select
+                                    value={status}
+                                    onChange={(e) => setStatus(e.target.value)} // Update the status state directly
+                                    label="Status"
+                                >
+                                  <MenuItem value="OFFEN">Offen</MenuItem>
+                                  <MenuItem value="IN-BEARBEITUNG">In Bearbeitung</MenuItem>
+                                  <MenuItem value="GESCHLOSSEN">Geschlossen</MenuItem>
+                                  <MenuItem value="ABGELEHNT">Abgelehnt</MenuItem>
+                                </Select>
+                              </FormControl>
+                            </Box>
                             {/* Render DefectReportButton only if a property is selected */}
                             {(selectedProperty &&
                               <DefectReportButton property={selectedProperty.name} />)}

@@ -31,7 +31,7 @@ public interface GMDBService<T> {
      */
     List<T> filter(String attribute, String status);
 
-    Map<String, Object> generateDefectReport(String property);
+    Map<String, Object> generateDefectReport(String location, String status, String startDatum, String endDatum);
 
     MultipartFile generatePdfFromReport(Map<String, Object> report);
 
