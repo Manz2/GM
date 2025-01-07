@@ -41,6 +41,11 @@ export interface ListTenantsRequest {
     tier?: ListTenantsTierEnum;
 }
 
+export interface RestartTenantRequest {
+    id: string;
+    gmTenant: GmTenant;
+}
+
 export interface UpdateTenantRequest {
     id: string;
     gmTenant: GmTenant;
@@ -219,6 +224,59 @@ export class TenantsApi extends runtime.BaseAPI {
      */
     async listTenants(requestParameters: ListTenantsRequest = {}, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Array<GmTenant>> {
         const response = await this.listTenantsRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * startet einen spezifischen Tenant neu anhand der ID
+     * Tenant erneut starten
+     */
+    async restartTenantRaw(requestParameters: RestartTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GmTenant>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling restartTenant().'
+            );
+        }
+
+        if (requestParameters['gmTenant'] == null) {
+            throw new runtime.RequiredError(
+                'gmTenant',
+                'Required parameter "gmTenant" was null or undefined when calling restartTenant().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        headerParameters['Content-Type'] = 'application/json';
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/api/tenants/restart/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'PUT',
+            headers: headerParameters,
+            query: queryParameters,
+            body: GmTenantToJSON(requestParameters['gmTenant']),
+        }, initOverrides);
+
+        return new runtime.JSONApiResponse(response, (jsonValue) => GmTenantFromJSON(jsonValue));
+    }
+
+    /**
+     * startet einen spezifischen Tenant neu anhand der ID
+     * Tenant erneut starten
+     */
+    async restartTenant(requestParameters: RestartTenantRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GmTenant> {
+        const response = await this.restartTenantRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

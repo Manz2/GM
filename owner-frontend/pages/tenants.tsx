@@ -9,6 +9,7 @@ import styles from "@/styles/owner.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
+import RefreshIcon from '@mui/icons-material/Refresh';
 import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
 
 
@@ -290,6 +291,19 @@ export default function Tenants() {
   const handleEditTenant = (tenant: GmTenant) => {
     setEditTenant(tenant);
     setOpen(true);  // Dialog öffnen
+  };
+
+  const handleRestartTenant = (tenant: GmTenant, e: { preventDefault: () => void }) => {
+    if (!tenant.id) {
+      console.error("Tenant ID fehlt");
+      return;
+    }
+    const tenantsApi = new TenantsApi(config);
+    tenantsApi
+      .restartTenant({
+        gmTenant: tenant,
+        id: tenant.id,
+      });
   };
 
   const handleUpdateTenant = () => {
@@ -668,6 +682,9 @@ export default function Tenants() {
                         </Button>
                         <IconButton onClick={() => handleEditTenant(tenant)}>
                           <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={() => handleRestartTenant(tenant)}>
+                          <RefreshIcon />
                         </IconButton>
                         <IconButton onClick={handleEmptyClick} style={{ marginLeft: 'auto' }}>
                           <CloseFullscreenIcon />

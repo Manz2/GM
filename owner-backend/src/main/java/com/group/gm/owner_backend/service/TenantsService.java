@@ -113,8 +113,11 @@ public class TenantsService implements TenantsApiDelegate {
 
         if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
             String ip = terraformService.relaunch(gmTenant.getId(),gmTenant);
-            gmTenant.getServices().getPropertyBackend().setUrl(ip);
-            tenantDbService.updateTenant(gmTenant);
+            if(ip != null && !ip.isEmpty()){
+                gmTenant.getServices().getPropertyBackend().setUrl(ip);
+                tenantDbService.updateTenant(gmTenant);
+            }
+
         } else {
             ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Only Premium Tenants can be restarted.");
         }
