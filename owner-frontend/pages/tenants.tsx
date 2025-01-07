@@ -9,6 +9,8 @@ import styles from "@/styles/owner.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
+import CollapseContent from '@mui/icons-material/closefullscreen';
+
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import * as Api from '../api';
 import {
@@ -222,9 +224,13 @@ export default function Tenants() {
   };
 
   const toggleCard = (index: number, id: string | undefined) => {
-    if (!open) {
+    if (expandedCard !== index && id) {
       setExpandedCard(expandedCard === index ? null : index);
     }
+  };
+
+  const handleEmptyClick = () => {
+    setExpandedCard(null);
   };
 
   const handleUpdateTier = (e: React.ChangeEvent<{ value: unknown }>, tenant: GmTenant, tier: GmTenantTierEnum) => {
@@ -661,6 +667,9 @@ export default function Tenants() {
                         </Button>
                         <IconButton onClick={() => handleEditTenant(tenant)}>
                           <EditIcon />
+                        </IconButton>
+                        <IconButton onClick={handleEmptyClick} style={{ marginLeft: 'auto' }}>
+                          <CollapseContent />
                         </IconButton>
                       </CardActions>
                     )}
