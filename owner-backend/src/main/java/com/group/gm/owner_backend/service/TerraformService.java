@@ -154,6 +154,63 @@ public class TerraformService {
         }
     }
 
+    public String relaunch(String clusterName, GmTenant gmTenant) {
+        String externalIp = null;
+        try {
+            // Pfad zum Skript
+            String scriptPath = "/app/scripts/relaunchTenant.sh";
+
+            // ProcessBuilder initialisieren mit Parametern
+            ProcessBuilder processBuilder = new ProcessBuilder(
+                    scriptPath,
+                    clusterName,
+                    gmTenant.getPreferedRegion(),
+                    gmTenant.getServices().getPropertyBackend().getVersion(),
+                    gmTenant.getServices().getManagementFrontend().getVersion(),
+                    gmTenant.getServices().getFinanceBackend().getVersion()
+            );
+
+            // Starte den Prozess
+            Process process = processBuilder.start();
+
+
+            // Standard- und Fehlerausgabe des Prozesses in separaten Threads lesen und direkt auf die Konsole loggen
+            StringBuilder output = new StringBuilder();
+            Thread stdOutLogger = new Thread(() -> {
+                String result = logStreamAndCapture(process.getInputStream(), "STDOUT");
+                synchronized (output) {
+                    output.append(result);
+                }
+            });
+            Thread stdErrLogger = new Thread(() -> logStream(process.getErrorStream(), "STDERR"));
+
+            // Threads starten
+            stdOutLogger.start();
+            stdErrLogger.start();
+
+            // Warte auf die Beendigung des Prozesses
+            int exitCode = process.waitFor();
+
+            // Warte auf die Beendigung der Logging-Threads
+            stdOutLogger.join();
+            stdErrLogger.join();
+
+            System.out.println("Skript beendet mit Exit-Code: " + exitCode);
+
+            // External IP aus der Ausgabe extrahieren
+            externalIp = parseExternalIp(output.toString());
+
+            if (externalIp == null) {
+                System.err.println("External IP konnte nicht ermittelt werden.");
+            } else {
+                System.out.println("External IP: " + externalIp);
+            }
+        } catch (IOException | InterruptedException e) {
+            e.printStackTrace();
+        }
+        return externalIp;
+    }
+
     /**
      * Liest den Stream (stdout oder stderr) und loggt ihn direkt in die Konsole.
      */

@@ -50,11 +50,13 @@ COPY ${JAR_FILE} /app/app.jar
 
 # Kopiere die Terraform-, Helm-Ordner und das Skript ins Image
 COPY terraformMid/ /app/terraformMid/
+COPY terraformRelaunch/ /app/terraformRelaunch/
 COPY ./terraform/ /app/terraform/
 COPY ./helm/ /app/helm/
 COPY ./newTenant.sh /app/scripts/newTenant.sh
 COPY ./updateTenant.sh /app/scripts/updateTenant.sh
 COPY ./newTenantMid.sh /app/scripts/newTenantMid.sh
+COPY ./relaunchTenant.sh /app/scripts/relaunchTenant.sh
 
 # Setze Berechtigungen für .kube-Verzeichnis
 RUN mkdir -p /app/.kube && chown -R spring:spring /app/.kube
@@ -67,8 +69,8 @@ RUN mkdir -p /tmp/.cache/helm && chown -R spring:spring /tmp/.cache
 
 # Setze die richtigen Berechtigungen für die kopierten Dateien
 # Setze die richtigen Berechtigungen für die kopierten Dateien
-RUN chown -R spring:spring /app/terraform /app/terraformMid /app/helm /app/scripts \
-    && chmod -R u+rwx /app/terraform /app/terraformMid /app/helm /app/scripts
+RUN chown -R spring:spring /app/terraform /app/terraformMid /app/terraformRelaunch/ /app/helm /app/scripts \
+    && chmod -R u+rwx /app/terraform /app/terraformMid /app/terraformRelaunch/ /app/helm /app/scripts
 
 # Setze den Benutzer zurück auf spring
 USER spring:spring

@@ -104,6 +104,23 @@ public class TenantsService implements TenantsApiDelegate {
         return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
     }
 
+    @Override
+    public ResponseEntity<GmTenant> restartTenant(String id, GmTenant gmTenant){
+        if (gmTenant == null || gmTenant.getName() == null) {
+            logger.error("Invalid tenant data provided.");
+            return ResponseEntity.badRequest().build();
+        }
+
+        if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
+            String ip = terraformService.relaunch(gmTenant.getId(),gmTenant);
+            gmTenant.getServices().getPropertyBackend().setUrl(ip);
+            tenantDbService.updateTenant(gmTenant);
+        } else {
+            ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Only Premium Tenants can be restarted.");
+        }
+        return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
+    }
+
     private void getServices(GmTenant gmTenant) {
         if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM || gmTenant.getTier() == GmTenant.TierEnum.ENHANCED) {
             GmService propertyDb = new GmService();
