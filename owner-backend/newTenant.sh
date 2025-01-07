@@ -59,3 +59,31 @@ if [ "$i" -gt 5 ]; then
   exit 1
 fi
 
+# External IP des Ingress überwachen
+echo "Waiting for Ingress External IP..."
+external_ip=""
+retries=0
+max_retries=30
+
+while [ "$retries" -lt "$max_retries" ]; do
+  external_ip=$(kubectl get svc -n ingress-nginx ingress-nginx-controller -o jsonpath='{.status.loadBalancer.ingress[0].ip}')
+
+  if [ "$external_ip" != "<pending>" ] && [ -n "$external_ip" ]; then
+    echo "Ingress External IP: $external_ip"
+    break
+  fi
+
+  echo "External IP is still pending... retrying in 10 seconds."
+  retries=$((retries + 1))
+  sleep 10
+done
+
+if [ "$retries" -ge "$max_retries" ]; then
+  echo "Failed to get External IP after $max_retries retries."
+  exit 1
+fi
+
+# External IP als Rückgabewert des Skripts ausgeben
+echo "External IP erfolgreich ermittelt: $external_ip"
+echo "$external_ip"
+exit 0

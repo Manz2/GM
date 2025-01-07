@@ -7,10 +7,13 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Service
 public class TerraformService {
-    public void start(String clusterName, GmTenant gmTenant) {
+    public String start(String clusterName, GmTenant gmTenant) {
+        String externalIp = null;
         try {
             // Pfad zum Skript
             String scriptPath = "/app/scripts/newTenant.sh";
@@ -32,7 +35,13 @@ public class TerraformService {
 
 
             // Standard- und Fehlerausgabe des Prozesses in separaten Threads lesen und direkt auf die Konsole loggen
-            Thread stdOutLogger = new Thread(() -> logStream(process.getInputStream(), "STDOUT"));
+            StringBuilder output = new StringBuilder();
+            Thread stdOutLogger = new Thread(() -> {
+                String result = logStreamAndCapture(process.getInputStream(), "STDOUT");
+                synchronized (output) {
+                    output.append(result);
+                }
+            });
             Thread stdErrLogger = new Thread(() -> logStream(process.getErrorStream(), "STDERR"));
 
             // Threads starten
@@ -47,9 +56,19 @@ public class TerraformService {
             stdErrLogger.join();
 
             System.out.println("Skript beendet mit Exit-Code: " + exitCode);
+
+            // External IP aus der Ausgabe extrahieren
+            externalIp = parseExternalIp(output.toString());
+
+            if (externalIp == null) {
+                System.err.println("External IP konnte nicht ermittelt werden.");
+            } else {
+                System.out.println("External IP: " + externalIp);
+            }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         }
+        return externalIp;
     }
 
     public void startUpdate(String clusterName, GmTenant gmTenant) {
@@ -147,5 +166,29 @@ public class TerraformService {
         } catch (IOException e) {
             System.err.println("Fehler beim Lesen des Streams [" + streamName + "]: " + e.getMessage());
         }
+    }
+
+    private String logStreamAndCapture(InputStream inputStream, String streamName) {
+        StringBuilder capturedOutput = new StringBuilder();
+        try (BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream))) {
+            String line;
+            while ((line = reader.readLine()) != null) {
+                System.out.println("[" + streamName + "] " + line);
+                capturedOutput.append(line).append("\n");
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return capturedOutput.toString();
+    }
+
+    private String parseExternalIp(String output) {
+        // Suche nach der Zeile mit der External IP
+        Pattern ipPattern = Pattern.compile("Ingress External IP: (\\d+\\.\\d+\\.\\d+\\.\\d+)");
+        Matcher matcher = ipPattern.matcher(output);
+        if (matcher.find()) {
+            return matcher.group(1);
+        }
+        return null;
     }
 }

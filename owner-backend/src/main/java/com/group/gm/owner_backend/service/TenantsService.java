@@ -92,10 +92,14 @@ public class TenantsService implements TenantsApiDelegate {
         }
 
         if(gmTenant.getTier() == GmTenant.TierEnum.PREMIUM) {
-            terraformService.start(googelTenant.getTenantId(),gmTenant);
+           String ip = terraformService.start(googelTenant.getTenantId(),gmTenant);
+           gmTenant.getServices().getPropertyBackend().setUrl(ip);
+           tenantDbService.updateTenant(gmTenant);
         } else if (gmTenant.getTier() == GmTenant.TierEnum.ENHANCED) {
             terraformService.startMid(gmTenant);
         }
+
+
 
         return ResponseEntity.status(HttpStatus.CREATED).body(gmTenant);
     }
