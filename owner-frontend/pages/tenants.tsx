@@ -683,7 +683,7 @@ export default function Tenants() {
                         <IconButton onClick={() => handleEditTenant(tenant)}>
                           <EditIcon />
                         </IconButton>
-                        <IconButton onClick={() => handleRestartTenant(tenant)}>
+                        <IconButton onClick={(e) => handleRestartTenant(tenant, e)}>
                           <RefreshIcon />
                         </IconButton>
                         <IconButton onClick={handleEmptyClick} style={{ marginLeft: 'auto' }}>
