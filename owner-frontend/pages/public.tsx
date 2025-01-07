@@ -114,11 +114,7 @@ export default function Public() {
         return sessionStorage.getItem("authToken");
     };
 
-    const configParameters: Api.ConfigurationParameters = {
-        headers: {
-            'Authorization': 'Bearer ' + getToken(),
-        },
-    };
+
 
     // Token im Session Storage speichern
     const setToken = (token: string) => {
@@ -141,17 +137,29 @@ export default function Public() {
             throw new Error("Kein Benutzer angemeldet");
         }
     };
-    const config = new Api.Configuration(configParameters);
-    const handleAddTenant = async (e: { preventDefault: () => void }) => {
+    let configParameters: Api.ConfigurationParameters = {};
+    let config: Api.Configuration | undefined;
+
+    const loginAndAdd = async (e: { preventDefault: () => void }) => {
         try {
             await firebase.auth().signInWithEmailAndPassword(email, password);
             console.log("login successful");
-            setToken(await generateToken());
+            await setToken(await generateToken());
         } catch (err) {
             console.log(err)
             console.log('Fehler bei der Anmeldung. Überprüfe deine Daten.');
             return
         }
+        configParameters = {
+            headers: {
+                'Authorization': 'Bearer ' + getToken(),
+            },
+        };
+        config = new Api.Configuration(configParameters);
+        handleAddTenant(e);
+
+    }
+    const handleAddTenant = async (e: { preventDefault: () => void }) => {
         handleClose()
         e.preventDefault();
         setLoading(true);
@@ -422,7 +430,7 @@ export default function Public() {
                             <Button onClick={() => setOpen(false)} color="primary">
                                 Abbrechen
                             </Button>
-                            <Button onClick={handleAddTenant} color="primary">
+                            <Button onClick={loginAndAdd} color="primary">
                                 Speichern
                             </Button>
                         </DialogActions>
