@@ -9,7 +9,8 @@ import styles from "@/styles/owner.module.css";
 import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
-import CollapseContent from '@mui/icons-material/closefullscreen';
+import CloseFullscreenIcon from '@mui/icons-material/CloseFullscreen';
+
 
 import Dropzone, { DropzoneRef } from 'react-dropzone';
 import * as Api from '../api';
@@ -669,7 +670,7 @@ export default function Tenants() {
                           <EditIcon />
                         </IconButton>
                         <IconButton onClick={handleEmptyClick} style={{ marginLeft: 'auto' }}>
-                          <CollapseContent />
+                          <CloseFullscreenIcon />
                         </IconButton>
                       </CardActions>
                     )}
