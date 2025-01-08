@@ -14,7 +14,7 @@ FINANCEVERSION=$5
 
 echo "Creating new tenant for cluster: $CLUSTER_NAME in region: $REGION"
 
-cd /app/terraform
+cd /app/terraformRelaunch
 
 terraform init
 
