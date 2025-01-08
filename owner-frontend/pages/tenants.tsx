@@ -565,11 +565,11 @@ export default function Tenants() {
                           {(tenant.tier === 'PREMIUM') && (
                             <>
                               <Typography variant="h6">url:</Typography>
-                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                                 <a href={`http://${tenant.services?.propertyBackend?.url}/management-frontend`} target="_blank" rel="noopener noreferrer">
                                   http://{tenant.services?.propertyBackend?.url}/management-frontend
                                 </a>
-                                </Typography>
+                              </Typography>
                             </>)}
                           <Typography variant="h6">Admin Mail:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
@@ -683,9 +683,10 @@ export default function Tenants() {
                         <IconButton onClick={() => handleEditTenant(tenant)}>
                           <EditIcon />
                         </IconButton>
-                        <IconButton onClick={(e) => handleRestartTenant(tenant, e)}>
-                          <RefreshIcon />
-                        </IconButton>
+                        {(tenant.tier === 'PREMIUM') && (
+                          <IconButton onClick={(e) => handleRestartTenant(tenant, e)}>
+                            <RefreshIcon />
+                          </IconButton>)}
                         <IconButton onClick={handleEmptyClick} style={{ marginLeft: 'auto' }}>
                           <CloseFullscreenIcon />
                         </IconButton>
