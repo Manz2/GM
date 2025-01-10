@@ -1,0 +1,269 @@
+openapi: 3.0.3
+info:
+  title: GM Properties API
+  description: OpenAPI-Spezifikation der GM Properties-API
+  version: 1.0.0
+
+paths:
+  /api/finance/defectreport:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Finance"
+      summary: "Defect-Report generieren und exportieren"
+      description: "Erstellt und exportiert einen Report über Defekte, basierend auf den vorhandenen Daten. Der Report wird in der Cloud gespeichert, und ein Link wird zurückgegeben."
+      operationId: "generateDefectReport"
+      parameters:
+        - name: "property"
+          in: query
+          description: "Das Parkhaus, zu dem der Defect gehört"
+          required: true
+          schema:
+            type: string
+        - name: "status"
+          in: query
+          description: "Status des Defects (z.B. Offen, In Bearbeitung, Geschlossen, Abgelehnt)"
+          required: false
+          schema:
+            type: string
+        - name: "start_date"
+          in: query
+          description: "Startdatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+        - name: "end_date"
+          in: query
+          description: "Enddatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Der Report wurde erfolgreich erstellt und ein Link zur Verfügung gestellt."
+          content:
+            application/json:
+              schema:
+                type: string
+                description: "Die URL des generierten Defect-Reports"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/finance/financereport:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Finance"
+      summary: "Generiere einen Finanz-Bericht (Revenue oder Profit)"
+      description: "Erstellt und exportiert entweder einen Revenue- oder Profit-Report basierend auf den angegebenen Parametern."
+      operationId: "generateViewFinanceReport"
+      parameters:
+        - name: "report_type"
+          in: query
+          description: "Typ des zu generierenden Berichts ('revenue' oder 'profit')"
+          required: true
+          schema:
+            type: string
+            enum: [ "revenue", "profit" ]
+        - name: "property"
+          in: query
+          description: "Das Parkhaus, für das der Bericht erstellt werden soll"
+          required: false
+          schema:
+            type: string
+        - name: "start_date"
+          in: query
+          description: "Startdatum des Berichtszeitraums (im Format YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: "end_date"
+          in: query
+          description: "Enddatum des Berichtszeitraums (im Format YYYY-MM-DD)"
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: "Der Report wurde erfolgreich erstellt und ein Link zur Verfügung gestellt."
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  report_url:
+                    type: string
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/finance/exportdata:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Finance"
+      summary: "Rohdaten ausgeben"
+      description: "Gibt alle Rohdaten zurück. Optional kann nach Datum und Property gefiltert werden. Die Daten werden im CSV-Format zurückgegeben."
+      operationId: "exportData"
+      parameters:
+        - name: "property"
+          in: query
+          description: "Das betroffene Parkhaus"
+          required: false
+          schema:
+            type: string
+        - name: "start_date"
+          in: query
+          description: "Startdatum des Filters"
+          required: false
+          schema:
+            type: string
+            format: date
+        - name: "end_date"
+          in: query
+          description: "Enddatum des Filters"
+          required: false
+          schema:
+            type: string
+            format: date
+      responses:
+        '200':
+          description: "CSV-Datei mit Rohdaten erfolgreich zurückgegeben"
+          content:
+            text/csv:
+              schema:
+                type: string
+                format: binary
+                description: "Die zurückgegebenen Rohdaten im CSV-Format"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+  /health:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "health"
+      summary: "health test"
+      description: "health test"
+      operationId: "health"
+      responses:
+        '200':
+          description: "alive"
+        '404':
+          description: "not alive"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    DefectReport:
+      type: object
+      properties:
+        properties:
+          type: array
+          items:
+            $ref: './property-openapi.yaml#/components/schemas/Property'
+        defects:
+          type: array
+          items:
+            $ref: './property-openapi.yaml#/components/schemas/Defect'
+        metadata:
+          type: object
+          properties:
+            generated_at:
+              type: string
+              format: date-time
+            total_defects:
+              type: integer
+            filters:
+              type: object
+              properties:
+                property:
+                  type: string
+                status:
+                  type: string
+                start_date:
+                  type: string
+                  format: date
+                end_date:
+                  type: string
+                  format: date
+
+    FinanceReport:
+        type: object
+        properties:
+          report_type:
+            type: string
+            enum: [ "revenue", "profit" ]
+          data:
+            type: object
+            additionalProperties: true
+          metadata:
+            type: object
+            properties:
+              generated_at:
+                type: string
+                format: date-time
+              filters:
+                type: object
+                properties:
+                  property:
+                    type: string
+                  start_date:
+                    type: string
+                    format: date
+                  end_date:
+                    type: string
+                    format: date
+    GmInfo:
+      type: object
+      properties:
+        tenant:
+          description: "der Tenant"
+          $ref: './owner-openapi.yaml#/components/schemas/GmTenant'
+
+    ErrorResponse:
+      description: "Basis Fehler-Response ohne Detailangaben"
+      type: object
+      properties:
+        message:
+          description: "Fehlermeldung"
+          type: string
+      required:
+        - "message"
+  responses:
+    BadRequest:
+      description: Fehlerhafte Anfrage
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Die angeforderte Ressource wurde nicht gefunden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

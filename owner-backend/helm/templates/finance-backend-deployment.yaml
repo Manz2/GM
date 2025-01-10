@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.financeBackend.name }}
+  labels:
+    app: {{ .Values.financeBackend.name }}
+spec:
+  replicas: {{ .Values.financeBackend.replicaCount }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Values.financeBackend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.financeBackend.name }}
+    spec:
+      serviceAccountName: staging
+      containers:
+        - name: {{ .Values.financeBackend.name }}
+          image: "{{ .Values.financeBackend.artifactRegistryPath }}/{{ .Values.financeBackend.image }}:{{ .Values.financeBackend.version }}"
+          ports:
+            - containerPort: {{ .Values.financeBackend.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.financeBackend.readinessProbePath }}
+              port: {{ .Values.financeBackend.containerPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.financeBackend.livenessProbePath }}
+              port: {{ .Values.financeBackend.containerPort }}
+            initialDelaySeconds: 40
+            periodSeconds: 30

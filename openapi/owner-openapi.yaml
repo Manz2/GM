@@ -1,0 +1,329 @@
+openapi: 3.0.3
+info:
+  title: GM-Owner API
+  description: OpenAPI-Spezifikation der owner-API
+  version: 1.0.0
+
+paths:
+  /api/tenants:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Tenants"
+      summary: "Tenant Liste abfragen"
+      description: "Gibt alle Tenants zurück. Optional kann nach tier gefiltert werden."
+      operationId: "listTenants"
+      parameters:
+        - name: "tier"
+          in: query
+          description: "Abbo Stufe des Tenant Entry, Enhanced oder Premium"
+          required: false
+          schema:
+            type: string
+            enum: [ "ENTRY", "ENHANCED", "PREMIUM" ]
+      responses:
+        '200':
+          description: "Liste der Tenants erfolgreich zurückgegeben"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/GmTenant'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    post:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Tenants"
+      summary: "Tenant hinzufügen"
+      description: "Fügt einen neuen Tenant hinzu"
+      operationId: "addTenant"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GmTenant'
+      responses:
+        '201':
+          description: "Tenant wurde erfolgreich erstellt"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GmTenant'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/tenants/{id}:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Tenants"
+      summary: "Tenant per ID abrufen"
+      description: "Gibt einen spezifischen Tenant anhand der ID zurück"
+      operationId: "getTenantById"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Der Tenant wurde gefunden und zurückgegeben"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GmTenant'
+        '404':
+          description: "Tenant mit der angegebenen ID wurde nicht gefunden"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    put:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Tenants"
+      summary: "Tenant aktualisieren"
+      description: "Aktualisiert einen spezifischen Tenant anhand der ID"
+      operationId: "updateTenant"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GmTenant'
+      responses:
+        '200':
+          description: "Tenant wurde erfolgreich aktualisiert"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GmTenant'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: "Tenant mit der angegebenen ID wurde nicht gefunden"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+    delete:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Tenants"
+      summary: "Tenant löschen"
+      description: "Löscht einen spezifischen Tenant anhand der ID"
+      operationId: "deleteTenant"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "Tenant wurde erfolgreich gelöscht"
+        '404':
+          description: "Tenant mit der angegebenen ID wurde nicht gefunden"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/tenants/restart/{id}:
+    put:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Tenants"
+      summary: "Tenant erneut starten"
+      description: "startet einen spezifischen Tenant neu anhand der ID"
+      operationId: "restartTenant"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/GmTenant'
+      responses:
+        '200':
+          description: "Tenant wurde erfolgreich aktualisiert"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/GmTenant'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '404':
+          description: "Tenant mit der angegebenen ID wurde nicht gefunden"
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    GmTenant:
+      description: "Tenant der Anwendung"
+      type: object
+      properties:
+        id:
+          description: "Id"
+          type: string
+        name:
+          description: "Der Name des Tenant"
+          type: string
+        tier:
+          description: "Abo Stufe des Tenant"
+          type: string
+          enum: [ "ENTRY", "ENHANCED", "PREMIUM" ]
+        adminMail:
+          description: "Die Mail des Administrators"
+          type: string
+        services:
+          description: "Die Namen bzw. ids der Services"
+          $ref: '#/components/schemas/Services'
+        customisation:
+          description: "Die Personalisierten Komponenten"
+          $ref: '#/components/schemas/customisation'
+        preferedRegion:
+          description: "bevorzugte Region des Tenant"
+          type: string
+        numberOfProperties:
+          description: "Anzahl der Properties"
+          type: integer
+        numberOfDefects:
+          description: "Anzahl der Defekte"
+          type: integer
+        numberOfUsers:
+          description: "Anzahl der User"
+          type: integer
+
+    Services:
+      type: object
+      properties:
+        financeBackend:
+          description: "Das Finanz Backend"
+          $ref: '#/components/schemas/GmService'
+        propertyBackend:
+          description: "Das Property Backend"
+          $ref: '#/components/schemas/GmService'
+        parkingBackend:
+          description: "Das Parking Backend"
+          $ref: '#/components/schemas/GmService'
+        paymentWatcher:
+          description: "der PaymentWatcher Service"
+          $ref: '#/components/schemas/GmService'
+        reportGenerationWorker:
+          description: "Report generation Worker "
+          $ref: '#/components/schemas/GmService'
+        managementFrontend:
+          description: "das Management Frontend"
+          $ref: '#/components/schemas/GmService'
+        parkingFrontend:
+          description: "das Parking Frontend"
+          $ref: '#/components/schemas/GmService'
+        propertyDb:
+          description: "Die Property DB"
+          $ref: '#/components/schemas/GmService'
+        parkingDb:
+          description: "Die Parking DB"
+          $ref: '#/components/schemas/GmService'
+        storage:
+            description: "Der Filestorage"
+            $ref: '#/components/schemas/GmService'
+
+    GmService:
+      type: object
+      properties:
+        name:
+          description: "name oder id des Service"
+          type: string
+        url:
+          description: "url des Service"
+          type: string
+        region:
+          description: "region des Service"
+          type: string
+        version:
+          description: "version des Service"
+          type: string
+        up:
+          description: "status des service"
+          type: boolean
+        lastUp:
+          description: "letzter positiver status check"
+          type: number
+
+    customisation:
+      type: object
+      properties:
+        applicationName:
+          description: "name der application"
+          type: string
+        backgroundImage:
+          description: "Background image"
+          type: string
+        colorScheme:
+          description: "color Scheme der Anwendung"
+          type: string
+
+
+    ErrorResponse:
+      description: "Basis Fehler-Response ohne Detailangaben"
+      type: object
+      properties:
+        message:
+          description: "Fehlermeldung"
+          type: string
+      required:
+        - "message"
+
+
+  responses:
+    BadRequest:
+      description: Fehlerhafte Anfrage
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Die angeforderte Ressource wurde nicht gefunden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'

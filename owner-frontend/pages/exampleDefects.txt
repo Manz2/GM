@@ -1,0 +1,98 @@
+[
+  {
+    "property": "Parkhaus am Hauptbahnhof",
+    "location": "Eingang",
+    "description_short": "Kaputter Aufzug",
+    "description_detailed": "Der Aufzug im Eingangsbereich funktioniert nicht mehr. Keine Anzeige, keine Reaktion auf Knopfdruck. Wartungen wurden noch nicht durchgeführt.",
+    "reporting_date": "2024-10-11",
+    "status": "Offen"
+  },
+  {
+    "property": "Parkhaus am Hauptbahnhof",
+    "location": "4. Etage",
+    "description_short": "Beleuchtung defekt",
+    "description_detailed": "Die Lampen auf der vierten Etage sind komplett ausgefallen. Es herrscht Dunkelheit, was das Parken und die Orientierung erschwert.",
+    "reporting_date": "2024-10-08",
+    "status": "Geschlossen"
+  },
+  {
+    "property": "Parkhaus am Hauptbahnhof",
+    "location": "2. Etage",
+    "description_short": "Pfützenbildung",
+    "description_detailed": "Durch undichte Stellen im Dach entstehen große Wasserpfützen, die zu Rutschgefahr führen, besonders bei Regenwetter.",
+    "reporting_date": "2024-10-12",
+    "status": "In-Bearbeitung"
+  },
+  {
+    "property": "Parkhaus am Hauptbahnhof",
+    "location": "Erdgeschoss, Einfahrt",
+    "description_short": "Defekte Schranke",
+    "description_detailed": "Die Schranke an der Einfahrt öffnet sich nur teilweise, was zu einem Stau führt. Fahrzeuge müssen warten, bis die Schranke manuell bedient wird.",
+    "reporting_date": "2024-10-10",
+    "status": "Offen"
+  },
+  {
+    "property": "Parkhaus am Stadtzentrum",
+    "location": "3. Etage",
+    "description_short": "Riss in der Wand",
+    "description_detailed": "Ein langer Riss zieht sich über die Außenwand auf der dritten Etage. Bei starkem Regen tritt Wasser ein, was weitere Schäden verursachen könnte.",
+    "reporting_date": "2024-10-09",
+    "status": "In-Bearbeitung"
+  },
+  {
+    "property": "Parkhaus am Stadtzentrum",
+    "location": "2. Etage",
+    "description_short": "Kaputtes Geländer",
+    "description_detailed": "Das Geländer entlang der Fahrspur ist locker und könnte bei starkem Druck nachgeben. Besonders für Kinder ist dies eine Gefahr.",
+    "reporting_date": "2024-10-13",
+    "status": "Offen"
+  },
+  {
+    "property": "Parkhaus am Stadtzentrum",
+    "location": "Erdgeschoss, Ausgang",
+    "description_short": "Defekter Kartenschlitz",
+    "description_detailed": "Der Kartenschlitz am Ausgang ist defekt. Die Parktickets werden nicht eingezogen, wodurch das Verlassen des Parkhauses erschwert wird.",
+    "reporting_date": "2024-10-07",
+    "status": "Geschlossen"
+  },
+  {
+    "property": "Parkhaus West",
+    "location": "1. Etage",
+    "description_short": "Verstopfter Abfluss",
+    "description_detailed": "In der Nähe des Fahrstuhls ist ein Abfluss verstopft. Es sammelt sich Wasser an, was für Fußgänger gefährlich werden könnte, besonders bei Regen.",
+    "reporting_date": "2024-10-12",
+    "status": "Offen"
+  },
+  {
+    "property": "Parkhaus West",
+    "location": "3. Etage",
+    "description_short": "Beleuchtung ausgefallen",
+    "description_detailed": "Die Beleuchtung auf der dritten Etage ist komplett ausgefallen, was das Parken in den Abendstunden schwierig und gefährlich macht.",
+    "reporting_date": "2024-10-10",
+    "status": "Abgelehnt"
+  },
+  {
+    "property": "Parkhaus West",
+    "location": "2. Etage, neben Treppenhaus",
+    "description_short": "Lose Bodenfliesen",
+    "description_detailed": "Mehrere Bodenfliesen im Bereich des Treppenhauses sind locker. Diese könnten bei starker Belastung brechen und sind eine Stolpergefahr.",
+    "reporting_date": "2024-10-15",
+    "status": "In-Bearbeitung"
+  },
+  {
+    "property": "Parkhaus am Kino",
+    "location": "2. Etage",
+    "description_short": "Defekte Schranke",
+    "description_detailed": "Die Schranke auf der zweiten Etage lässt sich nicht schließen. Fahrzeuge können ungehindert passieren, was ein Sicherheitsrisiko darstellt.",
+    "reporting_date": "2024-10-12",
+    "status": "In-Bearbeitung"
+  },
+  {
+    "property": "Parkhaus am Kino",
+    "location": "4. Etage",
+    "description_short": "Kaputte Lüftung",
+    "description_detailed": "Die Lüftung auf der vierten Etage funktioniert nicht mehr. Es staut sich die Luft, und die Etage ist an heißen Tagen kaum benutzbar.",
+    "reporting_date": "2024-10-14",
+    "status": "Offen"
+  }
+]

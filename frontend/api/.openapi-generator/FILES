@@ -1,7 +1,0 @@
-apis/DefectsApi.ts
-apis/index.ts
-index.ts
-models/Defect.ts
-models/ErrorResponse.ts
-models/index.ts
-runtime.ts

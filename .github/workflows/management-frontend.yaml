@@ -1,0 +1,50 @@
+name: Deploy Management Frontend
+
+on:
+  push:
+    branches: ["dev"]
+    paths:
+      - "management-frontend/**"
+  pull_request:
+    branches: ["dev"]
+    paths:
+      - "management-frontend/**"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read versions from version.yaml
+        id: read_versions
+        run: |
+          VERSION_MANAGEMENT=$(yq eval '.management-frontend' management-frontend/version.yaml)
+          echo "VERSION_MANAGEMENT=$VERSION_MANAGEMENT" >> $GITHUB_ENV
+      
+      - name: Create Management .env file
+        run: |
+          echo "NEXT_PUBLIC_PROPERTY_BACKEND=${{ vars.PROPERTY_BASE_PATH }}" >> management-frontend/.env.production
+          echo "NEXT_PUBLIC_FINANCE_BACKEND=${{ vars.FINANCE_BASE_PATH }}" >> management-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> management-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> management-frontend/.env.production
+
+      - name: Build Management Frontend
+        run: |
+          docker build -t com/group/management-frontend:${{ env.VERSION_MANAGEMENT }} ./management-frontend
+          docker tag com/group/management-frontend:${{ env.VERSION_MANAGEMENT }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend:${{ env.VERSION_MANAGEMENT }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ca-test2-438111
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker to use gcloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+          gcloud config set project ca-test2-438111
+
+      - name: Push  image to GCR
+        run: |
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/management-frontend:${{ env.VERSION_MANAGEMENT }}

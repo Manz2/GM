@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.propertyBackend.name }}
+  labels:
+    app: {{ .Values.propertyBackend.name }}
+spec:
+  replicas: {{ .Values.propertyBackend.replicaCount }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Values.propertyBackend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.propertyBackend.name }}
+    spec:
+      serviceAccountName: staging
+      containers:
+        - name: {{ .Values.propertyBackend.name }}
+          image: "{{ .Values.propertyBackend.artifactRegistryPath }}/{{ .Values.propertyBackend.image }}:{{ .Values.propertyBackend.version }}"
+          ports:
+            - containerPort: {{ .Values.propertyBackend.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.propertyBackend.readinessProbePath }}
+              port: {{ .Values.propertyBackend.containerPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.propertyBackend.livenessProbePath }}
+              port: {{ .Values.propertyBackend.containerPort }}
+            initialDelaySeconds: 40
+            periodSeconds: 30

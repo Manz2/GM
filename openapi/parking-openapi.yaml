@@ -1,0 +1,220 @@
+openapi: 3.0.3
+info:
+  title: GM Parking API
+  description: OpenAPI-Spezifikation der GM Parking-API
+  version: 1.0.0
+
+paths:
+  /api/parking/requestEntry:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Parking"
+      summary: "Einfahrt eines Fahrzeugs anfragen"
+      description: "Fragt an, ob ein Fahrzeug eingelassen werden kann. Falls ja wird ein entsprechendes Ticket erstellt und zurückgegeben"
+      operationId: "requestEntry"
+      parameters:
+        - name: "propertyId"
+          in: query
+          description: "Das Parkhaus, für welches die Einfahrt angefragt wird."
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Das erstellte Park Ticket"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Ticket'
+        '204':
+          description: Einfahrt abgelehnt
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/parking/markTicketPayed:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Parking"
+      summary: "Ein Ticket als bezahlt markieren"
+      operationId: "markTicketPayed"
+      parameters:
+        - name: "ticketId"
+          in: query
+          description: "Das Ticket, welches als bezahlt markiert werden soll."
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Ticket wurde als bezahlt markiert"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/parking/isTicketPayed:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Parking"
+      summary: "Fragt ab, ob ein Ticket bezahlt wurde"
+      operationId: "isTicketPayed"
+      parameters:
+        - name: "ticketId"
+          in: query
+          description: "Das Ticket, dessen Status auf bezahlt geprüft werden soll."
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Ticket wurde bezahlt
+        '204':
+          description: Ticket wurde nicht bezahlt
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/parking/occupancy:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Parking"
+      summary: "Liefert die Auslastung eines Parkhauses"
+      operationId: "occupancy"
+      parameters:
+        - name: "propertyId"
+          in: query
+          description: "Das Parkhaus, für welches die AUslastung abgefragt wird."
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Auslastung des Parkhauses"
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Occupancy'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/parking/getParkingHistory:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Parking"
+      summary: "Liefert die Tickets eines Parkhauses über einen bestimmten Zeitraum"
+      operationId: "getParkingHistory"
+      parameters:
+        - name: "property"
+          in: query
+          description: "Das Parkhaus, für welches die Parking History abgefragt wird."
+          required: true
+          schema:
+            type: string
+        - name: "dateFrom"
+          in: query
+          description: "Untere Datumsgrenze"
+          required: false
+          schema:
+            type: date
+        - name: "DateTo"
+          in: query
+          description: "Obere Datumsgrenze"
+          required: false
+          schema:
+            type: date
+      responses:
+        '200':
+          description: "Die Tickets des ausgewählten Zeitraums"
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Ticket'
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+components:
+  securitySchemes:
+    BearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+  schemas:
+    Ticket:
+      description: "Ein Parkticket"
+      type: object
+      properties:
+        id:
+          description: "Id"
+          type: string
+        propertyId:
+          description: "Das Parkhaus zu dem das Ticket gelöst wurde"
+          type: string
+        creation_date:
+          description: "Datum der Ticket Erstellung"
+          type: long
+        pay_date:
+          description: "Datum der Ticket Bezahlung"
+          type: long
+        status:
+          description: "Status halt"
+          type: string
+          enum: [ "Offen", "Bezahlt" ]
+
+    Occupancy:
+      description: "Die Auslastung eines Parkhauses"
+      type: object
+      properties:
+        spaces:
+          type: int
+        used:
+          type: int
+
+    ErrorResponse:
+      description: "Basis Fehler-Response ohne Detailangaben"
+      type: object
+      properties:
+        message:
+          description: "Fehlermeldung"
+          type: string
+      required:
+        - "message"
+
+
+  responses:
+    BadRequest:
+      description: Fehlerhafte Anfrage
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    NotFound:
+      description: Die angeforderte Ressource wurde nicht gefunden.
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
+    InternalServerError:
+      description: Internal Server Error
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/ErrorResponse'
