@@ -135,7 +135,7 @@ public class TenantsService implements TenantsApiDelegate {
             gmTenant.getServices().setPropertyDb(propertyDb);
             GmService parkingDb = new GmService();
             parkingDb.setName(gmTenant.getId() + " Parking DB");
-            parkingDb.setUrl(gmTenant.getId()+ "_parking");
+            parkingDb.setUrl(gmTenant.getId()+ "Parking");
             gmTenant.getServices().setPropertyDb(parkingDb);
             GmService storage = new GmService();
             storage.setName(gmTenant.getId() + " storage");
