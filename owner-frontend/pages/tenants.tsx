@@ -287,7 +287,7 @@ export default function Tenants() {
   };
 
   const getOverallStatus = (services: Api.Services) =>
-    services.managementFrontend?.up && services.propertyBackend?.up && services.financeBackend?.up;
+    services.managementFrontend?.up && services.propertyBackend?.up && services.financeBackend?.up && services.parkingBackend?.up;
 
   const getStatusColor = (status: boolean) => (status ? "green" : "red");
 
@@ -698,6 +698,28 @@ export default function Tenants() {
                                 <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                                   {tenant.services?.financeBackend?.lastUp
                                     ? `Zuletzt: ${new Date(tenant.services?.financeBackend?.lastUp).toLocaleString()}`
+                                    : "Nie"}
+                                </Typography>
+                              </div>
+
+                              <Typography variant="h6">Parking Backend:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.parkingBackend?.version}
+                              </Typography>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Avatar
+                                  style={{
+                                    backgroundColor: getStatusColor(!!tenant.services?.parkingBackend?.up),
+                                    width: 15,
+                                    height: 15,
+                                    marginLeft: '10px',
+                                  }}
+                                >
+                                  {" "}
+                                </Avatar>
+                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                  {tenant.services?.parkingBackend?.lastUp
+                                    ? `Zuletzt: ${new Date(tenant.services?.parkingBackend?.lastUp).toLocaleString()}`
                                     : "Nie"}
                                 </Typography>
                               </div>
