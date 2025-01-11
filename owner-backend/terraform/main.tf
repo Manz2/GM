@@ -56,7 +56,7 @@ resource "google_firestore_database" "firestore" {
 }
 
 resource "google_firestore_database" "firestoreParking" {
-  name        = "${var.cluster_name}Parking"
+  name        = "${var.cluster_name}parking"
   project     = var.project_id
   location_id = var.regionStorage
   type        = "FIRESTORE_NATIVE"
