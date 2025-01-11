@@ -8,7 +8,7 @@ import org.springframework.http.*;
 
 public class TenantService {
 
-    @Value("${google.cloud.projectId}")
+    @Value("google.cloud.cloudFunctionUrl")
     private String CLOUD_FUNCTION_URL;
 
     public GmTenant fetchTenantDetails(String tenantId, String authToken) {
