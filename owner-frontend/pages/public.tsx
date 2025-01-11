@@ -69,6 +69,12 @@ export default function Public() {
                 region: "",
                 version: "",
             },
+            parkingBackend: {
+                name: "Parking Backend",
+                url: "",
+                region: "",
+                version: "",
+              },
             managementFrontend: {
                 name: "Management Frontend",
                 url: "",
@@ -189,6 +195,12 @@ export default function Public() {
                             region: "",
                             version: "",
                         },
+                        parkingBackend: {
+                            name: "Parking Backend",
+                            url: "",
+                            region: "",
+                            version: "",
+                          },
                         managementFrontend: {
                             name: "Management Frontend",
                             url: "",
@@ -377,6 +389,26 @@ export default function Public() {
                                                                 ...prevTenant.services,
                                                                 financeBackend: {
                                                                     ...prevTenant.services?.financeBackend,
+                                                                    version: e.target.value,
+                                                                },
+                                                            },
+                                                        }))
+                                                    }
+                                                    required
+                                                    fullWidth
+                                                />
+                                            </Box>
+                                            <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                                                <TextField
+                                                    label="Parking Backend Version"
+                                                    value={newTenant.services?.parkingBackend?.version || ""}
+                                                    onChange={(e) =>
+                                                        setNewTenant((prevTenant) => ({
+                                                            ...prevTenant,
+                                                            services: {
+                                                                ...prevTenant.services,
+                                                                parkingBackend: {
+                                                                    ...prevTenant.services?.parkingBackend,
                                                                     version: e.target.value,
                                                                 },
                                                             },
