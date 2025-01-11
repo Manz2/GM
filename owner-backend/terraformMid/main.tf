@@ -37,7 +37,7 @@ resource "google_firestore_database" "firestore" {
   type        = "FIRESTORE_NATIVE"
 }
 
-resource "google_firestore_database" "firestore_parking" {
+resource "google_firestore_database" "firestoreParking" {
   name        = "${var.tenantid}Parking"
   project     = var.project_id
   location_id = var.regionStorage
