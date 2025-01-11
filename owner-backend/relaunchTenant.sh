@@ -1,7 +1,7 @@
 #!/bin/sh
 
 # Überprüfen, ob die erforderlichen Parameter übergeben wurden
-if [ "$#" -lt 6 ]; then
+if [ "$#" -lt 5 ]; then
   echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION>"
   exit 1
 fi
@@ -14,7 +14,7 @@ FINANCEVERSION=$5
 
 echo "Creating new tenant for cluster: $CLUSTER_NAME in region: $REGION"
 
-cd /app/terraform
+cd /app/terraformRelaunch
 
 terraform init
 

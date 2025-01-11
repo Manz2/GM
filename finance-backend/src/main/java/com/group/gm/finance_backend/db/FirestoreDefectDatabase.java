@@ -5,7 +5,12 @@ import com.google.cloud.firestore.*;
 import com.group.gm.openapi.model.Defect;
 import com.group.gm.finance_backend.config.FirestoreConfig;
 import com.group.gm.openapi.model.GmTenant;
+import com.itextpdf.io.image.ImageDataFactory;
+import com.itextpdf.kernel.pdf.canvas.draw.SolidLine;
+import com.itextpdf.layout.element.*;
+import com.itextpdf.layout.properties.HorizontalAlignment;
 import com.itextpdf.layout.properties.TextAlignment;
+import com.itextpdf.layout.properties.UnitValue;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.mock.web.MockMultipartFile;
@@ -19,13 +24,13 @@ import com.itextpdf.kernel.font.PdfFontFactory;
 import com.itextpdf.kernel.pdf.PdfDocument;
 import com.itextpdf.kernel.pdf.PdfWriter;
 import com.itextpdf.layout.Document;
-import com.itextpdf.layout.element.Paragraph;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.time.Instant;
-import java.time.ZoneId;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.ExecutionException;
 
 @Component
@@ -75,56 +80,84 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
     }
 
     @Override
-    public Map<String, Object> generateDefectReport(String property) {
-        System.out.println("Starting to generate defect report for property: " + property);
+    public Map<String, Object> generateDefectReport(String location, String status, String startDatum, String endDatum) {
+        System.out.println("Starting to generate defect report for property: " + location);
+        System.out.println("Parameters used: " + location + " " + status + " "+ startDatum + " "+ endDatum);
         tenantSpecificConfig();
         Map<String, Object> report = new HashMap<>();
         try {
-            ApiFuture<QuerySnapshot> future = defectCollection.whereEqualTo("property", property).get();
+            Query query = defectCollection.whereEqualTo("location", location);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (startDatum != null && !startDatum.isEmpty()) {
+                Date startDate = sdf.parse(startDatum);
+                long startMillis = startDate.getTime();
+                System.out.println("Startdate in Milliseconds: " + startMillis);
+                query = query.whereGreaterThanOrEqualTo("reportingDate", startMillis);
+            }
+            if (endDatum != null && !endDatum.isEmpty()) {
+                Date endDate = sdf.parse(endDatum);
+                long endMillis = endDate.getTime();
+                System.out.println("Enddate in Milliseconds: " + endMillis);
+                query = query.whereLessThanOrEqualTo("reportingDate", endMillis);
+            }
+            if (endDatum != null && !endDatum.isEmpty()) {
+                String UppercaseStatus = status.toUpperCase();
+                query = query.whereEqualTo("status", UppercaseStatus);
+            }
+
+            ApiFuture<QuerySnapshot> future = query.get();
             QuerySnapshot snapshot = future.get();
             int totalDefects = snapshot.size();
 
-            report.put("property", property);
+            report.put("location", location);
+            report.put("status", status);
             report.put("total_defects", totalDefects);
+            report.put("start_date", startDatum);
+            report.put("end_date", endDatum);
             report.put("generated_at", new Date());
 
-            logger.info("Report generated for property {}: total defects = {}", property, totalDefects);
+            logger.info("Report generated for location {}: total defects = {}", location, totalDefects);
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Error generating defect report: {}", e.getMessage());
+        } catch (ParseException e) {
+            logger.error("Error parsing dates: {}", e.getMessage());
         }
+
         System.out.println(report);
         return report;
     }
 
     @Override
     public MultipartFile generatePdfFromReport(Map<String, Object> report) {
+        System.out.println("Starting to generate Pdf for Report: " + report.get("location"));
         ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 
         try {
-            // Initialize the PdfWriter with the ByteArrayOutputStream
             PdfWriter writer = new PdfWriter(outputStream);
-
-            // Create a new PdfDocument
             PdfDocument pdfDocument = new PdfDocument(writer);
-
-            // Initialize the Document (layout and content container)
             Document document = new Document(pdfDocument);
 
-            // Set up a standard font (Helvetica)
-            PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+            document.setMargins(20, 20, 20, 20);
 
-            // Add content to the document
+            PdfFont titleFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
             document.add(new Paragraph("Defect Report")
-                    .setFont(font)
-                    .setFontSize(16)
-                    .setTextAlignment(TextAlignment.CENTER));
+                    .setFont(titleFont)
+                    .setFontSize(20)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginBottom(20));
 
+            LineSeparator separator = new LineSeparator(new SolidLine());
+            document.add(separator);
+
+            PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
             document.add(new Paragraph("Generated at: " + report.get("generated_at"))
                     .setFont(font)
                     .setFontSize(12)
-                    .setTextAlignment(TextAlignment.LEFT));
+                    .setTextAlignment(TextAlignment.LEFT)
+                    .setMarginTop(10));
 
-            document.add(new Paragraph("Property: " + report.get("property"))
+            document.add(new Paragraph("Property: " + report.get("location"))
                     .setFont(font)
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.LEFT));
@@ -134,19 +167,45 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.LEFT));
 
-            // Close the document
+            document.add(new Paragraph("Status: " + report.get("status"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("Start Datum: " + report.get("start_date"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("End Datum: " + report.get("end_date"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+            PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+            Table table = new Table(UnitValue.createPercentArray(new float[]{1, 2}))
+                    .useAllAvailableWidth()
+                    .setMarginTop(20);
+            table.addHeaderCell(new Cell().add(new Paragraph("Field").setFont(boldFont)));
+            table.addHeaderCell(new Cell().add(new Paragraph("Value").setFont(boldFont)));
+
+            for (Map.Entry<String, Object> entry : report.entrySet()) {
+                table.addCell(new Cell().add(new Paragraph(entry.getKey())));
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(entry.getValue()))));
+            }
+            document.add(table);
+
             document.close();
+
         } catch (Exception e) {
             throw new RuntimeException("Error generating PDF: " + e.getMessage(), e);
         }
 
-        // Convert ByteArrayOutputStream to MultipartFile
         try {
             return new MockMultipartFile(
-                    "report",                                   // Name of the file
-                    "defect-report.pdf",                        // Original filename
-                    "application/pdf",                          // Content type
-                    outputStream.toByteArray()                  // File content as byte array
+                    "report",
+                    "defect-report.pdf",
+                    "application/pdf",
+                    outputStream.toByteArray()
             );
         } catch (Exception e) {
             throw new RuntimeException("Error creating MultipartFile: " + e.getMessage(), e);
