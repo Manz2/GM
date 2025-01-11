@@ -35,7 +35,7 @@ while [ "$i" -le 5 ]; do
     --set propertyBackend.version="$PROPERTYVERSION" \
     --set managementFrontend.version="$MANAGEMENTVERSION" \
     --set financeBackend.version="$FINANCEVERSION" \
-    --set parkingBackend.version="$PARKINGVERSION" \ && break
+    --set parkingBackend.version="$PARKINGVERSION" && break
 
   echo "Attempt $i failed. Retrying in 10 seconds..."
   i=$((i + 1))
