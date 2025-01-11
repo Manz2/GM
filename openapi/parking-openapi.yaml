@@ -206,7 +206,7 @@ components:
           type: string
           enum: [ "Offen", "Bezahlt" ]
 
-    Property:
+    ParkingProperty:
       description: "Property"
       type: object
       properties:

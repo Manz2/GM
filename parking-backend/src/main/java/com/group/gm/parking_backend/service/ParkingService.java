@@ -2,7 +2,7 @@ package com.group.gm.parking_backend.service;
 
 import com.group.gm.openapi.api.ParkingApiDelegate;
 import com.group.gm.openapi.model.Occupancy;
-import com.group.gm.openapi.model.Property;
+import com.group.gm.openapi.model.ParkingProperty;
 import com.group.gm.openapi.model.Ticket;
 import com.group.gm.parking_backend.db.FirestoreParkingDatabase;
 import org.slf4j.Logger;
@@ -76,7 +76,7 @@ public class ParkingService implements ParkingApiDelegate {
     @Override
     public ResponseEntity<Ticket> requestEntry(String propertyId) {
         logger.info("Requesting entry for propertyId: {}", propertyId);
-        Property property = parkingDatabase.getById(propertyId);
+        ParkingProperty property = parkingDatabase.getById(propertyId);
         if (property.getAvailableSpace() > property.getOccupiedSpace()) {
             return ResponseEntity.noContent().build();
         }
@@ -95,7 +95,7 @@ public class ParkingService implements ParkingApiDelegate {
     @Override
     public ResponseEntity<Void> requestExit(String propertyId, String ticketId) {
         logger.info("Requesting exit for ticketId: {} in propertyId: {}", ticketId, propertyId);
-        Property property = parkingDatabase.getById(propertyId);
+        ParkingProperty property = parkingDatabase.getById(propertyId);
 
         Ticket ticket = parkingDatabase.getTicketById(ticketId);
         if (ticket != null && Ticket.StatusEnum.BEZAHLT.equals(ticket.getStatus())) {

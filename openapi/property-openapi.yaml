@@ -690,8 +690,9 @@ components:
       type: object
       properties:
         tenant:
-          description: "der Tenant"
           $ref: './owner-openapi.yaml#/components/schemas/GmTenant'
+        property:
+          $ref: './parking-openapi.yaml#/components/schemas/ParkingProperty'
 
     ErrorResponse:
       description: "Basis Fehler-Response ohne Detailangaben"

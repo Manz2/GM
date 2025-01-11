@@ -1,6 +1,8 @@
 package com.group.gm.property_backend.service;
 
+import com.group.gm.openapi.model.ParkingProperty;
 import com.group.gm.openapi.model.Property;
+import com.group.gm.property_backend.db.FirestoreParkingDatabase;
 import com.group.gm.property_backend.db.GMDBService;
 import com.group.gm.openapi.api.PropertyApiDelegate;
 import org.slf4j.Logger;
@@ -25,6 +27,7 @@ public class PropertyService implements PropertyApiDelegate {
 
     private final GMDBService<Property> gmdbService;
     private final GoogleCloudStorageService storageService;
+    private final FirestoreParkingDatabase parkingDatabase;
     private final String projectId;
     private final String bucket;
 
@@ -33,11 +36,13 @@ public class PropertyService implements PropertyApiDelegate {
     public PropertyService(GMDBService<Property> gmdbService,
                           GoogleCloudStorageService storageService,
                           @Value("${google.cloud.projectId}") String projectId,
-                          @Value("${google.cloud.bucket}") String bucket) {
+                          @Value("${google.cloud.bucket}") String bucket,
+                           FirestoreParkingDatabase parkingDatabase) {
         this.gmdbService = gmdbService;
         this.storageService = storageService;
         this.projectId = projectId;
         this.bucket = bucket;
+        this.parkingDatabase = parkingDatabase;
     }
 
     @Override
@@ -75,6 +80,10 @@ public class PropertyService implements PropertyApiDelegate {
         } else {
             property.setImage("");
         }
+        ParkingProperty parkingProperty = new ParkingProperty();
+        parkingProperty.setId(property.getId());
+        parkingProperty.setAvailableSpace(property.getCapacity());
+        parkingDatabase.add(parkingProperty);
         gmdbService.add(property);
         return ResponseEntity.status(HttpStatus.CREATED).body(property); // 201 Created
     }
@@ -110,6 +119,7 @@ public class PropertyService implements PropertyApiDelegate {
             if (!Objects.equals(image, "")) {
                 storageService.deleteObject(projectId, property.getImage());
             }
+            parkingDatabase.delete(id);
             boolean deleted = gmdbService.delete(id);
             if (deleted) {
                 return ResponseEntity.noContent().build();
@@ -127,6 +137,13 @@ public class PropertyService implements PropertyApiDelegate {
 
         if (existingProperty == null) {
             return ResponseEntity.notFound().build();
+        }
+
+        if(!Objects.equals(existingProperty.getCapacity(), updatedProperty.getCapacity())){
+            ParkingProperty parkingProperty = new ParkingProperty();
+            parkingProperty.setId(updatedProperty.getId());
+            parkingProperty.setAvailableSpace(updatedProperty.getCapacity());
+            parkingDatabase.update(parkingProperty);
         }
 
         existingProperty.setName(updatedProperty.getName());

@@ -1,16 +1,17 @@
-package com.group.gm.parking_backend.db;
+package com.group.gm.property_backend.db;
 
 import com.google.api.core.ApiFuture;
 import com.google.cloud.firestore.*;
 import com.group.gm.openapi.model.GmTenant;
-import com.group.gm.openapi.model.ParkingProperty;
-import com.group.gm.openapi.model.Ticket;
-import com.group.gm.parking_backend.config.FirestoreConfig;
+import com.group.gm.openapi.model.Property;
+import com.group.gm.property_backend.config.FirestoreConfig;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
+import com.group.gm.openapi.model.ParkingProperty;
+
 
 import java.io.IOException;
 import java.util.concurrent.ExecutionException;
@@ -41,10 +42,8 @@ public class FirestoreParkingDatabase {
         String tenantId = (String) authentication.getCredentials();
         if(gmTenant.getTier()== GmTenant.TierEnum.ENTRY){
             propertyCollection = firestore.collection("tenants").document(tenantId).collection("properties");
-            ticketCollection = firestore.collection("tenants").document(tenantId).collection("tickets");
         } else {
             propertyCollection = firestore.collection("properties");
-            ticketCollection = firestore.collection("tickets");
         }
     }
 
@@ -113,70 +112,5 @@ public class FirestoreParkingDatabase {
             return false;
         }
     }
-
-    public Ticket addTicket(Ticket ticket) {
-        tenantSpecificConfig();
-        try {
-            ApiFuture<DocumentReference> future = ticketCollection.add(ticket);
-            DocumentReference document = future.get();
-            ticket.setId(document.getId());
-            document.set(ticket);
-            logger.info("Added ticket: {} to: {}", ticket, ticketCollection.getId());
-            return ticket;
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error("Error adding ticket: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    public Ticket getTicketById(String id) {
-        tenantSpecificConfig();
-        try {
-            DocumentReference docRef = ticketCollection.document(id);
-            ApiFuture<DocumentSnapshot> future = docRef.get();
-            DocumentSnapshot document = future.get();
-            if (document.exists()) {
-                Ticket ticket = document.toObject(Ticket.class);
-                if (ticket != null) {
-                    ticket.setId(document.getId());
-                }
-                return ticket;
-            } else {
-                logger.warn("No ticket found with id: {}", id);
-                return null;
-            }
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error("Error fetching ticket by id: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    public Ticket updateTicket(Ticket ticket) {
-        tenantSpecificConfig();
-        try {
-            DocumentReference docRef = ticketCollection.document(ticket.getId());
-            ApiFuture<WriteResult> future = docRef.set(ticket);
-            future.get();
-            logger.info("Updated ticket: {} in: {}", ticket, ticketCollection.getId());
-            return ticket;
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error("Error updating ticket: {}", e.getMessage());
-            return null;
-        }
-    }
-
-    public boolean deleteTicket(String id) {
-        tenantSpecificConfig();
-        try {
-            DocumentReference docRef = ticketCollection.document(id);
-            ApiFuture<WriteResult> future = docRef.delete();
-            future.get();
-            logger.info("Successfully deleted ticket with id: {} in: {}", id, ticketCollection.getId());
-            return true;
-        } catch (InterruptedException | ExecutionException e) {
-            logger.error("Error deleting ticket: {}", e.getMessage());
-            return false;
-        }
-    }
-
 }
+
