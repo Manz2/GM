@@ -74,7 +74,7 @@ export default function Public() {
                 url: "",
                 region: "",
                 version: "",
-              },
+            },
             managementFrontend: {
                 name: "Management Frontend",
                 url: "",
@@ -200,7 +200,7 @@ export default function Public() {
                             url: "",
                             region: "",
                             version: "",
-                          },
+                        },
                         managementFrontend: {
                             name: "Management Frontend",
                             url: "",
@@ -360,15 +360,15 @@ export default function Public() {
                                             </Box>
                                             <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                                                 <TextField
-                                                    label="Management Frontend Version"
-                                                    value={newTenant.services?.managementFrontend?.version || ""}
+                                                    label="Finance Backend Version"
+                                                    value={newTenant.services?.financeBackend?.version || ""}
                                                     onChange={(e) =>
                                                         setNewTenant((prevTenant) => ({
                                                             ...prevTenant,
                                                             services: {
                                                                 ...prevTenant.services,
-                                                                managementFrontend: {
-                                                                    ...prevTenant.services?.managementFrontend,
+                                                                financeBackend: {
+                                                                    ...prevTenant.services?.financeBackend,
                                                                     version: e.target.value,
                                                                 },
                                                             },
@@ -380,15 +380,15 @@ export default function Public() {
                                             </Box>
                                             <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                                                 <TextField
-                                                    label="Finance Backend Version"
-                                                    value={newTenant.services?.financeBackend?.version || ""}
+                                                    label="Management Frontend Version"
+                                                    value={newTenant.services?.managementFrontend?.version || ""}
                                                     onChange={(e) =>
                                                         setNewTenant((prevTenant) => ({
                                                             ...prevTenant,
                                                             services: {
                                                                 ...prevTenant.services,
-                                                                financeBackend: {
-                                                                    ...prevTenant.services?.financeBackend,
+                                                                managementFrontend: {
+                                                                    ...prevTenant.services?.managementFrontend,
                                                                     version: e.target.value,
                                                                 },
                                                             },
