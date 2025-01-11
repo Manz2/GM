@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.parkingBackend.name }}
+  labels:
+    app: {{ .Values.parkingBackend.name }}
+spec:
+  replicas: {{ .Values.parkingBackend.replicaCount }}
+  strategy:
+    type: RollingUpdate
+  selector:
+    matchLabels:
+      app: {{ .Values.parkingBackend.name }}
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.parkingBackend.name }}
+    spec:
+      serviceAccountName: staging
+      containers:
+        - name: {{ .Values.parkingBackend.name }}
+          image: "{{ .Values.parkingBackend.artifactRegistryPath }}/{{ .Values.parkingBackend.image }}:{{ .Values.parkingBackend.version }}"
+          ports:
+            - containerPort: {{ .Values.parkingBackend.containerPort }}
+          readinessProbe:
+            httpGet:
+              path: {{ .Values.parkingBackend.readinessProbePath }}
+              port: {{ .Values.parkingBackend.containerPort }}
+            initialDelaySeconds: 30
+            periodSeconds: 30
+          livenessProbe:
+            httpGet:
+              path: {{ .Values.parkingBackend.livenessProbePath }}
+              port: {{ .Values.parkingBackend.containerPort }}
+            initialDelaySeconds: 40
+            periodSeconds: 30

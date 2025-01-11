@@ -42,6 +42,9 @@ public class TenantsService implements TenantsApiDelegate {
     @Value("${google.cloud.commonPropertyDb.id}")
     private String commonPropertyDb;
 
+    @Value("${google.cloud.commonParkingDb.id}")
+    private String commonParkingDb;
+
     @Value("${google.cloud.commonStorage.id}")
     private String commonStorage;
 
@@ -130,6 +133,10 @@ public class TenantsService implements TenantsApiDelegate {
             propertyDb.setName(gmTenant.getId() + " Property DB");
             propertyDb.setUrl(gmTenant.getId());
             gmTenant.getServices().setPropertyDb(propertyDb);
+            GmService parkingDb = new GmService();
+            parkingDb.setName(gmTenant.getId() + " Parking DB");
+            parkingDb.setUrl(gmTenant.getId()+ "_parking");
+            gmTenant.getServices().setPropertyDb(parkingDb);
             GmService storage = new GmService();
             storage.setName(gmTenant.getId() + " storage");
             storage.setUrl(gmTenant.getId());
@@ -139,6 +146,10 @@ public class TenantsService implements TenantsApiDelegate {
             propertyDb.setName("Common Property DB");
             propertyDb.setUrl(commonPropertyDb);
             gmTenant.getServices().setPropertyDb(propertyDb);
+            GmService parkingDb = new GmService();
+            parkingDb.setName(gmTenant.getId() + " Parking DB");
+            parkingDb.setUrl(commonParkingDb);
+            gmTenant.getServices().setPropertyDb(parkingDb);
             GmService storage = new GmService();
             storage.setName("common storage");
             storage.setUrl(commonStorage);

@@ -27,6 +27,7 @@ public class TerraformService {
                     gmTenant.getServices().getPropertyBackend().getVersion(),
                     gmTenant.getServices().getManagementFrontend().getVersion(),
                     gmTenant.getServices().getFinanceBackend().getVersion(),
+                    gmTenant.getServices().getParkingBackend().getVersion(),
                     regionStorage
             );
 
@@ -83,7 +84,8 @@ public class TerraformService {
                     gmTenant.getPreferedRegion(),
                     gmTenant.getServices().getPropertyBackend().getVersion(),
                     gmTenant.getServices().getManagementFrontend().getVersion(),
-                    gmTenant.getServices().getFinanceBackend().getVersion()
+                    gmTenant.getServices().getFinanceBackend().getVersion(),
+                    gmTenant.getServices().getParkingBackend().getVersion()
             );
 
             // Starte den Prozess
@@ -167,7 +169,8 @@ public class TerraformService {
                     gmTenant.getPreferedRegion(),
                     gmTenant.getServices().getPropertyBackend().getVersion(),
                     gmTenant.getServices().getManagementFrontend().getVersion(),
-                    gmTenant.getServices().getFinanceBackend().getVersion()
+                    gmTenant.getServices().getFinanceBackend().getVersion(),
+                    gmTenant.getServices().getParkingBackend().getVersion()
             );
 
             // Starte den Prozess

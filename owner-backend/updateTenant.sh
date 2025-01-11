@@ -2,7 +2,7 @@
 
 # Überprüfen, ob die erforderlichen Parameter übergeben wurden
 if [ "$#" -lt 5 ]; then
-  echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION>"
+  echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION> <PARKINGVERSION>"
   exit 1
 fi
 
@@ -11,10 +11,11 @@ REGION=$2
 PROPERTYVERSION=$3
 MANAGEMENTVERSION=$4
 FINANCEVERSION=$5
+PARKINGVERSION=$6
 
 echo "Updating tenant in cluster: $CLUSTER_NAME in region: $REGION"
 
-echo "Starting Helm installation for gm with versions: Property:$PROPERTYVERSION Management:$MANAGEMENTVERSION Finance:$FINANCEVERSION"
+echo "Starting Helm installation for gm with versions: Property:$PROPERTYVERSION Management:$MANAGEMENTVERSION Finance:$FINANCEVERSION Parking:$PARKINGVERSION"
 
 # Anmeldedaten für den Cluster abrufen
 gcloud container clusters get-credentials "$CLUSTER_NAME" --region="$REGION"
@@ -33,7 +34,8 @@ while [ "$i" -le 5 ]; do
   helm upgrade --install gm ./ \
     --set propertyBackend.version="$PROPERTYVERSION" \
     --set managementFrontend.version="$MANAGEMENTVERSION" \
-    --set financeBackend.version="$FINANCEVERSION" && break
+    --set financeBackend.version="$FINANCEVERSION" \
+    --set parkingBackend.version="$PARKINGVERSION" \ && break
 
   echo "Attempt $i failed. Retrying in 10 seconds..."
   i=$((i + 1))

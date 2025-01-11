@@ -1,8 +1,8 @@
 #!/bin/sh
 
 # Überprüfen, ob die erforderlichen Parameter übergeben wurden
-if [ "$#" -lt 6 ]; then
-  echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION> <REGIONSTORAGE>"
+if [ "$#" -lt 7 ]; then
+  echo "Usage: $0 <CLUSTER_NAME> <REGION> <PROPERTYVERSION> <MANAGEMENTVERSION> <FINANCEVERSION> <PARKINGVERSION> <REGIONSTORAGE>"
   exit 1
 fi
 
@@ -11,7 +11,8 @@ REGION=$2
 PROPERTYVERSION=$3
 MANAGEMENTVERSION=$4
 FINANCEVERSION=$5
-REGIONSTORAGE=$6
+PARKINGVERSION=$6
+REGIONSTORAGE=$7
 
 echo "Creating new tenant for cluster: $CLUSTER_NAME in region: $REGION"
 
@@ -22,7 +23,7 @@ terraform init
 # Terraform anwenden mit übergebenen Variablen
 terraform apply -auto-approve -var="cluster_name=$CLUSTER_NAME" -var="region=$REGION" -var="regionStorage=$REGIONSTORAGE" -state="./states/$CLUSTER_NAME.tfstate"
 
-echo "Starting Helm installation for gm with versions: Property:$PROPERTYVERSION Management:$MANAGEMENTVERSION Finance:$FINANCEVERSION"
+echo "Starting Helm installation for gm with versions: Property:$PROPERTYVERSION Management:$MANAGEMENTVERSION Finance:$FINANCEVERSION Parking:$PARKINGVERSION"
 
 # Anmeldedaten für den Cluster abrufen
 gcloud container clusters get-credentials "$CLUSTER_NAME" --region="$REGION"
@@ -47,7 +48,8 @@ while [ "$i" -le 5 ]; do
   helm upgrade --install gm ./ \
     --set propertyBackend.version="$PROPERTYVERSION" \
     --set managementFrontend.version="$MANAGEMENTVERSION" \
-    --set financeBackend.version="$FINANCEVERSION" && break
+    --set financeBackend.version="$FINANCEVERSION" \
+    --set parkingBackend.version="$PARKINGVERSION" \ && break
 
   echo "Attempt $i failed. Retrying in 10 seconds..."
   i=$((i + 1))
