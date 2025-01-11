@@ -2,13 +2,14 @@ package com.group.gm.property_backend.service;
 
 
 import com.group.gm.openapi.model.GmTenant;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.client.RestTemplate;
 import org.springframework.http.*;
 
 public class TenantService {
 
-
-    private static final String CLOUD_FUNCTION_URL = "https://europe-west1-ca-test2-438111.cloudfunctions.net/getTenantDetails";
+    @Value("${google.cloud.projectId}")
+    private String CLOUD_FUNCTION_URL;
 
     public GmTenant fetchTenantDetails(String tenantId, String authToken) {
         try {
