@@ -18,9 +18,11 @@ import java.io.IOException;
 public class TokenVerificationFilter extends OncePerRequestFilter {
 
     private final FirebaseAuth firebaseAuth;
+    private final TenantService tenantService;
 
-    public TokenVerificationFilter(FirebaseAuth firebaseAuth) {
+    public TokenVerificationFilter(FirebaseAuth firebaseAuth,TenantService tenantService) {
         this.firebaseAuth = firebaseAuth;
+        this.tenantService = tenantService;
     }
 
     @Override
@@ -33,7 +35,6 @@ public class TokenVerificationFilter extends OncePerRequestFilter {
                 FirebaseToken decodedToken = firebaseAuth.verifyIdToken(token);
                 String uid = decodedToken.getUid();
                 String tenantId = decodedToken.getTenantId();
-                TenantService tenantService = new TenantService();
                 GmTenant tenantInfo = tenantService.fetchTenantDetails(tenantId,token);
                 Authentication authentication = new FirebaseAuthenticationToken(uid,tenantInfo);
                 SecurityContextHolder.getContext().setAuthentication(authentication);
