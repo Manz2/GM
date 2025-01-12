@@ -1,56 +1,156 @@
 {
 	"info": {
-		"_postman_id": "c0aefd7f-f69d-4340-a3fd-054fd91b9ee1",
-		"name": "gm",
+		"_postman_id": "dc7cc7cb-3363-42f5-87f0-236bce97ffc2",
+		"name": "Gm",
 		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
 		"_exporter_id": "27572129"
 	},
 	"item": [
 		{
-			"name": "postDefect",
+			"name": "requestEntry",
 			"request": {
-				"method": "POST",
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQwZDg4ZGQ1NWQxYjAwZDg0ZWU4MWQwYjk2M2RlNGNkOGM0ZmFjM2UiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2EtdGVzdDItNDM4MTExIiwiYXVkIjoiY2EtdGVzdDItNDM4MTExIiwiYXV0aF90aW1lIjoxNzM2NzAwMjY2LCJ1c2VyX2lkIjoiQWdDUU1SVGVhV2JZNklBWG1oQ0Y0dTA3dGR5MiIsInN1YiI6IkFnQ1FNUlRlYVdiWTZJQVhtaENGNHUwN3RkeTIiLCJpYXQiOjE3MzY3MDAyNjYsImV4cCI6MTczNjcwMzg2NiwiZW1haWwiOiJlcmlrbWFuemVyMjFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImVyaWttYW56ZXIyMUBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCIsInRlbmFudCI6InRlbmFudDEtcWVkYXgifX0.YIShgLbChVmLZfPE4FzwuyPvLLi1-IxpJbnmKhr0l9osVSH8lhrnhAAQuLlAblyZryfC5j8zgZLh8jRflVPgDRYYdrJO9LJgx2XJtYqWb4l4unt-eDPkBT_k670iVA-IRq-fa-PTMNJZj8qus6LC9nt0V9G-ICgedmV00cwJEXrmgKQZPtQwJEAK8AZeR5XOgv6ow7Z-xmQZnA_t6NVogqz2QHKzqCPmg89JfriyTdPGs3_pPF82rwyeuI_IchDgYoFGzt2BRKorxSqNxmKfbQCbb2jZ9FNG4AHFv2gyM7pc4r_D4i3Zlv5PiwJzz2zF0EhJVI0QmQMXdm3Wc6BG7A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
 				"header": [],
 				"url": {
-					"raw": ""
-				}
-			},
-			"response": []
-		},
-		{
-			"name": "http://localhost:8000/api/defects",
-			"request": {
-				"method": "POST",
-				"header": [
-					{
-						"key": "Content-Type",
-						"value": "application/json"
-					}
-				],
-				"body": {
-					"mode": "raw",
-					"raw": "{\r\n  \"property\": \"Parkhaus 1\",\r\n  \"location\": \"Eingang\",\r\n  \"description_short\": \"Kaputter Aufzug\",\r\n  \"description_detailed\": \"Der Aufzug funktioniert nicht, es gibt keine Anzeige.\",\r\n  \"reporting_date\": \"2024-10-11\",\r\n  \"status\": \"Offen\"\r\n}"
-				},
-				"url": {
-					"raw": "http://localhost:8000/api/defects",
+					"raw": "http://localhost:8084/api/parking/requestEntry?propertyId=nhgrYvqbKfivrWgLJ3tP",
 					"protocol": "http",
 					"host": [
 						"localhost"
 					],
-					"port": "8000",
+					"port": "8084",
 					"path": [
 						"api",
-						"defects"
+						"parking",
+						"requestEntry"
+					],
+					"query": [
+						{
+							"key": "propertyId",
+							"value": "nhgrYvqbKfivrWgLJ3tP"
+						}
 					]
 				}
 			},
 			"response": []
 		},
 		{
-			"name": "ListDefects",
+			"name": "requestExit",
 			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQwZDg4ZGQ1NWQxYjAwZDg0ZWU4MWQwYjk2M2RlNGNkOGM0ZmFjM2UiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2EtdGVzdDItNDM4MTExIiwiYXVkIjoiY2EtdGVzdDItNDM4MTExIiwiYXV0aF90aW1lIjoxNzM2NzAwMjY2LCJ1c2VyX2lkIjoiQWdDUU1SVGVhV2JZNklBWG1oQ0Y0dTA3dGR5MiIsInN1YiI6IkFnQ1FNUlRlYVdiWTZJQVhtaENGNHUwN3RkeTIiLCJpYXQiOjE3MzY3MDAyNjYsImV4cCI6MTczNjcwMzg2NiwiZW1haWwiOiJlcmlrbWFuemVyMjFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImVyaWttYW56ZXIyMUBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCIsInRlbmFudCI6InRlbmFudDEtcWVkYXgifX0.YIShgLbChVmLZfPE4FzwuyPvLLi1-IxpJbnmKhr0l9osVSH8lhrnhAAQuLlAblyZryfC5j8zgZLh8jRflVPgDRYYdrJO9LJgx2XJtYqWb4l4unt-eDPkBT_k670iVA-IRq-fa-PTMNJZj8qus6LC9nt0V9G-ICgedmV00cwJEXrmgKQZPtQwJEAK8AZeR5XOgv6ow7Z-xmQZnA_t6NVogqz2QHKzqCPmg89JfriyTdPGs3_pPF82rwyeuI_IchDgYoFGzt2BRKorxSqNxmKfbQCbb2jZ9FNG4AHFv2gyM7pc4r_D4i3Zlv5PiwJzz2zF0EhJVI0QmQMXdm3Wc6BG7A",
+							"type": "string"
+						}
+					]
+				},
 				"method": "GET",
-				"header": []
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/parking/requestEntry?propertyId=nhgrYvqbKfivrWgLJ3tP",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"api",
+						"parking",
+						"requestEntry"
+					],
+					"query": [
+						{
+							"key": "propertyId",
+							"value": "nhgrYvqbKfivrWgLJ3tP"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "getPrice",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQwZDg4ZGQ1NWQxYjAwZDg0ZWU4MWQwYjk2M2RlNGNkOGM0ZmFjM2UiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2EtdGVzdDItNDM4MTExIiwiYXVkIjoiY2EtdGVzdDItNDM4MTExIiwiYXV0aF90aW1lIjoxNzM2NzAwMjY2LCJ1c2VyX2lkIjoiQWdDUU1SVGVhV2JZNklBWG1oQ0Y0dTA3dGR5MiIsInN1YiI6IkFnQ1FNUlRlYVdiWTZJQVhtaENGNHUwN3RkeTIiLCJpYXQiOjE3MzY3MDAyNjYsImV4cCI6MTczNjcwMzg2NiwiZW1haWwiOiJlcmlrbWFuemVyMjFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImVyaWttYW56ZXIyMUBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCIsInRlbmFudCI6InRlbmFudDEtcWVkYXgifX0.YIShgLbChVmLZfPE4FzwuyPvLLi1-IxpJbnmKhr0l9osVSH8lhrnhAAQuLlAblyZryfC5j8zgZLh8jRflVPgDRYYdrJO9LJgx2XJtYqWb4l4unt-eDPkBT_k670iVA-IRq-fa-PTMNJZj8qus6LC9nt0V9G-ICgedmV00cwJEXrmgKQZPtQwJEAK8AZeR5XOgv6ow7Z-xmQZnA_t6NVogqz2QHKzqCPmg89JfriyTdPGs3_pPF82rwyeuI_IchDgYoFGzt2BRKorxSqNxmKfbQCbb2jZ9FNG4AHFv2gyM7pc4r_D4i3Zlv5PiwJzz2zF0EhJVI0QmQMXdm3Wc6BG7A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/parking/requestEntry?propertyId=nhgrYvqbKfivrWgLJ3tP",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"api",
+						"parking",
+						"requestEntry"
+					],
+					"query": [
+						{
+							"key": "propertyId",
+							"value": "nhgrYvqbKfivrWgLJ3tP"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "markTicketPayed",
+			"request": {
+				"auth": {
+					"type": "bearer",
+					"bearer": [
+						{
+							"key": "token",
+							"value": "eyJhbGciOiJSUzI1NiIsImtpZCI6IjQwZDg4ZGQ1NWQxYjAwZDg0ZWU4MWQwYjk2M2RlNGNkOGM0ZmFjM2UiLCJ0eXAiOiJKV1QifQ.eyJpc3MiOiJodHRwczovL3NlY3VyZXRva2VuLmdvb2dsZS5jb20vY2EtdGVzdDItNDM4MTExIiwiYXVkIjoiY2EtdGVzdDItNDM4MTExIiwiYXV0aF90aW1lIjoxNzM2NzAwMjY2LCJ1c2VyX2lkIjoiQWdDUU1SVGVhV2JZNklBWG1oQ0Y0dTA3dGR5MiIsInN1YiI6IkFnQ1FNUlRlYVdiWTZJQVhtaENGNHUwN3RkeTIiLCJpYXQiOjE3MzY3MDAyNjYsImV4cCI6MTczNjcwMzg2NiwiZW1haWwiOiJlcmlrbWFuemVyMjFAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOmZhbHNlLCJmaXJlYmFzZSI6eyJpZGVudGl0aWVzIjp7ImVtYWlsIjpbImVyaWttYW56ZXIyMUBnbWFpbC5jb20iXX0sInNpZ25faW5fcHJvdmlkZXIiOiJwYXNzd29yZCIsInRlbmFudCI6InRlbmFudDEtcWVkYXgifX0.YIShgLbChVmLZfPE4FzwuyPvLLi1-IxpJbnmKhr0l9osVSH8lhrnhAAQuLlAblyZryfC5j8zgZLh8jRflVPgDRYYdrJO9LJgx2XJtYqWb4l4unt-eDPkBT_k670iVA-IRq-fa-PTMNJZj8qus6LC9nt0V9G-ICgedmV00cwJEXrmgKQZPtQwJEAK8AZeR5XOgv6ow7Z-xmQZnA_t6NVogqz2QHKzqCPmg89JfriyTdPGs3_pPF82rwyeuI_IchDgYoFGzt2BRKorxSqNxmKfbQCbb2jZ9FNG4AHFv2gyM7pc4r_D4i3Zlv5PiwJzz2zF0EhJVI0QmQMXdm3Wc6BG7A",
+							"type": "string"
+						}
+					]
+				},
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8084/api/parking/requestEntry?propertyId=nhgrYvqbKfivrWgLJ3tP",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8084",
+					"path": [
+						"api",
+						"parking",
+						"requestEntry"
+					],
+					"query": [
+						{
+							"key": "propertyId",
+							"value": "nhgrYvqbKfivrWgLJ3tP"
+						}
+					]
+				}
 			},
 			"response": []
 		}

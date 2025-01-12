@@ -205,6 +205,10 @@ components:
           description: "Status halt"
           type: string
           enum: [ "Offen", "Bezahlt" ]
+        price:
+          description: "der Preis"
+          type: number
+          format: double
 
     ParkingProperty:
       description: "Property"

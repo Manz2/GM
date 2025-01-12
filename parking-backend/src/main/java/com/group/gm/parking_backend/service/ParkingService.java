@@ -31,7 +31,10 @@ public class ParkingService implements ParkingApiDelegate {
             // Beispiel: Preis berechnen (10 Einheiten pro Stunde seit Erstellung)
             long creationTime = ticket.getCreationDate();
             long currentTime = System.currentTimeMillis();
-            double price = ((double) (currentTime - creationTime) / 3600000 * 10); // Preis pro Stunde
+            double price = ((double) (currentTime - creationTime) / 3600000 * 10);
+            ticket.setPrice(price);
+            ticket.setPayDate(System.currentTimeMillis());
+            parkingDatabase.updateTicket(ticket);
             return ResponseEntity.ok(price);
         }
         return ResponseEntity.badRequest().build();
@@ -77,10 +80,11 @@ public class ParkingService implements ParkingApiDelegate {
     public ResponseEntity<Ticket> requestEntry(String propertyId) {
         logger.info("Requesting entry for propertyId: {}", propertyId);
         ParkingProperty property = parkingDatabase.getById(propertyId);
-        if (property.getAvailableSpace() > property.getOccupiedSpace()) {
+        if (property == null || property.getAvailableSpace() <= property.getOccupiedSpace()) {
             return ResponseEntity.noContent().build();
         }
         property.setOccupiedSpace(property.getOccupiedSpace()+1);
+        parkingDatabase.update(property);
 
         Ticket ticket = new Ticket();
         ticket.setPropertyId(propertyId);
