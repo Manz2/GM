@@ -43,7 +43,7 @@ paths:
         '200':
           description: "Der Report wurde erfolgreich erstellt und ein Link zur Verfügung gestellt."
           content:
-            application/json:
+            text/plain:
               schema:
                 type: string
                 description: "Die URL des generierten Defect-Reports"

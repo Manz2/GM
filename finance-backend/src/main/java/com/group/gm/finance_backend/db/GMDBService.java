@@ -35,5 +35,4 @@ public interface GMDBService<T> {
 
     MultipartFile generatePdfFromReport(Map<String, Object> report);
 
-
 }

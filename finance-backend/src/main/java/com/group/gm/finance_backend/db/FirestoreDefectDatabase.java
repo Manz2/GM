@@ -212,6 +212,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
         }
     }
 
+
     @Override
     public Defect getById(String id) {
         tenantSpecificConfig();
