@@ -50,18 +50,28 @@ public class FirestoreParkingDatabase {
     public ParkingProperty add(ParkingProperty property) {
         tenantSpecificConfig();
         try {
-            ApiFuture<DocumentReference> future = propertyCollection.add(property);
-            DocumentReference document = future.get();
-            property.setId(document.getId());
-            document.set(property);
-            logger.info("Added property: {} to: {}", property, propertyCollection.getId());
+            if (property.getId() == null || property.getId().isEmpty()) {
+                throw new IllegalArgumentException("Property ID must not be null or empty");
+            }
+
+            // Dokument mit der spezifischen ID erstellen
+            DocumentReference document = propertyCollection.document(property.getId());
+            ApiFuture<WriteResult> future = document.set(property);
+            WriteResult result = future.get();
+
+            logger.info("Added property with ID: {} to collection: {} at time: {}",
+                    property.getId(), propertyCollection.getId(), result.getUpdateTime());
 
             return property;
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Error adding property: {}", e.getMessage());
             return null;
+        } catch (IllegalArgumentException e) {
+            logger.error("Invalid property ID: {}", e.getMessage());
+            return null;
         }
     }
+
 
     public ParkingProperty getById(String id) {
         tenantSpecificConfig();

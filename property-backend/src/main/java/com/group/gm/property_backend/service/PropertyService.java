@@ -80,11 +80,12 @@ public class PropertyService implements PropertyApiDelegate {
         } else {
             property.setImage("");
         }
+        gmdbService.add(property);
         ParkingProperty parkingProperty = new ParkingProperty();
         parkingProperty.setId(property.getId());
         parkingProperty.setAvailableSpace(property.getCapacity());
+        parkingProperty.setOccupiedSpace(0);
         parkingDatabase.add(parkingProperty);
-        gmdbService.add(property);
         return ResponseEntity.status(HttpStatus.CREATED).body(property); // 201 Created
     }
 
