@@ -3,6 +3,7 @@ package com.group.gm.finance_backend.service;
 
 
 import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.storage.*;
 import com.group.gm.openapi.model.GmTenant;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,14 +11,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
+import com.google.cloud.secretmanager.v1.SecretPayload;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.InputStream;
+import java.io.*;
 import java.net.URL;
 import java.nio.file.Path;
 
-import java.io.IOException;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
@@ -74,26 +75,26 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
         }
 
         try {
-            // Upload the file to the storage bucket
             storage.createFrom(blobInfo, file.getInputStream(), precondition);
 
-            // Now sign the URL for the uploaded object using a service account
-            // Explicitly set credentials for signing
-            InputStream serviceAccountStream = getClass().getClassLoader().getResourceAsStream("ca-test2-438111-88491045eedd.json");
+            // Secret abrufen
+            SecretManagerServiceClient client = SecretManagerServiceClient.create();
+            String secretName = "projects/563205931618/secrets/DevServiceAccountKey";
 
-            if (serviceAccountStream == null) {
-                throw new FileNotFoundException("Service account JSON file not found in resources folder");
-            }
+            AccessSecretVersionResponse secretResponse = client.accessSecretVersion(secretName);
+            String serviceAccountJson = secretResponse.getPayload().getData().toStringUtf8();
+
+            // Secret als InputStream verwenden
+            InputStream serviceAccountStream = new ByteArrayInputStream(serviceAccountJson.getBytes());
 
             Storage storageForSign = StorageOptions.newBuilder()
                     .setCredentials(ServiceAccountCredentials.fromStream(serviceAccountStream))
                     .build()
                     .getService();
 
-            // Generate Signed URL for the uploaded object
             URL signedUrl = storageForSign.signUrl(
                     blobInfo,
-                    15, // Link expiration time in minutes
+                    15,
                     TimeUnit.MINUTES,
                     Storage.SignUrlOption.withV4Signature() // Optional: Use V4 signing
             );

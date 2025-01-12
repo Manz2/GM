@@ -18,6 +18,8 @@ import java.util.Map;
 @Service
 public class FinanceService implements FinanceApiDelegate {
 
+    //changeme123 ist passwort standard bei tenant1
+
     private final com.group.gm.finance_backend.db.GMDBService<Defect> gmdbService;
     private final com.group.gm.finance_backend.service.GoogleCloudStorageService storageService;
     private final String projectId;
@@ -50,10 +52,10 @@ public class FinanceService implements FinanceApiDelegate {
 
             MultipartFile pdfFile = gmdbService.generatePdfFromReport(report);
             System.out.println("Pdf generated");
-            String pdfUrl = storageService.uploadObject(pdfFile); // Return the signed URL here
+            String pdfUrl = storageService.uploadObject(pdfFile);
             System.out.println("Pdf uploaded to: " + pdfUrl);
 
-            return ResponseEntity.ok(pdfUrl); // Send the signed URL in the response
+            return ResponseEntity.ok(pdfUrl);
         } catch (DateTimeParseException e) {
             return ResponseEntity.badRequest().body("Error: Invalid date format. Use YYYY-MM-DD.");
         } catch (Exception e) {
