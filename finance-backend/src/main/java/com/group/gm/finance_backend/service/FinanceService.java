@@ -50,14 +50,15 @@ public class FinanceService implements FinanceApiDelegate {
 
             MultipartFile pdfFile = gmdbService.generatePdfFromReport(report);
             System.out.println("Pdf generated");
-            String pdfPath = storageService.uploadObject(pdfFile);
-            System.out.println("Pdf uploaded to: " + pdfPath);
+            String pdfUrl = storageService.uploadObject(pdfFile); // Return the signed URL here
+            System.out.println("Pdf uploaded to: " + pdfUrl);
 
-            return ResponseEntity.ok(pdfPath);
+            return ResponseEntity.ok(pdfUrl); // Send the signed URL in the response
         } catch (DateTimeParseException e) {
             return ResponseEntity.badRequest().body("Error: Invalid date format. Use YYYY-MM-DD.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error generating defect report: " + e.getMessage());
         }
     }
+
 }
