@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * GM Properties API
- * OpenAPI-Spezifikation der GM Properties-API
+ * GM Parking API
+ * OpenAPI-Spezifikation der GM Parking-API
  *
  * The version of the OpenAPI document: 1.0.0
  * 
@@ -20,13 +20,6 @@ import {
     GmTenantToJSON,
     GmTenantToJSONTyped,
 } from './GmTenant';
-import type { ParkingProperty } from './ParkingProperty';
-import {
-    ParkingPropertyFromJSON,
-    ParkingPropertyFromJSONTyped,
-    ParkingPropertyToJSON,
-    ParkingPropertyToJSONTyped,
-} from './ParkingProperty';
 
 /**
  * 
@@ -40,12 +33,6 @@ export interface GmInfo {
      * @memberof GmInfo
      */
     tenant?: GmTenant;
-    /**
-     * 
-     * @type {ParkingProperty}
-     * @memberof GmInfo
-     */
-    property?: ParkingProperty;
 }
 
 /**
@@ -66,7 +53,6 @@ export function GmInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): Gm
     return {
         
         'tenant': json['tenant'] == null ? undefined : GmTenantFromJSON(json['tenant']),
-        'property': json['property'] == null ? undefined : ParkingPropertyFromJSON(json['property']),
     };
 }
 
@@ -82,7 +68,6 @@ export function GmInfoFromJSONTyped(json: any, ignoreDiscriminator: boolean): Gm
     return {
         
         'tenant': GmTenantToJSON(value['tenant']),
-        'property': ParkingPropertyToJSON(value['property']),
     };
 }
 

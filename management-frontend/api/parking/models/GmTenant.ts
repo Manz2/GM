@@ -1,8 +1,8 @@
 /* tslint:disable */
 /* eslint-disable */
 /**
- * GM Properties API
- * OpenAPI-Spezifikation der GM Properties-API
+ * GM Parking API
+ * OpenAPI-Spezifikation der GM Parking-API
  *
  * The version of the OpenAPI document: 1.0.0
  * 
