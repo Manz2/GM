@@ -210,7 +210,7 @@ public class TenantsService implements TenantsApiDelegate {
             terraformService.startUpdate(tenant.getId(),tenant);
         } else if (tenant.getTier() == GmTenant.TierEnum.PREMIUM && oldTier == GmTenant.TierEnum.ENHANCED) {
             logger.info("updating tenant: {} from ENHANCED TO PREMIUM", tenant.getId());
-            terraformService.startUpdate(tenant.getId(),tenant);
+            terraformService.relaunch(tenant.getId(),tenant);
         }
 
         return ResponseEntity.ok(existingTenant);
