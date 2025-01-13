@@ -1,0 +1,80 @@
+@startuml DefectSchema
+<style>
+.open {
+BackGroundColor LightGreen
+FontColor Black
+}
+.in_progress {
+BackGroundColor LightBlue
+FontColor Black
+}
+.closed {
+BackGroundColor LightGray
+FontColor Black
+}
+.rejected {
+BackGroundColor Red
+FontColor White
+}
+</style>
+
+entity "Defect" as Defect {
+  id : string <<key>>
+  property : string <<FK>>
+  location : string
+  description_short : string
+  description_detailed : string
+  reporting_date : long
+  image : string
+  status : enum <<open, in_progress, closed, rejected>>
+  updatedAt : long
+}
+
+entity "Property" as Property {
+  id : string <<key>>
+  name : string
+  city : string
+  address : string
+  capacity : int
+  construction_date : long
+  image : string
+  floors : array of string
+  status : enum <<open, closed>>
+  pricing : Pricing <<FK>>
+  expenses : array of Expense <<FK>>
+  paymentWatcherJob : PaymentWatcherJob <<FK>>
+}
+
+entity "Pricing" as Pricing {
+  firstHour : double
+  hourly : double
+  daily : double
+}
+
+entity "Expense" as Expense {
+  receiver : string
+  purposeOfUse : string
+  sum : double
+  invoiceDate : long
+}
+
+entity "PaymentWatcherJob" as PaymentWatcherJob {
+  targetMail : string
+  credentials : string
+  sender : string
+  keywords : array of string
+}
+
+entity "User" as User {
+  id : string <<key>>
+  mail : string
+  name : string
+  role : enum <<Admin, Facility, Finance, Operations>>
+}
+
+' Relationships
+Defect -> Property : belongs to
+Property --> Pricing : has
+Property --> Expense : tracks
+Property --> PaymentWatcherJob : linked to
+@enduml
