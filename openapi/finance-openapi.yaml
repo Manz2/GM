@@ -58,47 +58,36 @@ paths:
         - BearerAuth: [ ]
       tags:
         - "Finance"
-      summary: "Generiere einen Finanz-Bericht (Revenue oder Profit)"
-      description: "Erstellt und exportiert entweder einen Revenue- oder Profit-Report basierend auf den angegebenen Parametern."
-      operationId: "generateViewFinanceReport"
+      summary: "Finance-Report generieren und exportieren"
+      description: "Erstellt und exportiert einen Report über Finanzen, basierend auf den vorhandenen Daten. Der Report wird in der Cloud gespeichert, und ein Link wird zurückgegeben."
+      operationId: "generateFinanceReport" # Eindeutige operationId
       parameters:
-        - name: "report_type"
-          in: query
-          description: "Typ des zu generierenden Berichts ('revenue' oder 'profit')"
-          required: true
-          schema:
-            type: string
-            enum: [ "revenue", "profit" ]
         - name: "property"
           in: query
-          description: "Das Parkhaus, für das der Bericht erstellt werden soll"
-          required: false
+          description: "Das Parkhaus, zu dem der Defect gehört"
+          required: true
           schema:
             type: string
         - name: "start_date"
           in: query
-          description: "Startdatum des Berichtszeitraums (im Format YYYY-MM-DD)"
+          description: "Startdatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
           required: false
           schema:
             type: string
-            format: date
         - name: "end_date"
           in: query
-          description: "Enddatum des Berichtszeitraums (im Format YYYY-MM-DD)"
+          description: "Enddatum des Zeitraums für den Report (im Format YYYY-MM-DD)"
           required: false
           schema:
             type: string
-            format: date
       responses:
         '200':
           description: "Der Report wurde erfolgreich erstellt und ein Link zur Verfügung gestellt."
           content:
-            application/json:
+            text/plain:
               schema:
-                type: object
-                properties:
-                  report_url:
-                    type: string
+                type: string
+                description: "Die URL des generierten Defect-Reports"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':

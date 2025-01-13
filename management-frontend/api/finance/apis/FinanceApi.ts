@@ -16,13 +16,10 @@
 import * as runtime from '../runtime';
 import type {
   ErrorResponse,
-  GenerateViewFinanceReport200Response,
 } from '../models/index';
 import {
     ErrorResponseFromJSON,
     ErrorResponseToJSON,
-    GenerateViewFinanceReport200ResponseFromJSON,
-    GenerateViewFinanceReport200ResponseToJSON,
 } from '../models/index';
 
 export interface ExportDataRequest {
@@ -38,11 +35,10 @@ export interface GenerateDefectReportRequest {
     endDate?: string;
 }
 
-export interface GenerateViewFinanceReportRequest {
-    reportType: GenerateViewFinanceReportReportTypeEnum;
-    property?: string;
-    startDate?: Date;
-    endDate?: Date;
+export interface GenerateFinanceReportRequest {
+    property: string;
+    startDate?: string;
+    endDate?: string;
 }
 
 /**
@@ -162,33 +158,29 @@ export class FinanceApi extends runtime.BaseAPI {
     }
 
     /**
-     * Erstellt und exportiert entweder einen Revenue- oder Profit-Report basierend auf den angegebenen Parametern.
-     * Generiere einen Finanz-Bericht (Revenue oder Profit)
+     * Erstellt und exportiert einen Report über Finanzen, basierend auf den vorhandenen Daten. Der Report wird in der Cloud gespeichert, und ein Link wird zurückgegeben.
+     * Finance-Report generieren und exportieren
      */
-    async generateViewFinanceReportRaw(requestParameters: GenerateViewFinanceReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<GenerateViewFinanceReport200Response>> {
-        if (requestParameters['reportType'] == null) {
+    async generateFinanceReportRaw(requestParameters: GenerateFinanceReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<string>> {
+        if (requestParameters['property'] == null) {
             throw new runtime.RequiredError(
-                'reportType',
-                'Required parameter "reportType" was null or undefined when calling generateViewFinanceReport().'
+                'property',
+                'Required parameter "property" was null or undefined when calling generateFinanceReport().'
             );
         }
 
         const queryParameters: any = {};
-
-        if (requestParameters['reportType'] != null) {
-            queryParameters['report_type'] = requestParameters['reportType'];
-        }
 
         if (requestParameters['property'] != null) {
             queryParameters['property'] = requestParameters['property'];
         }
 
         if (requestParameters['startDate'] != null) {
-            queryParameters['start_date'] = (requestParameters['startDate'] as any).toISOString().substring(0,10);
+            queryParameters['start_date'] = requestParameters['startDate'];
         }
 
         if (requestParameters['endDate'] != null) {
-            queryParameters['end_date'] = (requestParameters['endDate'] as any).toISOString().substring(0,10);
+            queryParameters['end_date'] = requestParameters['endDate'];
         }
 
         const headerParameters: runtime.HTTPHeaders = {};
@@ -208,25 +200,20 @@ export class FinanceApi extends runtime.BaseAPI {
             query: queryParameters,
         }, initOverrides);
 
-        return new runtime.JSONApiResponse(response, (jsonValue) => GenerateViewFinanceReport200ResponseFromJSON(jsonValue));
+        if (this.isJsonMime(response.headers.get('content-type'))) {
+            return new runtime.JSONApiResponse<string>(response);
+        } else {
+            return new runtime.TextApiResponse(response) as any;
+        }
     }
 
     /**
-     * Erstellt und exportiert entweder einen Revenue- oder Profit-Report basierend auf den angegebenen Parametern.
-     * Generiere einen Finanz-Bericht (Revenue oder Profit)
+     * Erstellt und exportiert einen Report über Finanzen, basierend auf den vorhandenen Daten. Der Report wird in der Cloud gespeichert, und ein Link wird zurückgegeben.
+     * Finance-Report generieren und exportieren
      */
-    async generateViewFinanceReport(requestParameters: GenerateViewFinanceReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<GenerateViewFinanceReport200Response> {
-        const response = await this.generateViewFinanceReportRaw(requestParameters, initOverrides);
+    async generateFinanceReport(requestParameters: GenerateFinanceReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
+        const response = await this.generateFinanceReportRaw(requestParameters, initOverrides);
         return await response.value();
     }
 
 }
-
-/**
- * @export
- */
-export const GenerateViewFinanceReportReportTypeEnum = {
-    Revenue: 'revenue',
-    Profit: 'profit'
-} as const;
-export type GenerateViewFinanceReportReportTypeEnum = typeof GenerateViewFinanceReportReportTypeEnum[keyof typeof GenerateViewFinanceReportReportTypeEnum];

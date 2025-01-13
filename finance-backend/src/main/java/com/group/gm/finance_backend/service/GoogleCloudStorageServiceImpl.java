@@ -77,14 +77,12 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
         try {
             storage.createFrom(blobInfo, file.getInputStream(), precondition);
 
-            // Secret abrufen
             SecretManagerServiceClient client = SecretManagerServiceClient.create();
-            String secretName = "projects/563205931618/secrets/DevServiceAccountKey";
+            String secretName = "projects/563205931618/secrets/DevServiceAccountKey/versions/latest";
 
             AccessSecretVersionResponse secretResponse = client.accessSecretVersion(secretName);
             String serviceAccountJson = secretResponse.getPayload().getData().toStringUtf8();
 
-            // Secret als InputStream verwenden
             InputStream serviceAccountStream = new ByteArrayInputStream(serviceAccountJson.getBytes());
 
             Storage storageForSign = StorageOptions.newBuilder()

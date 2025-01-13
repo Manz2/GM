@@ -12,7 +12,6 @@ models/Expense.ts
 models/FinanceReport.ts
 models/FinanceReportMetadata.ts
 models/FinanceReportMetadataFilters.ts
-models/GenerateViewFinanceReport200Response.ts
 models/GmInfo.ts
 models/GmService.ts
 models/GmTenant.ts

@@ -10,7 +10,6 @@ export * from './Expense';
 export * from './FinanceReport';
 export * from './FinanceReportMetadata';
 export * from './FinanceReportMetadataFilters';
-export * from './GenerateViewFinanceReport200Response';
 export * from './GmInfo';
 export * from './GmService';
 export * from './GmTenant';
