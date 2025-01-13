@@ -143,11 +143,11 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
     @Override
     public Map<String, Object> generateFinanceReport(String location, String startDatum, String endDatum) {
         System.out.println("Starting to generate Finance report for property: " + location);
-        System.out.println("Parameters used: " + location + " "+ startDatum + " "+ endDatum);
+        System.out.println("Parameters used: " + location + " " + startDatum + " " + endDatum);
         tenantSpecificConfig();
         Map<String, Object> report = new HashMap<>();
-        try {
 
+        try {
             Query propertyQuery = propertyCollection.whereEqualTo("name", location);
             ApiFuture<QuerySnapshot> propertyFuture = propertyQuery.get();
             QuerySnapshot propertySnapshot = propertyFuture.get();
@@ -159,11 +159,27 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
                 return report;
             }
 
+            double totalPropertyPrice = 0.0;
+            String propertyId = null;
 
-            DocumentSnapshot propertyDocument = propertySnapshot.getDocuments().get(0);
-            String propertyId = propertyDocument.getId();
-            logger.info("Found property ID for location {}: {}", location, propertyId);
+            for (DocumentSnapshot propertyDocument : propertySnapshot.getDocuments()) {
+                Double propertyPrice = propertyDocument.getDouble("price"); // Assuming properties have a "price" field
+                if (propertyPrice != null) {
+                    totalPropertyPrice += propertyPrice;
+                }
+                if (propertyId == null) {
+                    propertyId = propertyDocument.getId(); // Use the first property ID if available
+                }
+            }
 
+            logger.info("Found properties for location {}: total price = {}, primary property ID = {}", location, totalPropertyPrice, propertyId);
+
+            if (propertyId == null) {
+                logger.warn("No valid property ID found for location: {}", location);
+                report.put("location", location);
+                report.put("error", "No valid property found");
+                return report;
+            }
 
             Query ticketQuery = ticketCollection.whereEqualTo("propertyId", propertyId);
 
@@ -181,30 +197,28 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
                 ticketQuery = ticketQuery.whereLessThanOrEqualTo("creationDate", endMillis);
             }
 
-
             ApiFuture<QuerySnapshot> ticketFuture = ticketQuery.get();
             QuerySnapshot ticketSnapshot = ticketFuture.get();
 
-            double totalPrice = 0.0;
-
+            double totalTicketPrice = 0.0;
 
             for (DocumentSnapshot ticketDocument : ticketSnapshot.getDocuments()) {
-                Double price = ticketDocument.getDouble("price"); // Assuming the price field is named "price"
-                if (price != null) {
-                    totalPrice += price;
+                Double ticketPrice = ticketDocument.getDouble("price"); // Assuming tickets have a "price" field
+                if (ticketPrice != null) {
+                    totalTicketPrice += ticketPrice;
                 }
             }
-
 
             report.put("location", location);
             report.put("property_id", propertyId);
             report.put("total_tickets", ticketSnapshot.size());
-            report.put("total_price", totalPrice);
+            report.put("total_tickets_price", totalTicketPrice);
             report.put("start_date", startDatum);
             report.put("end_date", endDatum);
             report.put("generated_at", new Date());
 
-            logger.info("Report generated for location {}: total tickets = {}, total price = {}", location, ticketSnapshot.size(), totalPrice);
+            logger.info("Report generated for location {}: total properties price = {}, total tickets = {}, total ticket price = {}",
+                    location, totalPropertyPrice, ticketSnapshot.size(), totalTicketPrice);
 
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Error generating defect report: {}", e.getMessage());
@@ -344,7 +358,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.LEFT));
 
-            document.add(new Paragraph("Total Price: " + report.get("total_price"))
+            document.add(new Paragraph("Total Price: " + report.get("total_tickets_price"))
                     .setFont(font)
                     .setFontSize(12)
                     .setTextAlignment(TextAlignment.LEFT));
