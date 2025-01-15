@@ -37,6 +37,8 @@ import java.util.concurrent.ExecutionException;
 public class FirestoreDefectDatabase implements GMDBService<Defect> {
 
     private CollectionReference defectCollection;
+    private CollectionReference ticketCollection;
+    private CollectionReference propertyCollection;
     private static final Logger logger = LoggerFactory.getLogger(FirestoreDefectDatabase.class);
 
     public FirestoreDefectDatabase() {}
@@ -46,9 +48,15 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
         GmTenant gmTenant = (GmTenant) authentication.getDetails();
         String dbId = gmTenant.getServices().getPropertyDb().getUrl();
         Firestore firestore;
+        Firestore firestoreProperty;
+        Firestore firestoreParking;
         try {
             firestore = new FirestoreConfig(dbId).firestore();
             logger.info("Firestore with id: " + dbId);
+            firestoreProperty = new FirestoreConfig(dbId).firestore();
+            firestoreParking = new FirestoreConfig(dbId+"parking").firestore();
+            logger.info("FirestoreProperty with id: " + dbId);
+            logger.info("FirestoreParking with id: " + dbId+"parking");
         } catch (IOException e) {
             logger.error("unable to get firestore"+ e.getMessage());
             throw new RuntimeException(e);
@@ -56,8 +64,12 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
         String tenantId = (String) authentication.getCredentials();
         if(gmTenant.getTier()== GmTenant.TierEnum.ENTRY){
             defectCollection = firestore.collection("tenants").document(tenantId).collection("defects");
+            ticketCollection = firestoreParking.collection("tenant").document(tenantId).collection("tickets");
+            propertyCollection = firestoreProperty.collection("tenant").document(tenantId).collection("properties");
         } else {
             defectCollection = firestore.collection("defects");
+            ticketCollection = firestoreParking.collection("tickets");
+            propertyCollection = firestoreProperty.collection("properties");
         }
     }
 
@@ -118,6 +130,96 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
             report.put("generated_at", new Date());
 
             logger.info("Report generated for location {}: total defects = {}", location, totalDefects);
+        } catch (InterruptedException | ExecutionException e) {
+            logger.error("Error generating defect report: {}", e.getMessage());
+        } catch (ParseException e) {
+            logger.error("Error parsing dates: {}", e.getMessage());
+        }
+
+        System.out.println(report);
+        return report;
+    }
+
+    @Override
+    public Map<String, Object> generateFinanceReport(String location, String startDatum, String endDatum) {
+        System.out.println("Starting to generate Finance report for property: " + location);
+        System.out.println("Parameters used: " + location + " " + startDatum + " " + endDatum);
+        tenantSpecificConfig();
+        Map<String, Object> report = new HashMap<>();
+
+        try {
+            Query propertyQuery = propertyCollection.whereEqualTo("name", location);
+            ApiFuture<QuerySnapshot> propertyFuture = propertyQuery.get();
+            QuerySnapshot propertySnapshot = propertyFuture.get();
+
+            if (propertySnapshot.isEmpty()) {
+                logger.warn("No property found with name: {}", location);
+                report.put("location", location);
+                report.put("error", "Property not found");
+                return report;
+            }
+
+            double totalPropertyPrice = 0.0;
+            String propertyId = null;
+
+            for (DocumentSnapshot propertyDocument : propertySnapshot.getDocuments()) {
+                Double propertyPrice = propertyDocument.getDouble("price"); // Assuming properties have a "price" field
+                if (propertyPrice != null) {
+                    totalPropertyPrice += propertyPrice;
+                }
+                if (propertyId == null) {
+                    propertyId = propertyDocument.getId(); // Use the first property ID if available
+                }
+            }
+
+            logger.info("Found properties for location {}: total price = {}, primary property ID = {}", location, totalPropertyPrice, propertyId);
+
+            if (propertyId == null) {
+                logger.warn("No valid property ID found for location: {}", location);
+                report.put("location", location);
+                report.put("error", "No valid property found");
+                return report;
+            }
+
+            Query ticketQuery = ticketCollection.whereEqualTo("propertyId", propertyId);
+
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            if (startDatum != null && !startDatum.isEmpty()) {
+                Date startDate = sdf.parse(startDatum);
+                long startMillis = startDate.getTime();
+
+                ticketQuery = ticketQuery.whereGreaterThanOrEqualTo("creationDate", startMillis);
+            }
+            if (endDatum != null && !endDatum.isEmpty()) {
+                Date endDate = sdf.parse(endDatum);
+                long endMillis = endDate.getTime();
+
+                ticketQuery = ticketQuery.whereLessThanOrEqualTo("creationDate", endMillis);
+            }
+
+            ApiFuture<QuerySnapshot> ticketFuture = ticketQuery.get();
+            QuerySnapshot ticketSnapshot = ticketFuture.get();
+
+            double totalTicketPrice = 0.0;
+
+            for (DocumentSnapshot ticketDocument : ticketSnapshot.getDocuments()) {
+                Double ticketPrice = ticketDocument.getDouble("price"); // Assuming tickets have a "price" field
+                if (ticketPrice != null) {
+                    totalTicketPrice += ticketPrice;
+                }
+            }
+
+            report.put("location", location);
+            report.put("property_id", propertyId);
+            report.put("total_tickets", ticketSnapshot.size());
+            report.put("total_tickets_price", totalTicketPrice);
+            report.put("start_date", startDatum);
+            report.put("end_date", endDatum);
+            report.put("generated_at", new Date());
+
+            logger.info("Report generated for location {}: total properties price = {}, total tickets = {}, total ticket price = {}",
+                    location, totalPropertyPrice, ticketSnapshot.size(), totalTicketPrice);
+
         } catch (InterruptedException | ExecutionException e) {
             logger.error("Error generating defect report: {}", e.getMessage());
         } catch (ParseException e) {
@@ -204,6 +306,97 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
             return new MockMultipartFile(
                     "report",
                     "defect-report.pdf",
+                    "application/pdf",
+                    outputStream.toByteArray()
+            );
+        } catch (Exception e) {
+            throw new RuntimeException("Error creating MultipartFile: " + e.getMessage(), e);
+        }
+    }
+
+    @Override
+    public MultipartFile generatePdfFromFinanceReport(Map<String, Object> report) {
+        System.out.println("Starting to generate Pdf for Report: " + report.get("location"));
+        ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+
+        try {
+            PdfWriter writer = new PdfWriter(outputStream);
+            PdfDocument pdfDocument = new PdfDocument(writer);
+            Document document = new Document(pdfDocument);
+
+            document.setMargins(20, 20, 20, 20);
+
+            PdfFont titleFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+            document.add(new Paragraph("Finance Report")
+                    .setFont(titleFont)
+                    .setFontSize(20)
+                    .setTextAlignment(TextAlignment.CENTER)
+                    .setMarginBottom(20));
+
+            LineSeparator separator = new LineSeparator(new SolidLine());
+            document.add(separator);
+
+            PdfFont font = PdfFontFactory.createFont(StandardFonts.HELVETICA);
+            document.add(new Paragraph("Generated at: " + report.get("generated_at"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT)
+                    .setMarginTop(10));
+
+            document.add(new Paragraph("Property: " + report.get("location"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("Property ID: " + report.get("property_id"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("Total Tickets: " + report.get("total_tickets"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("Total Price: " + report.get("total_tickets_price"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("Start Date: " + report.get("start_date"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            document.add(new Paragraph("End Date: " + report.get("end_date"))
+                    .setFont(font)
+                    .setFontSize(12)
+                    .setTextAlignment(TextAlignment.LEFT));
+
+            PdfFont boldFont = PdfFontFactory.createFont(StandardFonts.HELVETICA_BOLD);
+            Table table = new Table(UnitValue.createPercentArray(new float[]{1, 2}))
+                    .useAllAvailableWidth()
+                    .setMarginTop(20);
+            table.addHeaderCell(new Cell().add(new Paragraph("Field").setFont(boldFont)));
+            table.addHeaderCell(new Cell().add(new Paragraph("Value").setFont(boldFont)));
+
+            // Include additional fields from the report map
+            for (Map.Entry<String, Object> entry : report.entrySet()) {
+                table.addCell(new Cell().add(new Paragraph(entry.getKey())));
+                table.addCell(new Cell().add(new Paragraph(String.valueOf(entry.getValue()))));
+            }
+            document.add(table);
+
+            document.close();
+
+        } catch (Exception e) {
+            throw new RuntimeException("Error generating PDF: " + e.getMessage(), e);
+        }
+
+        try {
+            return new MockMultipartFile(
+                    "report",
+                    "finance-report.pdf",
                     "application/pdf",
                     outputStream.toByteArray()
             );

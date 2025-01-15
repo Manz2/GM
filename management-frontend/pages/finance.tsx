@@ -175,6 +175,79 @@ export default function Properties() {
   createRef<DropzoneRef>();
   const financeConfig = new FApi.Configuration(financeConfigParameters);
 
+  const FinanceReportButton = ({ property }: { property: string }) => {
+    const [loading, setLoading] = useState(false);
+    const [reportUrl, setReportUrl] = useState<string | null>(null);
+
+    const financeApi = new FinanceApi(financeConfig);
+
+    const generateFinanceReport = async (property: string) => {
+      const requestParameters = {
+        property: property,
+        startDate: startDate, // Example start date
+        endDate: endDate, // Example end date
+      };
+      try {
+        setLoading(true);
+        const response = await financeApi.generateFinanceReport(requestParameters);
+
+        // Log the entire response for inspection
+        console.log("Raw response:", response);
+
+        // Since the response is a plain string, you don't need to parse it
+        setReportUrl(response); // Directly set the string response to the state
+      } catch (error) {
+        console.error("Error generating defect report:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+        <div style={{ textAlign: "center", padding: "20px" }}>
+          <button
+              onClick={() => generateFinanceReport(property)}
+              disabled={loading}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                cursor: loading ? "not-allowed" : "pointer",
+                backgroundColor: "orange",
+                color: "black",
+                border: "none",
+                borderRadius: "5px",
+                transition: "background-color 0.3s ease",
+              }}
+          >
+            {loading ? "Generating Report..." : "Generate Finance Report"}
+          </button>
+
+          {reportUrl && (
+              <div style={{ marginTop: "20px", marginBottom:"20px" }}>
+                <p style={{ fontSize: "18px", fontWeight: "bold" ,marginBottom:"20px"}}>Finance report is ready for download:</p>
+                <a
+                    href={reportUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      margin: "20px",
+                      padding: "10px 20px",
+                      fontSize: "16px",
+                      textDecoration: "none",
+                      backgroundColor: "orange",
+                      color: "black",
+                      borderRadius: "5px",
+                      transition: "background-color 0.3s ease",
+                    }}
+                >
+                  Download Report
+                </a>
+              </div>
+          )}
+        </div>
+    );
+  };
+
   const DefectReportButton = ({ property }: { property: string }) => {
     const [loading, setLoading] = useState(false);
     const [reportUrl, setReportUrl] = useState<string | null>(null);
@@ -357,51 +430,51 @@ export default function Properties() {
                 <Grid item xs={12} sm={6}>
                   <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography variant="h6">Revenue Report</Typography>
+                      <Typography variant="h6">Finance Report</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                       <Box display="flex" flexDirection="column" gap={2}>
                         <List>
                           {properties.map((property, index) => (
-                            <ListItem
-                              component="button" // Definiert das Element als Button
-                              key={index}
-                              onClick={() => handlePropertySelect(property)}
-                              sx={{
-                                textAlign: "left", // Optional: Stellt sicher, dass der Text links ausgerichtet ist
-                              }}
-                            >
-                              <ListItemText primary={property.name} />
-                            </ListItem>
+                              <ListItem
+                                  component="button"
+                                  key={index}
+                                  onClick={() => handlePropertySelect(property)}
+                                  sx={{
+                                    backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                    "&:hover": {
+                                      backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                    },
+                                  }}
+                              >
+                                <ListItemText primary={property.name} />
+                              </ListItem>
+
                           ))}
                         </List>
 
-                        {selectedProperty && (
-                          <Box display="flex" flexDirection="column" gap={2}>
-                            <TextField
-                              label="Startdatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                              value={startDate}
-                              onChange={(e) => setStartDate(e.target.value)}
-                            />
-                            <TextField
-                              label="Enddatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                              value={endDate}
-                              onChange={(e) => setEndDate(e.target.value)}
-                            />
-                            <Button
-                              variant="contained"
-                              color="primary"
-
-                            >
-                              Revenue Report generieren
-                            </Button>
-                          </Box>
+                        {(
+                            <Box display="flex" flexDirection="column" gap={2}>
+                              <TextField
+                                  label="Startdatum"
+                                  type="date"
+                                  InputLabelProps={{ shrink: true }}
+                                  fullWidth
+                                  value={startDate}
+                                  onChange={(e) => setStartDate(e.target.value)}
+                              />
+                              <TextField
+                                  label="Enddatum"
+                                  type="date"
+                                  InputLabelProps={{ shrink: true }}
+                                  fullWidth
+                                  value={endDate}
+                                  onChange={(e) => setEndDate(e.target.value)}
+                              />
+                              {/* Render DefectReportButton only if a property is selected */}
+                              {(selectedProperty &&
+                                  <FinanceReportButton property={selectedProperty.name} />)}
+                            </Box>
                         )}
                       </Box>
                     </AccordionDetails>

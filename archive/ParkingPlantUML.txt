@@ -1,0 +1,41 @@
+@startuml ParkingSchema
+<style>
+.open {
+BackGroundColor LightGreen
+FontColor Black
+}
+.paid {
+BackGroundColor LightBlue
+FontColor Black
+}
+.closed {
+BackGroundColor LightGray
+FontColor Black
+}
+</style>
+
+entity "Ticket" as Ticket {
+  id : string <<key>>
+  propertyId : string <<FK>>
+  creation_date : long
+  pay_date : long
+  status : enum <<open, paid>>
+  price : double
+}
+
+entity "ParkingProperty" as ParkingProperty {
+  id : string <<key>>
+  availableSpace : int
+  occupiedSpace : int
+}
+
+entity "Occupancy" as Occupancy {
+  spaces : int
+  used : int
+}
+
+
+' Relationships
+Ticket -> ParkingProperty : relates to
+ParkingProperty -> Occupancy : has occupancy
+@enduml
