@@ -557,6 +557,11 @@ export default function Properties() {
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {property.capacity}
                           </Typography>
+                          <Typography variant="h6">Belegte Parkflächen:</Typography>
+                          <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                            {`${property.occupied} von ${property.capacity}`}
+                          </Typography>
+
                           <Typography variant="h6">Baujahr:</Typography>
                           <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
                             {property.constructionDate ? new Date(property.constructionDate).toLocaleDateString('de-DE') : 'Kein Datum'}

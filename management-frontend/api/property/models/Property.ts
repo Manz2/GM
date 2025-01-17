@@ -72,6 +72,12 @@ export interface Property {
      */
     capacity?: number;
     /**
+     * Anzahl belegter Parkflächen
+     * @type {number}
+     * @memberof Property
+     */
+    occupied?: number;
+    /**
      * Baujahr
      * @type {number}
      * @memberof Property
@@ -148,6 +154,7 @@ export function PropertyFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'city': json['city'] == null ? undefined : json['city'],
         'address': json['address'] == null ? undefined : json['address'],
         'capacity': json['capacity'] == null ? undefined : json['capacity'],
+        'occupied': json['occupied'] == null ? undefined : json['occupied'],
         'constructionDate': json['construction_date'] == null ? undefined : json['construction_date'],
         'image': json['image'] == null ? undefined : json['image'],
         'floors': json['floors'] == null ? undefined : json['floors'],
@@ -174,6 +181,7 @@ export function PropertyFromJSONTyped(json: any, ignoreDiscriminator: boolean): 
         'city': value['city'],
         'address': value['address'],
         'capacity': value['capacity'],
+        'occupied': value['occupied'],
         'construction_date': value['constructionDate'],
         'image': value['image'],
         'floors': value['floors'],

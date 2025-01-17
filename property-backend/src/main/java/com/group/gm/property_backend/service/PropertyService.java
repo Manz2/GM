@@ -49,6 +49,8 @@ public class PropertyService implements PropertyApiDelegate {
     public ResponseEntity<Property> getPropertyById(String id) {
         Property property = gmdbService.getById(id);
         if (property != null) {
+            int occupied = parkingDatabase.getById(property.getId()).getOccupiedSpace();
+            property.setOccupied(occupied);
             return ResponseEntity.ok(gmdbService.getById(id));
         } else {
             return ResponseEntity.notFound().build();
@@ -94,6 +96,10 @@ public class PropertyService implements PropertyApiDelegate {
                                                   Integer capacity){
         List<Property> properties;
         properties = gmdbService.getAll();
+        for (Property property : properties) {
+            int occupied = parkingDatabase.getById(property.getId()).getOccupiedSpace();
+            property.setOccupied(occupied);
+        }
         if (city != null && !city.isEmpty() && capacity != null && capacity > 0) {
             properties = properties.stream()
                     .filter(property -> city.equals(property.getCity()) &&

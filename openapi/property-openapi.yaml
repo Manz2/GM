@@ -594,6 +594,9 @@ components:
         capacity:
           description: "Anzahl Parkflächen"
           type: int
+        occupied:
+          description: "Anzahl belegter Parkflächen"
+          type: int
         construction_date:
           description: "Baujahr"
           type: long
@@ -610,7 +613,6 @@ components:
           type: string
           enum: [ "Offen", "Geschlossen"]
         pricing:
-          description: "Preisstrategie"
           $ref: '#/components/schemas/Pricing'
         expenses:
           description: "Liste der Ausgaben"
@@ -618,7 +620,6 @@ components:
           items:
             $ref: '#/components/schemas/Expense'
         paymentWatcherJob:
-          description: "Verlinkter Payment Watcher Job welcher automatisch Ausgaben einpflegt"
           $ref: '#/components/schemas/PaymentWatcherJob'
 
 
