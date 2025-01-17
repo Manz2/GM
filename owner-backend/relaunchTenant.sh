@@ -39,7 +39,7 @@ helm upgrade --install ingress-nginx ingress-nginx --repo https://kubernetes.git
 
 kubectl create serviceaccount staging
 
-gcloud iam service-accounts add-iam-policy-binding dev-serviceaccount@ca-test2-438111.iam.gserviceaccount.com --role="roles/iam.workloadIdentityUser" --member="serviceAccount:ca-test2-438111.svc.id.goog[default/staging]"
+gcloud iam service-accounts add-iam-policy-binding $CLUSTER_NAME@ca-test2-438111.iam.gserviceaccount.com --role="roles/iam.workloadIdentityUser" --member="serviceAccount:ca-test2-438111.svc.id.goog[default/staging]"
 
 # Helm-Charts installieren (mit Retry)
 i=1

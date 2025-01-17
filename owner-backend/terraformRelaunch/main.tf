@@ -42,6 +42,40 @@ variable "node_machine_type" {
   default     = "e2-medium"
 }
 
+# Service Account erstellen
+resource "google_service_account" "cluster_service_account" {
+  account_id   = var.cluster_name
+  display_name = "${var.cluster_name} Service Account"
+}
+
+# Rolle: Übernahme der Identität von Dienstkonten
+resource "google_project_iam_member" "service_account_identity" {
+  project = var.project_id
+  role    = "roles/iam.serviceAccountTokenCreator"
+  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
+}
+
+# Rolle: GCS Storage Admin
+resource "google_project_iam_member" "storage_admin" {
+  project = var.project_id
+  role    = "roles/storage.admin"
+  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
+}
+
+# Rolle: Firestore User
+resource "google_project_iam_member" "datastore_user" {
+  project = var.project_id
+  role    = "roles/datastore.user"
+  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
+}
+
+# Rolle: Firebase Authentication Admin
+resource "google_project_iam_member" "firebase_auth_admin" {
+  project = var.project_id
+  role    = "roles/firebaseauth.admin"
+  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
+}
+
 resource "google_container_cluster" "primary" {
   name                  = var.cluster_name
   location              = var.region
