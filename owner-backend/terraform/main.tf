@@ -138,12 +138,6 @@ resource "google_container_cluster" "primary" {
   networking_mode       = "VPC_NATIVE"
   ip_allocation_policy  {}
 
-  enable_autoscaling = true
-  autoscaling {
-    min_node_count = var.min_node_count
-    max_node_count = var.max_node_count
-  }
-
   node_pool {
     name               = "default-pool"
     initial_node_count = var.node_count
