@@ -36,6 +36,18 @@ variable "node_count" {
   default     = 2
 }
 
+variable "min_node_count" {
+  description = "Die minimale Anzahl der Knoten im Cluster"
+  type        = number
+  default     = 1
+}
+
+variable "max_node_count" {
+  description = "Die maximale Anzahl der Knoten im Cluster"
+  type        = number
+  default     = 5
+}
+
 variable "node_machine_type" {
   description = "Der Maschinentyp der Knoten"
   type        = string
@@ -88,15 +100,29 @@ resource "google_container_cluster" "primary" {
   networking_mode       = "VPC_NATIVE"
   ip_allocation_policy  {}
 
-  initial_node_count    = var.node_count
+  enable_autoscaling = true
+  autoscaling {
+    min_node_count = var.min_node_count
+    max_node_count = var.max_node_count
+  }
 
-  node_config {
-    machine_type = var.node_machine_type
-    disk_size_gb = 50
+  node_pool {
+    name               = "default-pool"
+    initial_node_count = var.node_count
 
-    oauth_scopes = [
-      "https://www.googleapis.com/auth/cloud-platform",
-    ]
+    autoscaling {
+      min_node_count = var.min_node_count
+      max_node_count = var.max_node_count
+    }
+
+    node_config {
+      machine_type = var.node_machine_type
+      disk_size_gb = 50
+
+      oauth_scopes = [
+        "https://www.googleapis.com/auth/cloud-platform",
+      ]
+    }
   }
 }
 
