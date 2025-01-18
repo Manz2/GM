@@ -14,8 +14,8 @@ FINANCEVERSION=$5
 PARKINGVERSION=$6
 REGIONSTORAGE=$7
 
-DNS_ZONE="example-zone" # DNS-Zonenname
-DNS_NAME="$CLUSTER_NAME.example.com." # Vollständiger DNS-Name mit Punkt am Ende
+DNS_ZONE="gm" # DNS-Zonenname
+DNS_NAME="$CLUSTER_NAME.gm25.software." # Vollständiger DNS-Name mit Punkt am Ende
 TTL=3600 # Zeit in Sekunden, wie lange der Eintrag gecached wird
 
 echo "Creating new tenant for cluster: $CLUSTER_NAME in region: $REGION"

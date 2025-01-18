@@ -13,6 +13,10 @@ MANAGEMENTVERSION=$4
 FINANCEVERSION=$5
 PARKINGVERSION=$6
 
+DNS_ZONE="gm" # DNS-Zonenname
+DNS_NAME="$CLUSTER_NAME.gm25.software." # Vollständiger DNS-Name mit Punkt am Ende
+TTL=3600 # Zeit in Sekunden, wie lange der Eintrag gecached wird
+
 echo "Creating new tenant for cluster: $CLUSTER_NAME in region: $REGION"
 
 cd /app/terraformRelaunch
@@ -83,6 +87,34 @@ if [ "$retries" -ge "$max_retries" ]; then
   echo "Failed to get External IP after $max_retries retries."
   exit 1
 fi
+
+# DNS-Eintrag aktualisieren
+echo "Updating DNS entry for $DNS_NAME with IP $external_ip"
+gcloud dns record-sets transaction start --zone="$DNS_ZONE"
+
+# Bestehenden Eintrag entfernen (falls vorhanden)
+EXISTING_RECORD=$(gcloud dns record-sets list --zone="$DNS_ZONE" --name="$DNS_NAME" --type="A" --format="json")
+if [ "$EXISTING_RECORD" != "[]" ]; then
+  echo "Removing existing DNS record for $DNS_NAME"
+  gcloud dns record-sets transaction remove \
+    --zone="$DNS_ZONE" \
+    --name="$DNS_NAME" \
+    --type="A" \
+    --ttl="$TTL" \
+    $(echo "$EXISTING_RECORD" | jq -r '.[0].rrdatas[]')
+fi
+
+# Neuen Eintrag hinzufügen
+gcloud dns record-sets transaction add \
+  --zone="$DNS_ZONE" \
+  --name="$DNS_NAME" \
+  --type="A" \
+  --ttl="$TTL" \
+  "$external_ip"
+
+gcloud dns record-sets transaction execute --zone="$DNS_ZONE"
+
+echo "DNS entry updated successfully: $DNS_NAME -> $external_ip"
 
 # External IP als Rückgabewert des Skripts ausgeben
 echo "External IP erfolgreich ermittelt: $external_ip"
