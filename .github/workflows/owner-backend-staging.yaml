@@ -2,11 +2,11 @@ name: Deploy Owner-Backend
 
 on:
   push:
-    branches: ["main"]
+    branches: ["dev"]
     paths:
       - "owner-backend/**"
   pull_request:
-    branches: ["main"]
+    branches: ["dev"]
     paths:
       - "owner-backend/**"
 
@@ -97,4 +97,4 @@ jobs:
           gcloud config set project ca-test2-438111
      - name: Deploy Backend to Cloud Run
        run: |
-          gcloud run deploy owner-backend --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend:${{ env.VERSION_OWNER }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod" --timeout=60m
+          gcloud run deploy owner-backend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-backend:${{ env.VERSION_OWNER }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev" --timeout=60m

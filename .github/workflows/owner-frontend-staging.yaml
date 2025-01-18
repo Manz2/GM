@@ -2,11 +2,11 @@ name: Deploy Owner-Frontend
 
 on:
   push:
-    branches: ["main"]
+    branches: ["dev"]
     paths:
       - "owner-frontend/**"
   pull_request:
-    branches: ["main"]
+    branches: ["dev"]
     paths:
       - "owner-frontend/**"
 
@@ -23,8 +23,8 @@ jobs:
           echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
       - name: Create owner .env file
         run: |
-          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.OWNER_PROD_BASE_PATH }}" >> owner-frontend/.env.production
-          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.OWNER_PROD_APPLICATION_NAME }}" >> owner-frontend/.env.production
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.OWNER_STAGING_BASE_PATH }}" >> owner-frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.OWNER_STAGING_APPLICATION_NAME }}" >> owner-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> owner-frontend/.env.production
           echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> owner-frontend/.env.production
       - name: Build Owner Frontend
@@ -67,4 +67,4 @@ jobs:
           gcloud config set project ca-test2-438111
      - name: Deploy frontend to Cloud Run
        run: |
-          gcloud run deploy owner-frontend --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.PROD_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=prod"
+          gcloud run deploy owner-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"
