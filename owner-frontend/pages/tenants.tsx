@@ -765,7 +765,7 @@ export default function Tenants() {
                       label="Region"
                       value={editTenant.preferedRegion}
                       fullWidth
-                      contentEditable={false}
+                      contentEditable={!editTenant.preferedRegion}
                     />
                     <TextField
                       label="Admin Mail"
