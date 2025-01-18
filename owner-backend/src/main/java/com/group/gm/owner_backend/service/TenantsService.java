@@ -215,6 +215,11 @@ public class TenantsService implements TenantsApiDelegate {
                 tenant.getServices().getPropertyBackend().setUrl(ip);
                 tenantDbService.updateTenant(tenant);
             }
+        } else if (tenant.getTier() == GmTenant.TierEnum.ENHANCED && oldTier == GmTenant.TierEnum.ENTRY) {
+            logger.info("updating tenant: {} from ENTRY TO ENHANCED", tenant.getId());
+            getServices(tenant);
+            tenantDbService.addTenant(tenant);
+            terraformService.startMid(tenant);
         }
 
         return ResponseEntity.ok(existingTenant);
