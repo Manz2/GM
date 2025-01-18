@@ -87,6 +87,7 @@ public class PropertyService implements PropertyApiDelegate {
         parkingProperty.setId(property.getId());
         parkingProperty.setAvailableSpace(property.getCapacity());
         parkingProperty.setOccupiedSpace(0);
+        parkingProperty.setClosed(property.getStatus() == Property.StatusEnum.GESCHLOSSEN);
         parkingDatabase.add(parkingProperty);
         return ResponseEntity.status(HttpStatus.CREATED).body(property); // 201 Created
     }
@@ -151,6 +152,11 @@ public class PropertyService implements PropertyApiDelegate {
             parkingProperty.setId(updatedProperty.getId());
             parkingProperty.setAvailableSpace(updatedProperty.getCapacity());
             parkingDatabase.update(parkingProperty);
+        }
+        if(existingProperty.getStatus() != updatedProperty.getStatus()){
+           ParkingProperty parkingProperty = parkingDatabase.getById(existingProperty.getId());
+           parkingProperty.setClosed(updatedProperty.getStatus() == Property.StatusEnum.GESCHLOSSEN);
+           parkingDatabase.update(parkingProperty);
         }
 
         existingProperty.setName(updatedProperty.getName());

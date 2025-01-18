@@ -80,7 +80,10 @@ public class ParkingService implements ParkingApiDelegate {
     public ResponseEntity<Ticket> requestEntry(String propertyId) {
         logger.info("Requesting entry for propertyId: {}", propertyId);
         ParkingProperty property = parkingDatabase.getById(propertyId);
-        if (property == null || property.getAvailableSpace() <= property.getOccupiedSpace()) {
+        if(property == null || property.getClosed()) {
+            return ResponseEntity.noContent().build();
+        }
+        if (property.getAvailableSpace() <= property.getOccupiedSpace()) {
             return ResponseEntity.noContent().build();
         }
         property.setOccupiedSpace(property.getOccupiedSpace()+1);

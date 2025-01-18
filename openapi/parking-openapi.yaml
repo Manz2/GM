@@ -223,6 +223,9 @@ components:
         occupiedSpace:
           description: "leftSpace"
           type: int
+        closed:
+          description: "ist das Parkhaus geschlossen"
+          type: boolean
 
     Occupancy:
       description: "Die Auslastung eines Parkhauses"
