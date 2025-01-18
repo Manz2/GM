@@ -765,7 +765,7 @@ export default function Tenants() {
                       label="Region"
                       value={editTenant.preferedRegion}
                       fullWidth
-                      contentEditable={!editTenant.preferedRegion}
+                      onChange={(e) => setEditTenant({ ...editTenant, preferedRegion: e.target.value })}
                     />
                     <TextField
                       label="Admin Mail"
