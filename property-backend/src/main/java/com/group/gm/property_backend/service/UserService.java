@@ -52,12 +52,12 @@ public class UserService implements UserApiDelegate {
 
         try {
             TenantAwareFirebaseAuth auth = FirebaseAuth.getInstance().getTenantManager().getAuthForTenant(tenantId);
-            auth.createUser(new UserRecord.CreateRequest()
+            UserRecord gmUser = auth.createUser(new UserRecord.CreateRequest()
                     .setEmail(user.getMail())
                     .setPassword("changeMe123")  // Initiales Passwort
                     .setEmailVerified(false)     // E-Mail noch nicht verifiziert
                     .setDisplayName(user.getMail())); // Optional, Display Name setzen
-
+            user.setId(gmUser.getUid());
             gmdbService.add(user);  // Nutzer in der lokalen DB (falls benötigt)
             return ResponseEntity.status(HttpStatus.CREATED).body(user); // 201 Created
         } catch (Exception e) {

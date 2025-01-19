@@ -50,14 +50,12 @@ public class FirestoreUserDatabase implements GMDBService<User> {
     public User add(User user) {
         tenantSpecificConfig();
         try {
-            ApiFuture<DocumentReference> future = userCollection.add(user);
-            DocumentReference document = future.get();
-            user.setId(document.getId());
+            DocumentReference document = userCollection.document(user.getId());
             document.set(user);
             logger.info("Added user: {} to: {}", user, userCollection.getId());
 
             return user;
-        } catch (InterruptedException | ExecutionException e) {
+        } catch (Exception e) {
             logger.error("Error adding user: {}", e.getMessage());
             return null;
         }
