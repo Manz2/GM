@@ -1,4 +1,4 @@
-name: Deploy Owner-Backend
+name: Deploy Owner-Backend-staging
 
 on:
   push:

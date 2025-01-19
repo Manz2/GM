@@ -1,6 +1,8 @@
 package com.group.gm.property_backend.config;
 
 import com.google.firebase.auth.FirebaseAuth;
+import com.group.gm.openapi.model.User;
+import com.group.gm.property_backend.db.GMDBService;
 import com.group.gm.property_backend.security.TokenVerificationFilter;
 import com.group.gm.property_backend.service.TenantService;
 import org.springframework.context.annotation.Bean;
@@ -18,15 +20,17 @@ public class SecurityConfig {
 
     private final FirebaseAuth firebaseAuth;
     private final TenantService tenantService;
+    private final GMDBService<User> gmdbService;
 
-    public SecurityConfig(FirebaseAuth firebaseAuth, TenantService tenantService) {
+    public SecurityConfig(FirebaseAuth firebaseAuth, TenantService tenantService, GMDBService<User> gmdbService) {
         this.firebaseAuth = firebaseAuth;
         this.tenantService = tenantService;
+        this.gmdbService = gmdbService;
     }
 
     @Bean
     public TokenVerificationFilter tokenVerificationFilter() {
-        return new TokenVerificationFilter(firebaseAuth, tenantService);
+        return new TokenVerificationFilter(firebaseAuth, tenantService,gmdbService);
     }
 
     @Bean

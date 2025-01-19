@@ -473,32 +473,47 @@ export default function Public() {
                         <Typography variant="h6" gutterBottom>
                             Preisübersicht
                         </Typography>
-                        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "10px" }}>
+                        <table style={{ width: "100%", borderCollapse: "collapse", marginTop: "20px" }}>
                             <thead>
                                 <tr style={{ borderBottom: "2px solid #ddd" }}>
-                                    <th style={{ textAlign: "left", padding: "10px" }}>Tier</th>
-                                    <th style={{ textAlign: "left", padding: "10px" }}>Preis pro Monat</th>
-                                    <th style={{ textAlign: "left", padding: "10px" }}>Leistungen</th>
+                                    <th style={{ textAlign: "left", padding: "12px", fontWeight: "bold" }}>Paket</th>
+                                    <th style={{ textAlign: "left", padding: "12px", fontWeight: "bold" }}>Basispreis pro Monat</th>
+                                    <th style={{ textAlign: "left", padding: "12px", fontWeight: "bold" }}>Leistungen</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 <tr style={{ borderBottom: "1px solid #ddd" }}>
-                                    <td style={{ padding: "10px" }}>Entry</td>
-                                    <td style={{ padding: "10px" }}>€10</td>
-                                    <td style={{ padding: "10px" }}>Basis-Funktionen</td>
+                                    <td style={{ padding: "12px" }}>Entry</td>
+                                    <td style={{ padding: "12px" }}>€100</td>
+                                    <td style={{ padding: "12px" }}>
+                                        Das ideale Einstiegspaket für grundlegende Anforderungen: Gebäudeverwaltung,
+                                        Defektmanagement und Nutzerverwaltung. Mit einer Schnittstelle für Parkvorgänge und
+                                        zentraler, geteilter Infrastruktur, die eine zuverlässige Datenspeicherung ermöglicht.
+                                    </td>
                                 </tr>
                                 <tr style={{ borderBottom: "1px solid #ddd" }}>
-                                    <td style={{ padding: "10px" }}>Enhanced</td>
-                                    <td style={{ padding: "10px" }}>€25</td>
-                                    <td style={{ padding: "10px" }}>Basis-Funktionen + erweiterte Berichte</td>
+                                    <td style={{ padding: "12px" }}>Enhanced</td>
+                                    <td style={{ padding: "12px" }}>€250</td>
+                                    <td style={{ padding: "12px" }}>
+                                        Zusätzlich zu den Basisfunktionen bietet dieses Paket detaillierte Berichte und Analysen,
+                                        die Ihnen bei der Optimierung Ihrer Prozesse helfen. Individualisieren Sie die Anwendung
+                                        mit Ihrem Logo und Applikationsnamen. Inklusive dedizierter Datenbank und Speicher mit
+                                        wählbarem Standort.
+                                    </td>
                                 </tr>
                                 <tr>
-                                    <td style={{ padding: "10px" }}>Premium</td>
-                                    <td style={{ padding: "10px" }}>€50</td>
-                                    <td style={{ padding: "10px" }}>Alle Funktionen + Prioritäts-Support</td>
+                                    <td style={{ padding: "12px" }}>Premium</td>
+                                    <td style={{ padding: "12px" }}>€1000</td>
+                                    <td style={{ padding: "12px" }}>
+                                        Unser umfassendstes Paket: Alle Funktionen des Enhanced-Pakets plus Prioritäts-Support,
+                                        dedizierte Infrastruktur und freie Wahl des Datenstandorts für maximale
+                                        Datenschutzkonformität und Flexibilität.
+                                    </td>
                                 </tr>
                             </tbody>
+                            
                         </table>
+                        Zusätzlich werden Monatlich 10€ pro Gebäude 1€ pro Nutzer und 0,1€ Pro Defect berechnet.
                     </Box>
 
 
