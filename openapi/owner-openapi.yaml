@@ -209,10 +209,8 @@ components:
           description: "Die Mail des Administrators"
           type: string
         services:
-          description: "Die Namen bzw. ids der Services"
           $ref: '#/components/schemas/Services'
         customisation:
-          description: "Die Personalisierten Komponenten"
           $ref: '#/components/schemas/customisation'
         preferedRegion:
           description: "bevorzugte Region des Tenant"
@@ -231,34 +229,24 @@ components:
       type: object
       properties:
         financeBackend:
-          description: "Das Finanz Backend"
           $ref: '#/components/schemas/GmService'
         propertyBackend:
-          description: "Das Property Backend"
           $ref: '#/components/schemas/GmService'
         parkingBackend:
-          description: "Das Parking Backend"
           $ref: '#/components/schemas/GmService'
         paymentWatcher:
-          description: "der PaymentWatcher Service"
           $ref: '#/components/schemas/GmService'
         reportGenerationWorker:
-          description: "Report generation Worker "
           $ref: '#/components/schemas/GmService'
         managementFrontend:
-          description: "das Management Frontend"
           $ref: '#/components/schemas/GmService'
         parkingFrontend:
-          description: "das Parking Frontend"
           $ref: '#/components/schemas/GmService'
         propertyDb:
-          description: "Die Property DB"
           $ref: '#/components/schemas/GmService'
         parkingDb:
-          description: "Die Parking DB"
           $ref: '#/components/schemas/GmService'
         storage:
-            description: "Der Filestorage"
             $ref: '#/components/schemas/GmService'
 
     GmService:

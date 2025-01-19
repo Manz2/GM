@@ -18,6 +18,8 @@ import java.util.Map;
 @Service
 public class FinanceService implements FinanceApiDelegate {
 
+    //changeme123 ist passwort standard bei tenant1
+
     private final com.group.gm.finance_backend.db.GMDBService<Defect> gmdbService;
     private final com.group.gm.finance_backend.service.GoogleCloudStorageService storageService;
     private final String projectId;
@@ -35,6 +37,7 @@ public class FinanceService implements FinanceApiDelegate {
         this.bucket = bucket;
     }
 
+
     @Override
     public ResponseEntity<String> generateDefectReport(String location, String status, String startDatum, String endDatum) {
         if (location == null || location.isEmpty()) {
@@ -50,14 +53,41 @@ public class FinanceService implements FinanceApiDelegate {
 
             MultipartFile pdfFile = gmdbService.generatePdfFromReport(report);
             System.out.println("Pdf generated");
-            String pdfPath = storageService.uploadObject(pdfFile);
-            System.out.println("Pdf uploaded to: " + pdfPath);
+            String pdfUrl = storageService.uploadObject(pdfFile);
+            System.out.println("Pdf uploaded to: " + pdfUrl);
 
-            return ResponseEntity.ok(pdfPath);
+            return ResponseEntity.ok(pdfUrl);
         } catch (DateTimeParseException e) {
             return ResponseEntity.badRequest().body("Error: Invalid date format. Use YYYY-MM-DD.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error generating defect report: " + e.getMessage());
         }
     }
+
+    @Override
+    public ResponseEntity<String> generateFinanceReport(String location, String startDatum, String endDatum) {
+        if (location == null || location.isEmpty()) {
+            return ResponseEntity.badRequest().body("Error: Property parameter is required.");
+        }
+        try {
+            Map<String, Object> report = gmdbService.generateFinanceReport(location, startDatum, endDatum);
+            System.out.println("Report content: " + report);
+
+            if (report.isEmpty()) {
+                return ResponseEntity.noContent().build();
+            }
+
+            MultipartFile pdfFile = gmdbService.generatePdfFromFinanceReport(report);
+            System.out.println("Pdf generated");
+            String pdfUrl = storageService.uploadObject(pdfFile);
+            System.out.println("Pdf uploaded to: " + pdfUrl);
+
+            return ResponseEntity.ok(pdfUrl);
+        } catch (DateTimeParseException e) {
+            return ResponseEntity.badRequest().body("Error: Invalid date format. Use YYYY-MM-DD.");
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Error generating defect report: " + e.getMessage());
+        }
+    }
+
 }

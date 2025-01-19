@@ -78,15 +78,10 @@ export default function Properties() {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
   const [expanded, setExpanded] = useState<string | null>(null);
-  const [expandedCard, setExpandedCard] = useState<number | null>(null);
-  const [open, setOpen] = useState(false);
-  const [acceptedFiles, setAcceptedFiles] = useState<File[]>([]);
-  const [blobUrls, setBlobUrls] = useState<Record<number, string>>({});
-  const router = useRouter();
-  const [editProperty, setEditProperty] = useState<Property | null>(null);
   const [status, setStatus] = useState<string>('');
   const [appName, setAppName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [reportUrl, setReportUrl] = useState<string | null>(null);
 
   useEffect(() => {
     // Dynamisch initialisieren
@@ -106,7 +101,6 @@ export default function Properties() {
       console.log("Window was null getToken")
       return null;
     }
-    // Production: Speichere im sessionStorage
     return sessionStorage.getItem("authToken");
   };
 
@@ -168,37 +162,6 @@ export default function Properties() {
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : null); // Setzt expanded auf null, wenn das Panel geschlossen wird
   };
-
-  const toggleCard = (index: number, id: string | undefined) => {
-    if (!open) {
-      setExpandedCard(expandedCard === index ? null : index);
-    }
-    if (expandedCard !== index && id) {
-      loadImageAsBlob(index, id);
-    }
-
-  };
-  const loadImageAsBlob = async (index: number, propertyId: string) => {
-    try {
-      const propertyApi = new PropertyApi(config);
-      const response = await propertyApi.getPropertyImageById({ id: propertyId });
-      const url = URL.createObjectURL(response);
-
-      setBlobUrls((prev) => ({ ...prev, [index]: url }));
-    } catch (error) {
-      console.error('Fehler beim Laden des Bildes:', error);
-    }
-  };
-
-  const handleOpen = () => {
-    console.log('Dialog geöffnet');
-    setOpen(true);
-  };
-
-  const handleClose = () => {
-    setOpen(false);
-  };
-
   const handleReset = () => {
     setFilter({
       city: '',
@@ -209,36 +172,30 @@ export default function Properties() {
       capacity: 0,
     });
   };
-
-  const dropzoneRef = createRef<DropzoneRef>();
-  const openDialog = () => {
-    // Note that the ref is set async,
-    // so it might be null at some point
-    if (dropzoneRef.current) {
-      dropzoneRef.current.open()
-    }
-  };
-
+  createRef<DropzoneRef>();
   const financeConfig = new FApi.Configuration(financeConfigParameters);
 
-  const DefectReportButton = ({ property }: { property: string }) => {
+  const FinanceReportButton = ({ property }: { property: string }) => {
     const [loading, setLoading] = useState(false);
-    const [report, setReport] = useState<any>(null);
+    const [reportUrl, setReportUrl] = useState<string | null>(null);
 
     const financeApi = new FinanceApi(financeConfig);
 
-    const generateDefectReport = async (property: string) => {
+    const generateFinanceReport = async (property: string) => {
       const requestParameters = {
         property: property,
-        status: status,
-        startDate: startDate,
-        endDate: endDate
+        startDate: startDate, // Example start date
+        endDate: endDate, // Example end date
       };
       try {
         setLoading(true);
-        const data = await financeApi.generateDefectReport(requestParameters);
-        console.log("Defect Report Data:", data);
-        setReport(data);
+        const response = await financeApi.generateFinanceReport(requestParameters);
+
+        // Log the entire response for inspection
+        console.log("Raw response:", response);
+
+        // Since the response is a plain string, you don't need to parse it
+        setReportUrl(response); // Directly set the string response to the state
       } catch (error) {
         console.error("Error generating defect report:", error);
       } finally {
@@ -247,9 +204,121 @@ export default function Properties() {
     };
 
     return (
-      <Button variant="contained" color="primary" onClick={() => generateDefectReport(property)}>
-        {loading ? "Generating Report..." : "Generate Defect Report"}
-      </Button>
+        <div style={{ textAlign: "center", padding: "20px" }}>
+          <button
+              onClick={() => generateFinanceReport(property)}
+              disabled={loading}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                cursor: loading ? "not-allowed" : "pointer",
+                backgroundColor: "orange",
+                color: "black",
+                border: "none",
+                borderRadius: "5px",
+                transition: "background-color 0.3s ease",
+              }}
+          >
+            {loading ? "Generating Report..." : "Generate Finance Report"}
+          </button>
+
+          {reportUrl && (
+              <div style={{ marginTop: "20px", marginBottom:"20px" }}>
+                <p style={{ fontSize: "18px", fontWeight: "bold" ,marginBottom:"20px"}}>Finance report is ready for download:</p>
+                <a
+                    href={reportUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      margin: "20px",
+                      padding: "10px 20px",
+                      fontSize: "16px",
+                      textDecoration: "none",
+                      backgroundColor: "orange",
+                      color: "black",
+                      borderRadius: "5px",
+                      transition: "background-color 0.3s ease",
+                    }}
+                >
+                  Download Report
+                </a>
+              </div>
+          )}
+        </div>
+    );
+  };
+
+  const DefectReportButton = ({ property }: { property: string }) => {
+    const [loading, setLoading] = useState(false);
+    const [reportUrl, setReportUrl] = useState<string | null>(null);
+
+    const financeApi = new FinanceApi(financeConfig);
+
+    const generateDefectReport = async (property: string) => {
+      const requestParameters = {
+        property: property,
+        status: status, // Example status
+        startDate: startDate, // Example start date
+        endDate: endDate, // Example end date
+      };
+      try {
+        setLoading(true);
+        const response = await financeApi.generateDefectReport(requestParameters);
+
+        // Log the entire response for inspection
+        console.log("Raw response:", response);
+
+        // Since the response is a plain string, you don't need to parse it
+        setReportUrl(response); // Directly set the string response to the state
+      } catch (error) {
+        console.error("Error generating defect report:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    return (
+        <div style={{ textAlign: "center", padding: "20px" }}>
+          <button
+              onClick={() => generateDefectReport(property)}
+              disabled={loading}
+              style={{
+                padding: "10px 20px",
+                fontSize: "16px",
+                cursor: loading ? "not-allowed" : "pointer",
+                backgroundColor: "orange",
+                color: "black",
+                border: "none",
+                borderRadius: "5px",
+                transition: "background-color 0.3s ease",
+              }}
+          >
+            {loading ? "Generating Report..." : "Generate Defect Report"}
+          </button>
+
+          {reportUrl && (
+              <div style={{ marginTop: "20px", marginBottom:"20px" }}>
+                <p style={{ fontSize: "18px", fontWeight: "bold" ,marginBottom:"20px"}}>Defect report is ready for download:</p>
+                <a
+                    href={reportUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{
+                      margin: "20px",
+                      padding: "10px 20px",
+                      fontSize: "16px",
+                      textDecoration: "none",
+                      backgroundColor: "orange",
+                      color: "black",
+                      borderRadius: "5px",
+                      transition: "background-color 0.3s ease",
+                    }}
+                >
+                  Download Report
+                </a>
+              </div>
+          )}
+        </div>
     );
   };
 
@@ -361,51 +430,51 @@ export default function Properties() {
                 <Grid item xs={12} sm={6}>
                   <Accordion>
                     <AccordionSummary expandIcon={<ExpandMoreIcon />}>
-                      <Typography variant="h6">Revenue Report</Typography>
+                      <Typography variant="h6">Finance Report</Typography>
                     </AccordionSummary>
                     <AccordionDetails>
                       <Box display="flex" flexDirection="column" gap={2}>
                         <List>
                           {properties.map((property, index) => (
-                            <ListItem
-                              component="button" // Definiert das Element als Button
-                              key={index}
-                              onClick={() => handlePropertySelect(property)}
-                              sx={{
-                                textAlign: "left", // Optional: Stellt sicher, dass der Text links ausgerichtet ist
-                              }}
-                            >
-                              <ListItemText primary={property.name} />
-                            </ListItem>
+                              <ListItem
+                                  component="button"
+                                  key={index}
+                                  onClick={() => handlePropertySelect(property)}
+                                  sx={{
+                                    backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                    "&:hover": {
+                                      backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                    },
+                                  }}
+                              >
+                                <ListItemText primary={property.name} />
+                              </ListItem>
+
                           ))}
                         </List>
 
-                        {selectedProperty && (
-                          <Box display="flex" flexDirection="column" gap={2}>
-                            <TextField
-                              label="Startdatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                              value={startDate}
-                              onChange={(e) => setStartDate(e.target.value)}
-                            />
-                            <TextField
-                              label="Enddatum"
-                              type="date"
-                              InputLabelProps={{ shrink: true }}
-                              fullWidth
-                              value={endDate}
-                              onChange={(e) => setEndDate(e.target.value)}
-                            />
-                            <Button
-                              variant="contained"
-                              color="primary"
-
-                            >
-                              Revenue Report generieren
-                            </Button>
-                          </Box>
+                        {(
+                            <Box display="flex" flexDirection="column" gap={2}>
+                              <TextField
+                                  label="Startdatum"
+                                  type="date"
+                                  InputLabelProps={{ shrink: true }}
+                                  fullWidth
+                                  value={startDate}
+                                  onChange={(e) => setStartDate(e.target.value)}
+                              />
+                              <TextField
+                                  label="Enddatum"
+                                  type="date"
+                                  InputLabelProps={{ shrink: true }}
+                                  fullWidth
+                                  value={endDate}
+                                  onChange={(e) => setEndDate(e.target.value)}
+                              />
+                              {/* Render DefectReportButton only if a property is selected */}
+                              {(selectedProperty &&
+                                  <FinanceReportButton property={selectedProperty.name} />)}
+                            </Box>
                         )}
                       </Box>
                     </AccordionDetails>

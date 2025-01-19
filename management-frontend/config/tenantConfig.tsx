@@ -3,7 +3,7 @@ import { GmTenant } from "@/api/finance";
 export async function fetchAndStoreTenantInfo() {
 
     //set to true to use local backends
-    const debug = false;
+    const debug = true;
     if (debug) {
         return;
     }

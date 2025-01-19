@@ -1,0 +1,14 @@
+apis/ParkingApi.ts
+apis/index.ts
+index.ts
+models/Customisation.ts
+models/ErrorResponse.ts
+models/GmInfo.ts
+models/GmService.ts
+models/GmTenant.ts
+models/Occupancy.ts
+models/ParkingProperty.ts
+models/Services.ts
+models/Ticket.ts
+models/index.ts
+runtime.ts

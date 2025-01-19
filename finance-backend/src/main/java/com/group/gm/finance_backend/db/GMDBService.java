@@ -31,9 +31,11 @@ public interface GMDBService<T> {
      */
     List<T> filter(String attribute, String status);
 
+    Map<String, Object> generateFinanceReport(String location, String startDatum, String endDatum);
+
     Map<String, Object> generateDefectReport(String location, String status, String startDatum, String endDatum);
 
     MultipartFile generatePdfFromReport(Map<String, Object> report);
 
-
+    MultipartFile generatePdfFromFinanceReport(Map<String, Object> report);
 }

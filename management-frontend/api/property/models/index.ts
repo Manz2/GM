@@ -7,6 +7,7 @@ export * from './Expense';
 export * from './GmInfo';
 export * from './GmService';
 export * from './GmTenant';
+export * from './ParkingProperty';
 export * from './PaymentWatcherJob';
 export * from './Pricing';
 export * from './Property';

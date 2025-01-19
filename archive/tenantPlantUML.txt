@@ -1,0 +1,59 @@
+@startuml TenantSchema
+<style>
+.entry {
+BackGroundColor LightGreen
+FontColor Black
+}
+.enhanced {
+BackGroundColor LightBlue
+FontColor Black
+}
+.premium {
+BackGroundColor Gold
+FontColor Black
+}
+</style>
+
+entity "GmTenant" as GmTenant {
+  id : string <<key>>
+  name : string
+  tier : enum <<entry, enhanced, premium>>
+  adminMail : string
+  preferedRegion : string
+  numberOfProperties : integer
+  numberOfDefects : integer
+  numberOfUsers : integer
+}
+
+entity "Services" as Services {
+  financeBackend : GmService
+  propertyBackend : GmService
+  parkingBackend : GmService
+  paymentWatcher : GmService
+  reportGenerationWorker : GmService
+  managementFrontend : GmService
+  parkingFrontend : GmService
+  propertyDb : GmService
+  parkingDb : GmService
+  storage : GmService
+}
+
+entity "GmService" as GmService {
+  name : string <<key>>
+  url : string
+  region : string
+  version : string
+  up : boolean
+  lastUp : number
+}
+
+entity "Customisation" as Customisation {
+  applicationName : string
+  backgroundImage : string
+  colorScheme : string
+}
+
+' Relationships
+GmTenant -> Services : has
+GmTenant -> Customisation : customisation
+@enduml

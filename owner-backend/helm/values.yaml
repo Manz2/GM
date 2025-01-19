@@ -8,6 +8,10 @@ microservices:
     containerPort: 8083
     ingressPath: /finance-backend(/|$)(.*)
     pathType: ImplementationSpecific
+  - name: parking-backend
+    containerPort: 8084
+    ingressPath: /parking-backend(/|$)(.*)
+    pathType: ImplementationSpecific
   - name: management-frontend
     replicaCount: 1
     containerPort: 3000
@@ -43,6 +47,17 @@ financeBackend:
   servicePort: 80
   artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
   image: com/group/finance-backend
+  version: ""
+  readinessProbePath: /actuator/health/readiness
+  livenessProbePath: /actuator/health/liveness
+
+parkingBackend:
+  name: parking-backend
+  replicaCount: 1
+  containerPort: 8084
+  servicePort: 80
+  artifactRegistryPath: "europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy"
+  image: com/group/parking-backend
   version: ""
   readinessProbePath: /actuator/health/readiness
   livenessProbePath: /actuator/health/liveness

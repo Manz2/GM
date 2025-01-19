@@ -2,12 +2,9 @@
 package com.group.gm.property_backend.service;
 
 
-import com.google.cloud.firestore.Firestore;
 import com.google.cloud.storage.*;
 import com.group.gm.openapi.model.GmTenant;
-import com.group.gm.property_backend.config.FirestoreConfig;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
@@ -17,8 +14,6 @@ import java.nio.file.Path;
 
 import java.io.IOException;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Service
 public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService {

@@ -2,6 +2,7 @@ package com.group.gm.finance_backend.config;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.group.gm.finance_backend.security.TokenVerificationFilter;
+import com.group.gm.finance_backend.service.TenantService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -16,14 +17,16 @@ public class SecurityConfig {
 
 
     private final FirebaseAuth firebaseAuth;
+    private final TenantService tenantService;
 
-    public SecurityConfig(FirebaseAuth firebaseAuth) {
+    public SecurityConfig(FirebaseAuth firebaseAuth, TenantService tenantService) {
         this.firebaseAuth = firebaseAuth;
+        this.tenantService = tenantService;
     }
 
     @Bean
     public TokenVerificationFilter tokenVerificationFilter() {
-        return new TokenVerificationFilter(firebaseAuth);
+        return new TokenVerificationFilter(firebaseAuth, tenantService);
     }
 
     @Bean
@@ -54,3 +57,4 @@ public class SecurityConfig {
         return new CorsFilter(source);
     }
 }
+

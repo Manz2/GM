@@ -37,6 +37,24 @@ export interface GmService {
      * @memberof GmService
      */
     region?: string;
+    /**
+     * version des Service
+     * @type {string}
+     * @memberof GmService
+     */
+    version?: string;
+    /**
+     * status des service
+     * @type {boolean}
+     * @memberof GmService
+     */
+    up?: boolean;
+    /**
+     * letzter positiver status check
+     * @type {number}
+     * @memberof GmService
+     */
+    lastUp?: number;
 }
 
 /**
@@ -59,6 +77,9 @@ export function GmServiceFromJSONTyped(json: any, ignoreDiscriminator: boolean):
         'name': json['name'] == null ? undefined : json['name'],
         'url': json['url'] == null ? undefined : json['url'],
         'region': json['region'] == null ? undefined : json['region'],
+        'version': json['version'] == null ? undefined : json['version'],
+        'up': json['up'] == null ? undefined : json['up'],
+        'lastUp': json['lastUp'] == null ? undefined : json['lastUp'],
     };
 }
 
@@ -76,6 +97,9 @@ export function GmServiceFromJSONTyped(json: any, ignoreDiscriminator: boolean):
         'name': value['name'],
         'url': value['url'],
         'region': value['region'],
+        'version': value['version'],
+        'up': value['up'],
+        'lastUp': value['lastUp'],
     };
 }
 

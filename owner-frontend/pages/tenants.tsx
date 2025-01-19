@@ -71,6 +71,12 @@ export default function Tenants() {
         region: "",
         version: "",
       },
+      parkingBackend: {
+        name: "Parking Backend",
+        url: "",
+        region: "",
+        version: "",
+      },
       managementFrontend: {
         name: "Management Frontend",
         url: "",
@@ -197,6 +203,12 @@ export default function Tenants() {
               region: "",
               version: "",
             },
+            parkingBackend: {
+              name: "Parking Backend",
+              url: "",
+              region: "",
+              version: "",
+            },
             managementFrontend: {
               name: "Management Frontend",
               url: "",
@@ -275,7 +287,7 @@ export default function Tenants() {
   };
 
   const getOverallStatus = (services: Api.Services) =>
-    services.managementFrontend?.up && services.propertyBackend?.up && services.financeBackend?.up;
+    services.managementFrontend?.up && services.propertyBackend?.up && services.financeBackend?.up && services.parkingBackend?.up;
 
   const getStatusColor = (status: boolean) => (status ? "green" : "red");
 
@@ -429,15 +441,15 @@ export default function Tenants() {
                       </Box>
                       <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                         <TextField
-                          label="Management Frontend Version"
-                          value={newTenant.services?.managementFrontend?.version || ""}
+                          label="Finance Bckend Version"
+                          value={newTenant.services?.financeBackend?.version || ""}
                           onChange={(e) =>
                             setNewTenant((prevTenant) => ({
                               ...prevTenant,
                               services: {
                                 ...prevTenant.services,
-                                managementFrontend: {
-                                  ...prevTenant.services?.managementFrontend,
+                                financeBackend: {
+                                  ...prevTenant.services?.financeBackend,
                                   version: e.target.value,
                                 },
                               },
@@ -449,15 +461,35 @@ export default function Tenants() {
                       </Box>
                       <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                         <TextField
-                          label="Finance Backend Version"
-                          value={newTenant.services?.financeBackend?.version || ""}
+                          label="Parking Backend Version"
+                          value={newTenant.services?.parkingBackend?.version || ""}
                           onChange={(e) =>
                             setNewTenant((prevTenant) => ({
                               ...prevTenant,
                               services: {
                                 ...prevTenant.services,
-                                financeBackend: {
-                                  ...prevTenant.services?.financeBackend,
+                                parkingBackend: {
+                                  ...prevTenant.services?.parkingBackend,
+                                  version: e.target.value,
+                                },
+                              },
+                            }))
+                          }
+                          required
+                          fullWidth
+                        />
+                      </Box>
+                      <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                        <TextField
+                          label="Management Frontend Version"
+                          value={newTenant.services?.managementFrontend?.version || ""}
+                          onChange={(e) =>
+                            setNewTenant((prevTenant) => ({
+                              ...prevTenant,
+                              services: {
+                                ...prevTenant.services,
+                                managementFrontend: {
+                                  ...prevTenant.services?.managementFrontend,
                                   version: e.target.value,
                                 },
                               },
@@ -669,6 +701,28 @@ export default function Tenants() {
                                     : "Nie"}
                                 </Typography>
                               </div>
+
+                              <Typography variant="h6">Parking Backend:</Typography>
+                              <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                {tenant.services?.parkingBackend?.version}
+                              </Typography>
+                              <div style={{ display: 'flex', alignItems: 'center' }}>
+                                <Avatar
+                                  style={{
+                                    backgroundColor: getStatusColor(!!tenant.services?.parkingBackend?.up),
+                                    width: 15,
+                                    height: 15,
+                                    marginLeft: '10px',
+                                  }}
+                                >
+                                  {" "}
+                                </Avatar>
+                                <Typography color="textSecondary" style={{ marginLeft: '10px' }}>
+                                  {tenant.services?.parkingBackend?.lastUp
+                                    ? `Zuletzt: ${new Date(tenant.services?.parkingBackend?.lastUp).toLocaleString()}`
+                                    : "Nie"}
+                                </Typography>
+                              </div>
                             </>)}
                         </>
                       )}
@@ -711,7 +765,7 @@ export default function Tenants() {
                       label="Region"
                       value={editTenant.preferedRegion}
                       fullWidth
-                      contentEditable={false}
+                      onChange={(e) => setEditTenant({ ...editTenant, preferedRegion: e.target.value })}
                     />
                     <TextField
                       label="Admin Mail"
@@ -758,6 +812,21 @@ export default function Tenants() {
                           ...prevTenant?.services,
                           financeBackend: {
                             ...prevTenant?.services?.financeBackend,
+                            version: e.target.value,
+                          },
+                        },
+                      }))}
+                      fullWidth
+                    />
+                    <TextField
+                      label="Parking Backend Version"
+                      value={editTenant.services?.parkingBackend?.version || ""}
+                      onChange={(e) => setEditTenant((prevTenant) => ({
+                        ...prevTenant,
+                        services: {
+                          ...prevTenant?.services,
+                          parkingBackend: {
+                            ...prevTenant?.services?.parkingBackend,
                             version: e.target.value,
                           },
                         },

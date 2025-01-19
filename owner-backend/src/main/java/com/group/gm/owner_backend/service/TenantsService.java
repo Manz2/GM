@@ -42,6 +42,9 @@ public class TenantsService implements TenantsApiDelegate {
     @Value("${google.cloud.commonPropertyDb.id}")
     private String commonPropertyDb;
 
+    @Value("${google.cloud.commonParkingDb.id}")
+    private String commonParkingDb;
+
     @Value("${google.cloud.commonStorage.id}")
     private String commonStorage;
 
@@ -130,6 +133,10 @@ public class TenantsService implements TenantsApiDelegate {
             propertyDb.setName(gmTenant.getId() + " Property DB");
             propertyDb.setUrl(gmTenant.getId());
             gmTenant.getServices().setPropertyDb(propertyDb);
+            GmService parkingDb = new GmService();
+            parkingDb.setName(gmTenant.getId() + " Parking DB");
+            parkingDb.setUrl(gmTenant.getId()+ "parking");
+            gmTenant.getServices().setParkingDb(parkingDb);
             GmService storage = new GmService();
             storage.setName(gmTenant.getId() + " storage");
             storage.setUrl(gmTenant.getId());
@@ -139,6 +146,10 @@ public class TenantsService implements TenantsApiDelegate {
             propertyDb.setName("Common Property DB");
             propertyDb.setUrl(commonPropertyDb);
             gmTenant.getServices().setPropertyDb(propertyDb);
+            GmService parkingDb = new GmService();
+            parkingDb.setName(gmTenant.getId() + " Parking DB");
+            parkingDb.setUrl(commonParkingDb);
+            gmTenant.getServices().setParkingDb(parkingDb);
             GmService storage = new GmService();
             storage.setName("common storage");
             storage.setUrl(commonStorage);
@@ -194,8 +205,21 @@ public class TenantsService implements TenantsApiDelegate {
 
         tenantDbService.updateTenant(existingTenant);
 
+
         if(tenant.getTier() == GmTenant.TierEnum.PREMIUM && oldTier == GmTenant.TierEnum.PREMIUM) {
             terraformService.startUpdate(tenant.getId(),tenant);
+        } else if (tenant.getTier() == GmTenant.TierEnum.PREMIUM && oldTier == GmTenant.TierEnum.ENHANCED) {
+            logger.info("updating tenant: {} from ENHANCED TO PREMIUM", tenant.getId());
+            String ip = terraformService.relaunch(tenant.getId(),tenant);
+            if(ip != null && !ip.isEmpty()){
+                tenant.getServices().getPropertyBackend().setUrl(ip);
+                tenantDbService.updateTenant(tenant);
+            }
+        } else if (tenant.getTier() == GmTenant.TierEnum.ENHANCED && oldTier == GmTenant.TierEnum.ENTRY) {
+            logger.info("updating tenant: {} from ENTRY TO ENHANCED", tenant.getId());
+            getServices(tenant);
+            tenantDbService.addTenant(tenant);
+            terraformService.startMid(tenant);
         }
 
         return ResponseEntity.ok(existingTenant);

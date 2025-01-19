@@ -2,13 +2,21 @@ package com.group.gm.finance_backend.service;
 
 
 import com.group.gm.openapi.model.GmTenant;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.*;
+import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
+
+@Service
 public class TenantService {
 
+    private final String cloudFunctionUrl;
 
-    private static final String CLOUD_FUNCTION_URL = "https://europe-west1-ca-test2-438111.cloudfunctions.net/getTenantDetails";
+    // Konstruktor-basierte Injection
+    public TenantService(@Value("${google.cloud.cloudFunctionUrl}") String cloudFunctionUrl) {
+        this.cloudFunctionUrl = cloudFunctionUrl;
+    }
 
     public GmTenant fetchTenantDetails(String tenantId, String authToken) {
         try {
@@ -27,7 +35,7 @@ public class TenantService {
 
             // Make POST Request
             ResponseEntity<GmTenant> responseEntity = restTemplate.exchange(
-                    CLOUD_FUNCTION_URL,
+                    cloudFunctionUrl, // Verwenden der injizierten URL
                     HttpMethod.POST,
                     requestEntity,
                     GmTenant.class

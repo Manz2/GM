@@ -2,21 +2,25 @@
 package com.group.gm.finance_backend.service;
 
 
+import com.google.auth.oauth2.ServiceAccountCredentials;
+import com.google.cloud.secretmanager.v1.AccessSecretVersionResponse;
 import com.google.cloud.storage.*;
 import com.group.gm.openapi.model.GmTenant;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
+import com.google.cloud.secretmanager.v1.SecretManagerServiceClient;
+import com.google.cloud.secretmanager.v1.AccessSecretVersionRequest;
+import com.google.cloud.secretmanager.v1.SecretPayload;
 
+import java.io.*;
+import java.net.URL;
 import java.nio.file.Path;
 
-import java.io.IOException;
 import java.util.UUID;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import java.util.concurrent.TimeUnit;
 
 @Service
 public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService {
@@ -52,6 +56,7 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
 
         logger.info("Deleted object {} from {}", objectName, bucket);
     }
+
     @Override
     public String uploadObject(MultipartFile file) {
         tenantSpecificConfig();
@@ -65,20 +70,43 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
         if (storage.get(bucket, objectName) == null) {
             precondition = Storage.BlobWriteOption.doesNotExist();
         } else {
-            precondition =
-                    Storage.BlobWriteOption.generationMatch(
-                            storage.get(bucket, objectName).getGeneration());
+            precondition = Storage.BlobWriteOption.generationMatch(
+                    storage.get(bucket, objectName).getGeneration());
         }
+
         try {
             storage.createFrom(blobInfo, file.getInputStream(), precondition);
-        } catch (IOException e)
-        {
-            logger.error("File {} COULDNT be uploaded to bucket {} as {}", file, bucket, objectName);
-            return null;
+
+            SecretManagerServiceClient client = SecretManagerServiceClient.create();
+            String secretName = "projects/563205931618/secrets/DevServiceAccountKey/versions/latest";
+
+            AccessSecretVersionResponse secretResponse = client.accessSecretVersion(secretName);
+            String serviceAccountJson = secretResponse.getPayload().getData().toStringUtf8();
+
+            InputStream serviceAccountStream = new ByteArrayInputStream(serviceAccountJson.getBytes());
+
+            Storage storageForSign = StorageOptions.newBuilder()
+                    .setCredentials(ServiceAccountCredentials.fromStream(serviceAccountStream))
+                    .build()
+                    .getService();
+
+            URL signedUrl = storageForSign.signUrl(
+                    blobInfo,
+                    15,
+                    TimeUnit.MINUTES,
+                    Storage.SignUrlOption.withV4Signature() // Optional: Use V4 signing
+            );
+
+            return signedUrl.toString();
+        } catch (IOException e) {
+            logger.error("IOException during file upload: {}", e.getMessage(), e);
+            throw new RuntimeException("Error uploading file to GCS", e);
+        } catch (Exception e) {
+            logger.error("Error generating signed URL: {}", e.getMessage(), e);
+            throw new RuntimeException("Error generating signed URL", e);
         }
-        logger.info("File {} uploaded to bucket {} as {}", file, bucket, objectName);
-        return objectName;
     }
+
 
     @Override
     public String uploadObject(MultipartFile file, String directoryPath) {

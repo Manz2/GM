@@ -1,0 +1,70 @@
+name: Deploy Owner-Frontend
+
+on:
+  push:
+    branches: ["dev"]
+    paths:
+      - "owner-frontend/**"
+  pull_request:
+    branches: ["dev"]
+    paths:
+      - "owner-frontend/**"
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Read versions from version.yaml
+        id: read_versions
+        run: |
+          VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' owner-frontend/version.yaml)
+          echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
+      - name: Create owner .env file
+        run: |
+          echo "NEXT_PUBLIC_BASE_PATH=${{ vars.OWNER_STAGING_BASE_PATH }}" >> owner-frontend/.env.production
+          echo "NEXT_PUBLIC_APPLICATION_NAME=${{ vars.OWNER_STAGING_APPLICATION_NAME }}" >> owner-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_API_KEY=${{ secrets.FIREBASE_KEY }}" >> owner-frontend/.env.production
+          echo "NEXT_PUBLIC_FIREBASE_AUTH_DOMAIN=${{ secrets.FIREBASE_DOMAIN}}" >> owner-frontend/.env.production
+      - name: Build Owner Frontend
+        run: |
+          docker build -t com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} ./owner-frontend
+          docker tag com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }}
+
+      - name: Authenticate to Google Cloud
+        uses: google-github-actions/auth@v2
+        with:
+          project_id: ca-test2-438111
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+
+      - name: Configure Docker to use gcloud credentials
+        run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+          gcloud config set project ca-test2-438111
+
+      - name: Push image to GCR
+        run: |
+          docker push europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }}
+  deploy:
+    needs: docker
+    runs-on: ubuntu-latest
+    steps:
+     - uses: actions/checkout@v4
+     - name: Read versions from version.yaml
+       id: read_versions
+       run: |
+         VERSION_OWNER_FRONTEND=$(yq eval '.owner-frontend' owner-frontend/version.yaml)
+         echo "VERSION_OWNER_FRONTEND=$VERSION_OWNER_FRONTEND" >> $GITHUB_ENV
+     - name: Authenticate to Google Cloud
+       uses: google-github-actions/auth@v2
+       with:
+          project_id: ca-test2-438111
+          credentials_json: ${{ secrets.GCP_SA_KEY }}
+     - name: Configure Docker to use gcloud credentials
+       run: |
+          gcloud auth configure-docker europe-west1-docker.pkg.dev
+          gcloud config set project ca-test2-438111
+     - name: Deploy frontend to Cloud Run
+       run: |
+          gcloud run deploy owner-frontend-staging --image=europe-west1-docker.pkg.dev/ca-test2-438111/cloud-run-source-deploy/com/group/owner-frontend:${{ env.VERSION_OWNER_FRONTEND }} --platform=managed --region=europe-west1 --allow-unauthenticated --port=8081 --memory=1Gi --service-account ${{ secrets.DEV_SERVICEACCOUNT }} --set-env-vars "SPRING_PROFILES_ACTIVE=dev"

@@ -23,17 +23,79 @@ paths:
             type: string
       responses:
         '200':
-          description: "Das erstellte Park Ticket"
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Ticket'
+          description: "Das erstellte Parkticket"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Ticket'
         '204':
-          description: Einfahrt abgelehnt
+          description: "Einfahrt abgelehnt"
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
           $ref: '#/components/responses/InternalServerError'
+
+  /api/parking/requestExit:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Parking"
+      summary: "Ausfahrt eines Fahrzeugs anfragen"
+      description: "Prüft, ob ein Fahrzeug das Parkhaus verlassen kann. Wenn das Ticket als bezahlt markiert ist, wird die Ausfahrt genehmigt."
+      operationId: "requestExit"
+      parameters:
+        - name: "propertyId"
+          in: query
+          description: "Die ID des Parkhauses, aus dem die Ausfahrt angefragt wird."
+          required: true
+          schema:
+            type: string
+        - name: "ticketId"
+          in: query
+          description: "Die ID des Tickets, das die Parkdauer und Zahlung repräsentiert."
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Das Ticket wurde bezahlt, und die Ausfahrt ist erlaubt."
+        '204':
+          description: "Das Ticket wurde nicht bezahlt. Die Ausfahrt ist nicht erlaubt."
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
+  /api/parking/getPrice:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Parking"
+      summary: "Gibt den Preis des Tickets zurück"
+      operationId: "getPrice"
+      parameters:
+        - name: "ticketId"
+          in: query
+          description: "Die ID des Tickets, dessen Preis abgefragt werden soll."
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Der Preis des Tickets wurde erfolgreich zurückgegeben."
+          content:
+            application/json:
+              schema:
+                type: number
+                format: double
+                description: "Der Preis des Tickets."
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
 
   /api/parking/markTicketPayed:
     get:
@@ -101,51 +163,10 @@ paths:
       responses:
         '200':
           description: "Auslastung des Parkhauses"
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Occupancy'
-        '400':
-          $ref: '#/components/responses/BadRequest'
-        '500':
-          $ref: '#/components/responses/InternalServerError'
-
-  /api/parking/getParkingHistory:
-    get:
-      security:
-        - BearerAuth: [ ]
-      tags:
-        - "Parking"
-      summary: "Liefert die Tickets eines Parkhauses über einen bestimmten Zeitraum"
-      operationId: "getParkingHistory"
-      parameters:
-        - name: "property"
-          in: query
-          description: "Das Parkhaus, für welches die Parking History abgefragt wird."
-          required: true
-          schema:
-            type: string
-        - name: "dateFrom"
-          in: query
-          description: "Untere Datumsgrenze"
-          required: false
-          schema:
-            type: date
-        - name: "DateTo"
-          in: query
-          description: "Obere Datumsgrenze"
-          required: false
-          schema:
-            type: date
-      responses:
-        '200':
-          description: "Die Tickets des ausgewählten Zeitraums"
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Ticket'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Occupancy'
         '400':
           $ref: '#/components/responses/BadRequest'
         '500':
@@ -158,6 +179,12 @@ components:
       scheme: bearer
       bearerFormat: JWT
   schemas:
+    GmInfo:
+      type: object
+      properties:
+        tenant:
+          $ref: './owner-openapi.yaml#/components/schemas/GmTenant'
+
     Ticket:
       description: "Ein Parkticket"
       type: object
@@ -178,6 +205,27 @@ components:
           description: "Status halt"
           type: string
           enum: [ "Offen", "Bezahlt" ]
+        price:
+          description: "der Preis"
+          type: number
+          format: double
+
+    ParkingProperty:
+      description: "Property"
+      type: object
+      properties:
+        id:
+          description: "Id"
+          type: string
+        availableSpace:
+          description: "availableSpace"
+          type: int
+        occupiedSpace:
+          description: "leftSpace"
+          type: int
+        closed:
+          description: "ist das Parkhaus geschlossen"
+          type: boolean
 
     Occupancy:
       description: "Die Auslastung eines Parkhauses"
