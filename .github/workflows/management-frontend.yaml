@@ -1,4 +1,4 @@
-name: Deploy Management Frontend
+name: Deploy Management Frontend Staging
 
 on:
   push:
