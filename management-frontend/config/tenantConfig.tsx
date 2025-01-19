@@ -1,14 +1,6 @@
 import { GmTenant } from "@/api/finance";
 
 export async function fetchAndStoreTenantInfo() {
-
-    //set to true to use local backends
-    const debug = true;
-    if (debug) {
-        return;
-    }
-
-
     if (typeof window === "undefined") {
         console.log("Window was null")
         return null;
@@ -51,6 +43,13 @@ export async function fetchAndStoreTenantInfo() {
     }
     console.log(`Application name: ${applicationName}`);
     sessionStorage.setItem(`applicationName`, applicationName || "GM-GarageManager");
+
+    const tier = tenantInfo.tier;
+    if (!tier) {
+        console.log("Kein tier gefunden");
+    }
+    console.log(`tier: ${applicationName}`);
+    sessionStorage.setItem(`tier`, tier || "ENTRY");
 }
 
 export async function updateCustomisation(gmApplicationName: string, gmImageUrl: string) {
@@ -115,6 +114,14 @@ export function getApplicationName(): string | null {
         return null;
     }
     return sessionStorage.getItem(`applicationName`);
+}
+
+export function getTier(): string | null {
+    if (typeof window === "undefined") {
+        console.log("Window was null")
+        return null;
+    }
+    return sessionStorage.getItem(`tier`);
 }
 
 interface Service {

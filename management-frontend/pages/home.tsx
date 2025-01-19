@@ -18,16 +18,18 @@ import ApartmentIcon from "@mui/icons-material/Apartment";
 import GroupIcon from "@mui/icons-material/Group";
 import AccountBalance from "@mui/icons-material/AccountBalance";
 import SettingsIcon from "@mui/icons-material/Settings";
-import { getApplicationName, getImage } from "@/config/tenantConfig";
+import { getApplicationName, getImage, getTier } from "@/config/tenantConfig";
 
 export default function Home() {
   const [appName, setAppName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [tier, setTier] = useState("");
 
   useEffect(() => {
     // Dynamisch initialisieren
     setAppName(getApplicationName() || "GM-GarageManager");
     setImageUrl(getImage() || "");
+    setTier(getTier() || "ENTRY");
   }, []);
 
   return (
@@ -115,36 +117,39 @@ export default function Home() {
               </Link>
             </CardActions>
           </Card>
-
-          <Card sx={{ maxWidth: 345, flex: 1 }}>
-            <CardContent>
-              <AccountBalance color="warning" sx={{ fontSize: 50, marginBottom: 2 }} />
-              <Typography variant="h5" component="div">
-                Finanzen
-              </Typography>
-              <Typography variant="body2" color="textSecondary">
-                Erstellen und exportieren Sie verschiedene Reports.
-              </Typography>
-            </CardContent>
-            <CardActions>
-              <Link href="/finance" passHref>
-                <Button variant="contained" color="warning" fullWidth>
-                  Gehe zu Finanzen
-                </Button>
-              </Link>
-            </CardActions>
-          </Card>
+          {tier !== 'ENTRY' && (
+            <Card sx={{ maxWidth: 345, flex: 1 }}>
+              <CardContent>
+                <AccountBalance color="warning" sx={{ fontSize: 50, marginBottom: 2 }} />
+                <Typography variant="h5" component="div">
+                  Finanzen
+                </Typography>
+                <Typography variant="body2" color="textSecondary">
+                  Erstellen und exportieren Sie verschiedene Reports.
+                </Typography>
+              </CardContent>
+              <CardActions>
+                <Link href="/finance" passHref>
+                  <Button variant="contained" color="warning" fullWidth>
+                    Gehe zu Finanzen
+                  </Button>
+                </Link>
+              </CardActions>
+            </Card>
+          )}
         </Box>
 
         <footer style={{ textAlign: "center", margin: "20px 0" }}>
           <Typography variant="body2" color="textSecondary">
             © 2024 GM Parking-Solutions
           </Typography>
-          <Link href="/settings" passHref>
-            <IconButton color="primary" aria-label="Einstellungen">
-              <SettingsIcon fontSize="large" />
-            </IconButton>
-          </Link>
+          {tier !== 'ENTRY' && (
+            <Link href="/settings" passHref>
+              <IconButton color="primary" aria-label="Einstellungen">
+                <SettingsIcon fontSize="large" />
+              </IconButton>
+            </Link>
+          )}
         </footer>
 
       </Container>

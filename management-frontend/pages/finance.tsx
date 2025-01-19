@@ -11,7 +11,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
-import { getApplicationName, getImage, getServiceUrl } from "../config/tenantConfig";
+import { getApplicationName, getImage, getServiceUrl, getTier } from "../config/tenantConfig";
 import * as PApi from "@/api/property";
 import * as FApi from "@/api/finance";
 import {
@@ -38,7 +38,7 @@ import {
 } from "@mui/material";
 import { firebase } from "@/config/firebaseConfig";
 import { useRouter } from "next/router";
-import {DefectStatusEnum} from "@/api/property";
+import { DefectStatusEnum } from "@/api/property";
 
 const geistSans = localFont({
   src: "./fonts/GeistVF.woff",
@@ -87,6 +87,9 @@ export default function Properties() {
     // Dynamisch initialisieren
     setAppName(getApplicationName() || "GM-GarageManager");
     setImageUrl(getImage() || "");
+    if (getTier() === "ENTRY") {
+      window.location.href = '/login';
+    }
   }, []);
 
 
@@ -204,47 +207,47 @@ export default function Properties() {
     };
 
     return (
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <button
-              onClick={() => generateFinanceReport(property)}
-              disabled={loading}
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <button
+          onClick={() => generateFinanceReport(property)}
+          disabled={loading}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: loading ? "not-allowed" : "pointer",
+            backgroundColor: "orange",
+            color: "black",
+            border: "none",
+            borderRadius: "5px",
+            transition: "background-color 0.3s ease",
+          }}
+        >
+          {loading ? "Generating Report..." : "Generate Finance Report"}
+        </button>
+
+        {reportUrl && (
+          <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+            <p style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "20px" }}>Finance report is ready for download:</p>
+            <a
+              href={reportUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
+                margin: "20px",
                 padding: "10px 20px",
                 fontSize: "16px",
-                cursor: loading ? "not-allowed" : "pointer",
+                textDecoration: "none",
                 backgroundColor: "orange",
                 color: "black",
-                border: "none",
                 borderRadius: "5px",
                 transition: "background-color 0.3s ease",
               }}
-          >
-            {loading ? "Generating Report..." : "Generate Finance Report"}
-          </button>
-
-          {reportUrl && (
-              <div style={{ marginTop: "20px", marginBottom:"20px" }}>
-                <p style={{ fontSize: "18px", fontWeight: "bold" ,marginBottom:"20px"}}>Finance report is ready for download:</p>
-                <a
-                    href={reportUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      margin: "20px",
-                      padding: "10px 20px",
-                      fontSize: "16px",
-                      textDecoration: "none",
-                      backgroundColor: "orange",
-                      color: "black",
-                      borderRadius: "5px",
-                      transition: "background-color 0.3s ease",
-                    }}
-                >
-                  Download Report
-                </a>
-              </div>
-          )}
-        </div>
+            >
+              Download Report
+            </a>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -278,47 +281,47 @@ export default function Properties() {
     };
 
     return (
-        <div style={{ textAlign: "center", padding: "20px" }}>
-          <button
-              onClick={() => generateDefectReport(property)}
-              disabled={loading}
+      <div style={{ textAlign: "center", padding: "20px" }}>
+        <button
+          onClick={() => generateDefectReport(property)}
+          disabled={loading}
+          style={{
+            padding: "10px 20px",
+            fontSize: "16px",
+            cursor: loading ? "not-allowed" : "pointer",
+            backgroundColor: "orange",
+            color: "black",
+            border: "none",
+            borderRadius: "5px",
+            transition: "background-color 0.3s ease",
+          }}
+        >
+          {loading ? "Generating Report..." : "Generate Defect Report"}
+        </button>
+
+        {reportUrl && (
+          <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+            <p style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "20px" }}>Defect report is ready for download:</p>
+            <a
+              href={reportUrl}
+              target="_blank"
+              rel="noopener noreferrer"
               style={{
+                margin: "20px",
                 padding: "10px 20px",
                 fontSize: "16px",
-                cursor: loading ? "not-allowed" : "pointer",
+                textDecoration: "none",
                 backgroundColor: "orange",
                 color: "black",
-                border: "none",
                 borderRadius: "5px",
                 transition: "background-color 0.3s ease",
               }}
-          >
-            {loading ? "Generating Report..." : "Generate Defect Report"}
-          </button>
-
-          {reportUrl && (
-              <div style={{ marginTop: "20px", marginBottom:"20px" }}>
-                <p style={{ fontSize: "18px", fontWeight: "bold" ,marginBottom:"20px"}}>Defect report is ready for download:</p>
-                <a
-                    href={reportUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    style={{
-                      margin: "20px",
-                      padding: "10px 20px",
-                      fontSize: "16px",
-                      textDecoration: "none",
-                      backgroundColor: "orange",
-                      color: "black",
-                      borderRadius: "5px",
-                      transition: "background-color 0.3s ease",
-                    }}
-                >
-                  Download Report
-                </a>
-              </div>
-          )}
-        </div>
+            >
+              Download Report
+            </a>
+          </div>
+        )}
+      </div>
     );
   };
 
@@ -405,9 +408,9 @@ export default function Properties() {
                               <FormControl fullWidth required>
                                 <InputLabel>Status</InputLabel>
                                 <Select
-                                    value={status}
-                                    onChange={(e) => setStatus(e.target.value)} // Update the status state directly
-                                    label="Status"
+                                  value={status}
+                                  onChange={(e) => setStatus(e.target.value)} // Update the status state directly
+                                  label="Status"
                                 >
                                   <MenuItem value="OFFEN">Offen</MenuItem>
                                   <MenuItem value="IN-BEARBEITUNG">In Bearbeitung</MenuItem>
@@ -436,45 +439,45 @@ export default function Properties() {
                       <Box display="flex" flexDirection="column" gap={2}>
                         <List>
                           {properties.map((property, index) => (
-                              <ListItem
-                                  component="button"
-                                  key={index}
-                                  onClick={() => handlePropertySelect(property)}
-                                  sx={{
-                                    backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
-                                    "&:hover": {
-                                      backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
-                                    },
-                                  }}
-                              >
-                                <ListItemText primary={property.name} />
-                              </ListItem>
+                            <ListItem
+                              component="button"
+                              key={index}
+                              onClick={() => handlePropertySelect(property)}
+                              sx={{
+                                backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                "&:hover": {
+                                  backgroundColor: selectedProperty?.name === property.name ? "orange" : "transparent",
+                                },
+                              }}
+                            >
+                              <ListItemText primary={property.name} />
+                            </ListItem>
 
                           ))}
                         </List>
 
                         {(
-                            <Box display="flex" flexDirection="column" gap={2}>
-                              <TextField
-                                  label="Startdatum"
-                                  type="date"
-                                  InputLabelProps={{ shrink: true }}
-                                  fullWidth
-                                  value={startDate}
-                                  onChange={(e) => setStartDate(e.target.value)}
-                              />
-                              <TextField
-                                  label="Enddatum"
-                                  type="date"
-                                  InputLabelProps={{ shrink: true }}
-                                  fullWidth
-                                  value={endDate}
-                                  onChange={(e) => setEndDate(e.target.value)}
-                              />
-                              {/* Render DefectReportButton only if a property is selected */}
-                              {(selectedProperty &&
-                                  <FinanceReportButton property={selectedProperty.name} />)}
-                            </Box>
+                          <Box display="flex" flexDirection="column" gap={2}>
+                            <TextField
+                              label="Startdatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={startDate}
+                              onChange={(e) => setStartDate(e.target.value)}
+                            />
+                            <TextField
+                              label="Enddatum"
+                              type="date"
+                              InputLabelProps={{ shrink: true }}
+                              fullWidth
+                              value={endDate}
+                              onChange={(e) => setEndDate(e.target.value)}
+                            />
+                            {/* Render DefectReportButton only if a property is selected */}
+                            {(selectedProperty &&
+                              <FinanceReportButton property={selectedProperty.name} />)}
+                          </Box>
                         )}
                       </Box>
                     </AccordionDetails>
