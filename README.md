@@ -14,6 +14,7 @@ a project for the Cloud Application Development course
 [![Deploy Owner-Backend](https://github.com/Manz2/GM/actions/workflows/owner-backend.yaml/badge.svg)](https://github.com/Manz2/GM/actions/workflows/owner-backend.yaml)
 [![Deploy Management Frontend](https://github.com/Manz2/GM/actions/workflows/management-frontend.yaml/badge.svg)](https://github.com/Manz2/GM/actions/workflows/management-frontend.yaml)
 [![Deploy Owner-Frontend](https://github.com/Manz2/GM/actions/workflows/owner-frontend.yaml/badge.svg)](https://github.com/Manz2/GM/actions/workflows/owner-frontend.yaml)
+[![Deploy parking-backend](https://github.com/Manz2/GM/actions/workflows/parking-backend.yaml/badge.svg)](https://github.com/Manz2/GM/actions/workflows/parking-backend.yaml)
 
 
 ## Deploy Manualy

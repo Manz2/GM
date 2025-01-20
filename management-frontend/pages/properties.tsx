@@ -9,7 +9,7 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterListOffIcon from '@mui/icons-material/FilterListOff';
 import EditIcon from '@mui/icons-material/Edit';
 import Dropzone, { DropzoneRef } from 'react-dropzone';
-import { getApplicationName, getImage, getServiceUrl } from "../config/tenantConfig";
+import { getApplicationName, getImage, getServiceUrl, getTier } from "../config/tenantConfig";
 import * as Api from '../api/property';
 import {
   Accordion,
@@ -81,11 +81,15 @@ export default function Properties() {
 
   const [appName, setAppName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
+  const [tier, setTier] = useState("");
+
 
   useEffect(() => {
     // Dynamisch initialisieren
     setAppName(getApplicationName() || "GM-GarageManager");
     setImageUrl(getImage() || "");
+    setTier(getTier() || "ENTRY");
+
   }, []);
 
 
@@ -390,6 +394,54 @@ export default function Properties() {
                       fullWidth
                     />
                   </Box>
+                  {tier == 'PREMIUM' && (
+                    <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                      <TextField
+                        label="Payment Watcher Credentials"
+                        value={newProperty.paymentWatcherJob?.credentials}
+                        onChange={(e) => setNewProperty((newProperty) => ({
+                          ...newProperty,
+                          paymentWatcherJob: {
+                            ...newProperty?.paymentWatcherJob,
+                            credentials: e.target.value,
+                          },
+                        }))}
+                        fullWidth
+                      />
+                    </Box>
+                  )}
+                  {tier == 'PREMIUM' && (
+                    <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                      <TextField
+                        label="Payment Watcher Target Mail"
+                        value={newProperty.paymentWatcherJob?.targetMail}
+                        onChange={(e) => setNewProperty((newProperty) => ({
+                          ...newProperty,
+                          paymentWatcherJob: {
+                            ...newProperty?.paymentWatcherJob,
+                            targetMail: e.target.value,
+                          },
+                        }))}
+                        fullWidth
+                      />
+                    </Box>
+                  )}
+                  {tier == 'PREMIUM' && (
+                    <Box flexBasis={{ xs: '100%', sm: '48%' }}>
+                      <TextField
+                        label="Payment Watcher sender"
+                        value={newProperty.paymentWatcherJob?.sender}
+                        onChange={(e) => setNewProperty((newProperty) => ({
+                          ...newProperty,
+                          paymentWatcherJob: {
+                            ...newProperty?.paymentWatcherJob,
+                            sender: e.target.value,
+                          },
+                        }))}
+                        fullWidth
+                      />
+                    </Box>
+                  )}
                   <Box flexBasis={{ xs: '100%', sm: '48%' }}>
                     <FormControl fullWidth required>
                       <InputLabel>Status</InputLabel>
@@ -632,6 +684,49 @@ export default function Properties() {
                       onChange={(e) => setEditProperty({ ...editProperty, capacity: Number(e.target.value) })}
                       fullWidth
                     />
+                    {tier == 'PREMIUM' && (
+                      <TextField
+                        label="Payment Watcher Credentials"
+                        value={newProperty.paymentWatcherJob?.credentials}
+                        onChange={(e) => setNewProperty((newProperty) => ({
+                          ...newProperty,
+                          paymentWatcherJob: {
+                            ...newProperty?.paymentWatcherJob,
+                            credentials: e.target.value,
+                          },
+                        }))}
+                        fullWidth
+                      />
+                    )}
+                    {tier == 'PREMIUM' && (
+                      <TextField
+                        label="Payment Watcher Target Mail"
+                        value={newProperty.paymentWatcherJob?.targetMail}
+                        onChange={(e) => setNewProperty((newProperty) => ({
+                          ...newProperty,
+                          paymentWatcherJob: {
+                            ...newProperty?.paymentWatcherJob,
+                            targetMail: e.target.value,
+                          },
+                        }))}
+                        fullWidth
+                      />
+                    )}
+
+                    {tier == 'PREMIUM' && (
+                      <TextField
+                        label="Payment Watcher Sender"
+                        value={newProperty.paymentWatcherJob?.sender}
+                        onChange={(e) => setNewProperty((newProperty) => ({
+                          ...newProperty,
+                          paymentWatcherJob: {
+                            ...newProperty?.paymentWatcherJob,
+                            sender: e.target.value,
+                          },
+                        }))}
+                        fullWidth
+                      />
+                    )}
                     <FormControl fullWidth required>
                       <InputLabel>Status</InputLabel>
                       <Select

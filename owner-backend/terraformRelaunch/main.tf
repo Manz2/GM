@@ -53,52 +53,12 @@ variable "node_machine_type" {
   type        = string
   default     = "e2-medium"
 }
-# Service Account erstellen
-resource "google_service_account" "cluster_service_account" {
-  account_id   = var.cluster_name
-  display_name = "${var.cluster_name} Service Account"
-}
-
-# Rolle: Übernahme der Identität von Dienstkonten
-resource "google_project_iam_member" "service_account_identity" {
-  project = var.project_id
-  role    = "roles/iam.serviceAccountTokenCreator"
-  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
-}
-
-# Rolle: Firebase Authentication Admin
-resource "google_project_iam_member" "firebase_auth_admin" {
-  project = var.project_id
-  role    = "roles/firebaseauth.admin"
-  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
-}
-
-
-# Storage-Bucket-spezifischer Zugriff
-resource "google_storage_bucket_iam_member" "bucket_access" {
-  bucket = var.cluster_name
-  role   = "roles/storage.objectAdmin"
-  member = "serviceAccount:${google_service_account.cluster_service_account.email}"
-}
-
-# Firestore spezifischer Zugriff
-resource "google_project_iam_member" "firestore_access" {
-  project = var.project_id
-  role    = "roles/datastore.user"
-  member  = "serviceAccount:${google_service_account.cluster_service_account.email}"
-
-  condition {
-    title       = "RestrictFirestoreAccess"
-    description = "Grant access to the specific Firestore databases"
-    expression  = "resource.name.startsWith('projects/${var.project_id}/databases/(default)/documents/${var.cluster_name}') || resource.name.startsWith('projects/${var.project_id}/databases/(default)/documents/${var.cluster_name}parking')"
-  }
-}
 
 resource "google_container_cluster" "primary" {
-  name                  = var.cluster_name
-  location              = var.region
-  networking_mode       = "VPC_NATIVE"
-  ip_allocation_policy  {}
+  name            = var.cluster_name
+  location        = var.region
+  networking_mode = "VPC_NATIVE"
+  ip_allocation_policy {}
 
   node_pool {
     name               = "default-pool"
