@@ -687,11 +687,11 @@ export default function Properties() {
                     {tier == 'PREMIUM' && (
                       <TextField
                         label="Payment Watcher Credentials"
-                        value={newProperty.paymentWatcherJob?.credentials}
-                        onChange={(e) => setNewProperty((newProperty) => ({
-                          ...newProperty,
+                        value={editProperty.paymentWatcherJob?.credentials}
+                        onChange={(e) => setEditProperty((editProperty) => ({
+                          ...editProperty,
                           paymentWatcherJob: {
-                            ...newProperty?.paymentWatcherJob,
+                            ...editProperty?.paymentWatcherJob,
                             credentials: e.target.value,
                           },
                         }))}
@@ -701,11 +701,11 @@ export default function Properties() {
                     {tier == 'PREMIUM' && (
                       <TextField
                         label="Payment Watcher Target Mail"
-                        value={newProperty.paymentWatcherJob?.targetMail}
-                        onChange={(e) => setNewProperty((newProperty) => ({
-                          ...newProperty,
+                        value={editProperty.paymentWatcherJob?.targetMail}
+                        onChange={(e) => setEditProperty((editProperty) => ({
+                          ...editProperty,
                           paymentWatcherJob: {
-                            ...newProperty?.paymentWatcherJob,
+                            ...editProperty?.paymentWatcherJob,
                             targetMail: e.target.value,
                           },
                         }))}
@@ -716,11 +716,11 @@ export default function Properties() {
                     {tier == 'PREMIUM' && (
                       <TextField
                         label="Payment Watcher Sender"
-                        value={newProperty.paymentWatcherJob?.sender}
-                        onChange={(e) => setNewProperty((newProperty) => ({
-                          ...newProperty,
+                        value={editProperty.paymentWatcherJob?.sender}
+                        onChange={(e) => setEditProperty((editProperty) => ({
+                          ...editProperty,
                           paymentWatcherJob: {
-                            ...newProperty?.paymentWatcherJob,
+                            ...editProperty?.paymentWatcherJob,
                             sender: e.target.value,
                           },
                         }))}

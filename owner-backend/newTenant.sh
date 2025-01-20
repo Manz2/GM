@@ -93,19 +93,36 @@ fi
 echo "Updating DNS entry for $DNS_NAME with IP $external_ip"
 gcloud dns record-sets transaction start --zone="$DNS_ZONE"
 
+
+# Bestehende Transaktionsdatei entfernen
+if [ -f "transaction.yaml" ]; then
+  echo "Removing existing transaction file"
+  rm -f transaction.yaml
+fi
+
+
+# Neue Transaktion starten
+if ! gcloud dns record-sets transaction start --zone="$DNS_ZONE"; then
+  echo "Failed to start DNS transaction. Exiting."
+  exit 1
+fi
+
 # Bestehenden Eintrag entfernen (falls vorhanden)
-EXISTING_RECORD=$(gcloud dns record-sets list --zone="$DNS_ZONE" --name="$DNS_NAME" --type="A" --format="json")
-if [ "$EXISTING_RECORD" != "[]" ]; then
-  echo "Removing existing DNS record for $DNS_NAME"
-  gcloud dns record-sets transaction remove \
-    --zone="$DNS_ZONE" \
-    --name="$DNS_NAME" \
-    --type="A" \
-    --ttl="$TTL" \
-    $(echo "$EXISTING_RECORD" | jq -r '.[0].rrdatas[]')
+EXISTING_RECORDS=$(gcloud dns record-sets list --zone="$DNS_ZONE" --name="$DNS_NAME" --type="A" --format="json")
+if [ "$EXISTING_RECORDS" != "[]" ]; then
+  echo "Removing existing DNS records for $DNS_NAME"
+  for record in $(echo "$EXISTING_RECORDS" | jq -r '.[].rrdatas[]'); do
+    gcloud dns record-sets transaction remove \
+      --zone="$DNS_ZONE" \
+      --name="$DNS_NAME" \
+      --type="A" \
+      --ttl="$TTL" \
+      "$record"
+  done
 fi
 
 # Neuen Eintrag hinzufügen
+echo "Adding new DNS record for $DNS_NAME"
 gcloud dns record-sets transaction add \
   --zone="$DNS_ZONE" \
   --name="$DNS_NAME" \
@@ -113,9 +130,15 @@ gcloud dns record-sets transaction add \
   --ttl="$TTL" \
   "$external_ip"
 
-gcloud dns record-sets transaction execute --zone="$DNS_ZONE"
+# Transaktion ausführen
+TRANSACTION_OUTPUT=$(gcloud dns record-sets transaction execute --zone="$DNS_ZONE" 2>&1)
 
-echo "DNS entry updated successfully: $DNS_NAME -> $external_ip"
+
+if echo "$TRANSACTION_OUTPUT" | grep -q "HTTPError 409"; then
+  echo "Conflict detected: A record already exists. Verifying changes..."
+else
+  echo "DNS entry updated successfully: $DNS_NAME -> $external_ip"
+fi
 
 # External IP als Rückgabewert des Skripts ausgeben
 echo "External IP erfolgreich ermittelt: $external_ip"
