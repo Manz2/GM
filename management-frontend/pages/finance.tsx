@@ -82,6 +82,8 @@ export default function Properties() {
   const [appName, setAppName] = useState("");
   const [imageUrl, setImageUrl] = useState("");
   const [reportUrl, setReportUrl] = useState<string | null>(null);
+  const [blobUrl, setBlobUrl] = useState<string | null>(null);
+
 
   useEffect(() => {
     // Dynamisch initialisieren
@@ -162,6 +164,21 @@ export default function Properties() {
     setFilter(filterForm);
   };
 
+  const loadFileAsBlob = async (fileId: string) => {
+    try {
+      const financeConfig = new FApi.Configuration(financeConfigParameters);
+      const financeApi = new FinanceApi(financeConfig);
+      const response = await financeApi.getReportFileById({ id: fileId });
+      console.log("Raw response:", response);
+      const url = URL.createObjectURL(response);
+      console.log("Blob URL:", url);
+
+      setBlobUrl(url);
+    } catch (error) {
+      console.error('Fehler beim Laden des Bildes:', error);
+    }
+  };
+
   const handleChange = (panel: string) => (event: React.SyntheticEvent, isExpanded: boolean) => {
     setExpanded(isExpanded ? panel : null); // Setzt expanded auf null, wenn das Panel geschlossen wird
   };
@@ -199,6 +216,7 @@ export default function Properties() {
 
         // Since the response is a plain string, you don't need to parse it
         setReportUrl(response); // Directly set the string response to the state
+        loadFileAsBlob(response);
       } catch (error) {
         console.error("Error generating defect report:", error);
       } finally {
@@ -225,11 +243,11 @@ export default function Properties() {
           {loading ? "Generating Report..." : "Generate Finance Report"}
         </button>
 
-        {reportUrl && (
+        {blobUrl && (
           <div style={{ marginTop: "20px", marginBottom: "20px" }}>
             <p style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "20px" }}>Finance report is ready for download:</p>
             <a
-              href={reportUrl}
+              href={blobUrl}
               target="_blank"
               rel="noopener noreferrer"
               style={{
@@ -273,6 +291,7 @@ export default function Properties() {
 
         // Since the response is a plain string, you don't need to parse it
         setReportUrl(response); // Directly set the string response to the state
+        loadFileAsBlob(response);
       } catch (error) {
         console.error("Error generating defect report:", error);
       } finally {
@@ -299,11 +318,11 @@ export default function Properties() {
           {loading ? "Generating Report..." : "Generate Defect Report"}
         </button>
 
-        {reportUrl && (
+        {blobUrl && (
           <div style={{ marginTop: "20px", marginBottom: "20px" }}>
             <p style={{ fontSize: "18px", fontWeight: "bold", marginBottom: "20px" }}>Defect report is ready for download:</p>
             <a
-              href={reportUrl}
+              href={blobUrl}
               target="_blank"
               rel="noopener noreferrer"
               style={{

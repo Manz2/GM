@@ -98,7 +98,7 @@ public class FirestoreDefectDatabase implements GMDBService<Defect> {
         tenantSpecificConfig();
         Map<String, Object> report = new HashMap<>();
         try {
-            Query query = defectCollection.whereEqualTo("location", location);
+            Query query = defectCollection.whereEqualTo("property", location);
 
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             if (startDatum != null && !startDatum.isEmpty()) {

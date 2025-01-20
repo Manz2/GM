@@ -41,6 +41,10 @@ export interface GenerateFinanceReportRequest {
     endDate?: string;
 }
 
+export interface GetReportFileByIdRequest {
+    id: string;
+}
+
 /**
  * 
  */
@@ -213,6 +217,47 @@ export class FinanceApi extends runtime.BaseAPI {
      */
     async generateFinanceReport(requestParameters: GenerateFinanceReportRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<string> {
         const response = await this.generateFinanceReportRaw(requestParameters, initOverrides);
+        return await response.value();
+    }
+
+    /**
+     * Report anhand der ID
+     */
+    async getReportFileByIdRaw(requestParameters: GetReportFileByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<runtime.ApiResponse<Blob>> {
+        if (requestParameters['id'] == null) {
+            throw new runtime.RequiredError(
+                'id',
+                'Required parameter "id" was null or undefined when calling getReportFileById().'
+            );
+        }
+
+        const queryParameters: any = {};
+
+        const headerParameters: runtime.HTTPHeaders = {};
+
+        if (this.configuration && this.configuration.accessToken) {
+            const token = this.configuration.accessToken;
+            const tokenString = await token("BearerAuth", []);
+
+            if (tokenString) {
+                headerParameters["Authorization"] = `Bearer ${tokenString}`;
+            }
+        }
+        const response = await this.request({
+            path: `/api/finance/pdf/{id}`.replace(`{${"id"}}`, encodeURIComponent(String(requestParameters['id']))),
+            method: 'GET',
+            headers: headerParameters,
+            query: queryParameters,
+        }, initOverrides);
+
+        return new runtime.BlobApiResponse(response);
+    }
+
+    /**
+     * Report anhand der ID
+     */
+    async getReportFileById(requestParameters: GetReportFileByIdRequest, initOverrides?: RequestInit | runtime.InitOverrideFunction): Promise<Blob> {
+        const response = await this.getReportFileByIdRaw(requestParameters, initOverrides);
         return await response.value();
     }
 

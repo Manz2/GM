@@ -6,10 +6,15 @@ import com.group.gm.openapi.api.FinanceApiDelegate;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;
 import java.util.Date;
@@ -61,6 +66,20 @@ public class FinanceService implements FinanceApiDelegate {
             return ResponseEntity.badRequest().body("Error: Invalid date format. Use YYYY-MM-DD.");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Error generating defect report: " + e.getMessage());
+        }
+    }
+
+    @Override
+    public ResponseEntity<Resource> getReportFileById(String id) {
+        try {
+            String prefix = id.substring(0, id.lastIndexOf('.'));
+            String suffix = id.substring(id.lastIndexOf('.'));
+
+            Path path = Files.createTempFile(prefix, suffix);
+            storageService.downloadObject(id, path);
+            return ResponseEntity.ok(new UrlResource(path.toUri()));
+        } catch (IOException e) {
+            return ResponseEntity.notFound().build();
         }
     }
 

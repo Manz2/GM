@@ -52,6 +52,36 @@ paths:
         '500':
           $ref: '#/components/responses/InternalServerError'
 
+  /api/finance/pdf/{id}:
+    get:
+      security:
+        - BearerAuth: [ ]
+      tags:
+        - "Finance"
+      summary: "Report anhand der ID"
+      operationId: "getReportFileById"
+      parameters:
+        - name: "id"
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: "Das Defect Image wurde gefunden und zurückgegeben"
+          content:
+            application/pdf:
+              schema:
+                type: string
+                format: binary
+                description: "Das Bild des Defects"
+        '404':
+          description: "Das Image des Defects mit der ID wurde nicht gefunden"
+        '400':
+          $ref: '#/components/responses/BadRequest'
+        '500':
+          $ref: '#/components/responses/InternalServerError'
+
   /api/finance/financereport:
     get:
       security:

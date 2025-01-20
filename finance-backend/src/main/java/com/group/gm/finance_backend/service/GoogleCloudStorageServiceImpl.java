@@ -76,35 +76,13 @@ public class GoogleCloudStorageServiceImpl implements GoogleCloudStorageService 
 
         try {
             storage.createFrom(blobInfo, file.getInputStream(), precondition);
-
-            SecretManagerServiceClient client = SecretManagerServiceClient.create();
-            String secretName = "projects/563205931618/secrets/DevServiceAccountKey/versions/latest";
-
-            AccessSecretVersionResponse secretResponse = client.accessSecretVersion(secretName);
-            String serviceAccountJson = secretResponse.getPayload().getData().toStringUtf8();
-
-            InputStream serviceAccountStream = new ByteArrayInputStream(serviceAccountJson.getBytes());
-
-            Storage storageForSign = StorageOptions.newBuilder()
-                    .setCredentials(ServiceAccountCredentials.fromStream(serviceAccountStream))
-                    .build()
-                    .getService();
-
-            URL signedUrl = storageForSign.signUrl(
-                    blobInfo,
-                    15,
-                    TimeUnit.MINUTES,
-                    Storage.SignUrlOption.withV4Signature() // Optional: Use V4 signing
-            );
-
-            return signedUrl.toString();
-        } catch (IOException e) {
-            logger.error("IOException during file upload: {}", e.getMessage(), e);
-            throw new RuntimeException("Error uploading file to GCS", e);
-        } catch (Exception e) {
-            logger.error("Error generating signed URL: {}", e.getMessage(), e);
-            throw new RuntimeException("Error generating signed URL", e);
+        } catch (IOException e)
+        {
+            logger.error("File {} COULDNT be uploaded to bucket {} as {}", file, bucket, objectName);
+            return null;
         }
+        logger.info("File {} uploaded to bucket {} as {}", file, bucket, objectName);
+        return objectName;
     }
 
 
