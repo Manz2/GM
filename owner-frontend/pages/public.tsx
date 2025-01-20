@@ -489,7 +489,16 @@ export default function Public() {
                                         Das ideale Einstiegspaket für grundlegende Anforderungen: Gebäudeverwaltung,
                                         Defektmanagement und Nutzerverwaltung. Mit einer Schnittstelle für Parkvorgänge und
                                         zentraler, geteilter Infrastruktur, die eine zuverlässige Datenspeicherung ermöglicht.
-                                    </td>
+                                        Sobald Ihre Anwendung einsatzbereit ist, können Sie unter{" "}
+                                        <a
+                                            href="http://default.gm25.software/management-frontend"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: "#007BFF", textDecoration: "none" }}
+                                        >
+                                            http://default.gm25.software/management-frontend
+                                        </a>{" "}
+                                        darauf zugreifen.                                    </td>
                                 </tr>
                                 <tr style={{ borderBottom: "1px solid #ddd" }}>
                                     <td style={{ padding: "12px" }}>Enhanced</td>
@@ -499,6 +508,16 @@ export default function Public() {
                                         die Ihnen bei der Optimierung Ihrer Prozesse helfen. Individualisieren Sie die Anwendung
                                         mit Ihrem Logo und Applikationsnamen. Inklusive dedizierter Datenbank und Speicher mit
                                         wählbarem Standort.
+                                        Sobald Ihre Anwendung einsatzbereit ist, können Sie unter{" "}
+                                        <a
+                                            href="http://default.gm25.software/management-frontend"
+                                            target="_blank"
+                                            rel="noopener noreferrer"
+                                            style={{ color: "#007BFF", textDecoration: "none" }}
+                                        >
+                                            http://default.gm25.software/management-frontend
+                                        </a>{" "}
+                                        darauf zugreifen.
                                     </td>
                                 </tr>
                                 <tr>
@@ -511,7 +530,7 @@ export default function Public() {
                                     </td>
                                 </tr>
                             </tbody>
-                            
+
                         </table>
                         Zusätzlich werden Monatlich 10€ pro Gebäude 1€ pro Nutzer und 0,1€ Pro Defect berechnet.
                     </Box>
