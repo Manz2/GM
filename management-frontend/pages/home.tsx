@@ -84,7 +84,7 @@ export default function Home() {
             <CardContent>
               <BuildIcon color="secondary" sx={{ fontSize: 50, marginBottom: 2 }} />
               <Typography variant="h5" component="div">
-                Defects123
+                Defects
               </Typography>
               <Typography variant="body2" color="textSecondary">
                 Erstellen und verwalten Sie Mängel in Ihren Objekten.
